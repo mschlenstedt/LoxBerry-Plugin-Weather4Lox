@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Loxone Weather</title>
+    <meta name="viewport" content="width=600, initial-scale=1">
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/themes/LoxoneClassic.min.css" />
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/themes/jquery.mobile.icons.min.css" />
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/css/jquery.mobile.structure-1.4.5.min.css" /> 
+    <script src="<!--$webpath-->/jquery/js/jquery-1.12.4.min.js"></script>
+    <script src="<!--$webpath-->/jquery/js/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+
+<!-- Start of first page: #dfc -->
+<div data-role="page" id="start" >
+	<div data-role="header">
+		<div data-role="navbar">
+			<ul>
+			<li><a href="<!--$themeurlmain-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">Current</a></li>
+			<li><a href="#start" class="ui-btn-active ui-state-persist" style="font-size: 1em; line-height: 1.5em">4 Day</a></li>
+			<li><a href="<!--$themeurlhfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">36 Hour</a></li>
+			<li><a href="<!--$themeurlmap-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">Map</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+	<div class="ui-body ui-body-a ui-corner-all">
+		<div data-role="collapsible-set" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d">
+		<div data-role="collapsible" data-collapsed="false">
+			<h3><!--$dfc0_wday-->, <!--$dfc0_day-->. <!--$dfc0_monthn--> <!--$dfc0_year--> (Today)</h3>
+			<table border=0 width="100%">
+				<tr>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/d/<!--$dfc0_we_icon-->.png" alt="<!--$dfc0_we_icon-->" width="110" height="110">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Max: </span><!--$dfc0_tt_h--> &deg;C
+				  <span style="color: darkgrey">Min: </span><!--$dfc0_tt_l--> &deg;C<br>
+				  <span style="color: darkgrey">Rain chance: </span><!--$dfc0_pop--> %<br>
+				  <span style="color: darkgrey">Rain amount: </span><!--$dfc0_prec--> mm<br>
+				  <span style="color: darkgrey">&#216; Humidity: </span><!--$dfc0_hu_a--> %
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Forecast: </span><!--$dfc0_we_des--><br>
+				  <span style="color: darkgrey">Wind: </span>From <!--$dfc0_w_dirdes_a--> with <!--$dfc0_w_sp_a--> kmh
+				</td>
+				</tr>
+			</table>
+		</div>
+		<div data-role="collapsible" data-collapsed="true">
+			<h3><!--$dfc1_wday-->, <!--$dfc1_day-->. <!--$dfc1_monthn--> <!--$dfc1_year--></h3>
+			<table border=0 width="100%">
+				<tr>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/d/<!--$dfc1_we_icon-->.png" alt="<!--$dfc1_we_icon-->" width="110" height="110">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Max: </span><!--$dfc1_tt_h--> &deg;C
+				  <span style="color: darkgrey">Min: </span><!--$dfc1_tt_l--> &deg;C<br>
+				  <span style="color: darkgrey">Rain chance: </span><!--$dfc1_pop--> %<br>
+				  <span style="color: darkgrey">Rain amount: </span><!--$dfc1_prec--> mm<br>
+				  <span style="color: darkgrey">&#216; Humidity: </span><!--$dfc1_hu_a--> %
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Forecast: </span><!--$dfc1_we_des--><br>
+				  <span style="color: darkgrey">Wind: </span>From <!--$dfc1_w_dirdes_a--> with <!--$dfc1_w_sp_a--> kmh
+				</td>
+				</tr>
+			</table>
+		</div>
+		<div data-role="collapsible" data-collapsed="true">
+			<h3><!--$dfc2_wday-->, <!--$dfc2_day-->. <!--$dfc2_monthn--> <!--$dfc2_year--></h3>
+			<table border=0 width="100%">
+				<tr>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/d/<!--$dfc2_we_icon-->.png" alt="<!--$dfc2_we_icon-->" width="110" height="110">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Max: </span><!--$dfc2_tt_h--> &deg;C
+				  <span style="color: darkgrey">Min: </span><!--$dfc2_tt_l--> &deg;C<br>
+				  <span style="color: darkgrey">Rain chance: </span><!--$dfc2_pop--> %<br>
+				  <span style="color: darkgrey">Rain amount: </span><!--$dfc2_prec--> mm<br>
+				  <span style="color: darkgrey">&#216; Humidity: </span><!--$dfc2_hu_a--> %
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Forecast: </span><!--$dfc2_we_des--><br>
+				  <span style="color: darkgrey">Wind: </span>From <!--$dfc2_w_dirdes_a--> with <!--$dfc2_w_sp_a--> kmh
+				</td>
+				</tr>
+			</table>
+		</div>
+		<div data-role="collapsible" data-collapsed="true">
+			<h3><!--$dfc3_wday-->, <!--$dfc3_day-->. <!--$dfc3_monthn--> <!--$dfc3_year--></h3>
+			<table border=0 width="100%">
+				<tr>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/d/<!--$dfc3_we_icon-->.png" alt="<!--$dfc3_we_icon-->" width="110" height="110">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Max: </span><!--$dfc3_tt_h--> &deg;C
+				  <span style="color: darkgrey">Min: </span><!--$dfc3_tt_l--> &deg;C<br>
+				  <span style="color: darkgrey">Rain chance: </span><!--$dfc3_pop--> %<br>
+				  <span style="color: darkgrey">Rain amount: </span><!--$dfc3_prec--> mm<br>
+				  <span style="color: darkgrey">&#216; Humidity: </span><!--$dfc3_hu_a--> %
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Forecast: </span><!--$dfc3_we_des--><br>
+				  <span style="color: darkgrey">Wind: </span>From <!--$dfc3_w_dirdes_a--> with <!--$dfc3_w_sp_a--> kmh
+				</td>
+				</tr>
+			</table>
+		</div>
+		</div>
+	</div>
+	</div><!-- /content -->
+
+</div><!-- /page dfc -->
+
+</body>
+</html>
+

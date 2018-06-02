@@ -1,0 +1,44 @@
+<div data-role="page" id="main">
+        <div data-role="header"">
+                <h1><TMPL_VAR SETTINGS.LABEL_ADDRESS_SEARCH></h1>
+        </div>
+
+        <!-- content -->
+        <div role="main" class="ui-content">
+                <div class="ui-body ui-body-a ui-corner-all loxberry-logo">
+
+    <div style="margin: 5%">
+
+      <p>
+      <center>
+      <form method="post" data-ajax="false" name="geo_form" id="geo_form" action="./geolocation.cgi">
+      <table width="100%" border=0>
+        <tr>
+          <td width="80%">
+	  <input id="search" name="search" type="search" class="textfield" value="" placeholder="<TMPL_VAR SETTINGS.LABEL_ADDRESS>">
+          </td>
+          <td width="20%">
+	  <button type="submit" form="geo_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.LABEL_SEARCH></button>
+          </td>
+        </tr>
+      </table>
+      </form>
+
+      <table data-role="table" data-mode="" class="ui-body-d ui-shadow table-stripe ui-responsive" id="addressTable" width="90%">
+
+	      <TMPL_VAR TABLE>
+
+      </table>
+      </center>
+      </p>
+
+    </div>
+
+                </div>
+
+        </div>
+        <!-- /content -->
+
+</div>
+<!-- /page -->
+

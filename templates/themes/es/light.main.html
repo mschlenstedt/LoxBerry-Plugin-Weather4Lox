@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Loxone Weather</title>
+    <meta name="viewport" content="width=600, initial-scale=1">
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/themes/LoxoneV4.min.css" />
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/themes/jquery.mobile.icons.min.css" />
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/css/jquery.mobile.structure-1.4.5.min.css" /> 
+    <script src="<!--$webpath-->/jquery/js/jquery-1.12.4.min.js"></script>
+    <script src="<!--$webpath-->/jquery/js/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+
+<!-- Start of first page: #current -->
+<div data-role="page" id="start">
+	<div data-role="header">
+		<div data-role="navbar">
+			<ul>
+			<li><a href="#start" class="ui-btn-active ui-state-persist" style="font-size: 1em; line-height: 1.5em">Actual</a></li>
+			<li><a href="<!--$themeurldfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">Próximos 4 días</a></li>
+			<li><a href="<!--$themeurlhfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">Próximas 36 horas</a></li>
+			<li><a href="<!--$themeurlmap-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">Mapa</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+	<div class="ui-body ui-body-a ui-corner-all">
+		<table border=0 width="100%">
+		<tr>
+			<td colspan=2 style="text-align: center; vertical-algin: middle">
+			<span style="font-size: 2em; font-weight: bold"><!--$cur_loc_n--></span>
+			<br>
+			<span style="color: darkgrey">Última Actualización: <!--$cur_day-->.<!--$cur_month-->.<!--$cur_year-->, <!--$cur_hour-->:<!--$cur_min--></span>
+			</td>
+		</tr>
+		<tr>
+			<td width="50%" style="text-align: right; vertical-algin: top">
+			<span style="vertical-align: middle; font-size: 4em; font-weight: bold"><!--$cur_tt--></span>
+			<span style="vertical-align: super">&deg;C</span><br>
+			<span style="color: darkgrey">Sensación Termica:</span> <!--$cur_tt_fl--> &deg;C
+			</td>
+			<td width="50%" style="text-align: left; line-height: 200px; vertical-align: top">
+			<img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$cur_dayornight-->/<!--$cur_we_icon-->.png" alt="<!--$we_we_icon-->" width="120" height="120" style="vertical-align: middle;">
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 style="text-align: center; vertical-algin: middle; line-height: 2em">
+			<span style="font-size: 2em;"><!--$cur_we_des--></span>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: right; vertical-align: top; color: darkgrey; padding: 10px; line-height: 1.5em">
+			Punto de rocío:<br>
+			Humedad:<br>
+			Índice UV:<br>
+			Radiación solar:<br>
+			Viento:<br>
+			</td>
+			<td style="text-align: left; vertical-align: top; padding: 10px; line-height: 1.5em">
+			<!--$cur_dp--> &deg;C<br>
+			<!--$cur_hu-->%<br>
+			<!--$cur_uvi--><br>
+			<!--$cur_sr--> W/m²<br>
+			De <!--$cur_w_dirdes--> a <!--$cur_w_sp--> kmh (Con rachas de <!--$cur_w_gu--> kmh)<br>
+			</td>
+		</tr>
+		<tr>
+			<td style="text-align: right; padding: 10px; line-height: 1.5em">
+			<span style="color: darkgrey">Amanecer:</span>
+			<span><!--$cur_sun_r--></span>
+			</td>
+			<td style="text-align: left; padding: 10px; line-height: 1.5em">
+			<span style="color: darkgrey">Ocaso:</span>
+			<span><!--$cur_sun_s--></span>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 style="text-align: center; padding: 10px; line-height: 1.5em">
+			<span style="color: darkgrey">Luna:</span>
+			<span><!--$cur_moon_ph-->, <!--$cur_moon_p-->% visible</span>
+			</td>
+		</tr>
+		</table>
+	</div>
+	</div><!-- /content -->
+
+</div><!-- /page cur -->
+
+</body>
+</html>
+

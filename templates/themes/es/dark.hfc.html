@@ -1,0 +1,972 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Loxone Weather</title>
+    <meta name="viewport" content="width=600, initial-scale=1">
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/themes/LoxoneClassic.min.css" />
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/themes/jquery.mobile.icons.min.css" />
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/css/jquery.mobile.structure-1.4.5.min.css" /> 
+    <script src="<!--$webpath-->/jquery/js/jquery-1.12.4.min.js"></script>
+    <script src="<!--$webpath-->/jquery/js/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+
+<!-- Start of first page: #hfc -->
+<div data-role="page" id="start" >
+	<div data-role="header">
+		<div data-role="navbar">
+			<ul>
+			<li><a href="<!--$themeurlmain-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">Actual</a></li>
+			<li><a href="<!--$themeurldfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">Próximos 4 días</a></li>
+			<li><a href="#start" class="ui-btn-active ui-state-persist" style="font-size: 1em; line-height: 1.5em">Próximas 36 horas</a></li>
+			<li><a href="<!--$themeurlmap-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">Mapa</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+	<div class="ui-body ui-body-a ui-corner-all">
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc1_hour-->:<!--$hfc1_min--><br>
+				  <span style="color: darkgrey"><!--$hfc1_day-->. <!--$hfc1_monthn_sh--> <!--$hfc1_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc1_dayornight-->/<!--$hfc1_we_icon-->.png" alt="<!--$hfc1_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc1_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc1_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc1_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc1_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc1_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc1_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc1_w_dirdes--> a <!--$hfc1_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc1_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc1_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc2_hour-->:<!--$hfc2_min--><br>
+				  <span style="color: darkgrey"><!--$hfc2_day-->. <!--$hfc2_monthn_sh--> <!--$hfc2_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc2_dayornight-->/<!--$hfc2_we_icon-->.png" alt="<!--$hfc2_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc2_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc2_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc2_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc2_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc2_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc2_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc2_w_dirdes--> a <!--$hfc2_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc2_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc2_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc3_hour-->:<!--$hfc3_min--><br>
+				  <span style="color: darkgrey"><!--$hfc3_day-->. <!--$hfc3_monthn_sh--> <!--$hfc3_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc3_dayornight-->/<!--$hfc3_we_icon-->.png" alt="<!--$hfc3_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc3_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc3_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc3_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc3_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc3_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc3_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc3_w_dirdes--> a <!--$hfc3_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc3_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc3_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc4_hour-->:<!--$hfc4_min--><br>
+				  <span style="color: darkgrey"><!--$hfc4_day-->. <!--$hfc4_monthn_sh--> <!--$hfc4_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc4_dayornight-->/<!--$hfc4_we_icon-->.png" alt="<!--$hfc4_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc4_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc4_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc4_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc4_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc4_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc4_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc4_w_dirdes--> a <!--$hfc4_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc4_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc4_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc5_hour-->:<!--$hfc5_min--><br>
+				  <span style="color: darkgrey"><!--$hfc5_day-->. <!--$hfc5_monthn_sh--> <!--$hfc5_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc5_dayornight-->/<!--$hfc5_we_icon-->.png" alt="<!--$hfc5_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc5_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc5_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc5_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc5_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc5_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc5_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc5_w_dirdes--> a <!--$hfc5_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc5_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc5_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc6_hour-->:<!--$hfc6_min--><br>
+				  <span style="color: darkgrey"><!--$hfc6_day-->. <!--$hfc6_monthn_sh--> <!--$hfc6_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc6_dayornight-->/<!--$hfc6_we_icon-->.png" alt="<!--$hfc6_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc6_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc6_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc6_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc6_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc6_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc6_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc6_w_dirdes--> a <!--$hfc6_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc6_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc6_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc7_hour-->:<!--$hfc7_min--><br>
+				  <span style="color: darkgrey"><!--$hfc7_day-->. <!--$hfc7_monthn_sh--> <!--$hfc7_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc7_dayornight-->/<!--$hfc7_we_icon-->.png" alt="<!--$hfc7_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc7_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc7_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc7_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc7_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc7_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc7_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc7_w_dirdes--> a <!--$hfc7_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc7_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc7_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc8_hour-->:<!--$hfc8_min--><br>
+				  <span style="color: darkgrey"><!--$hfc8_day-->. <!--$hfc8_monthn_sh--> <!--$hfc8_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc8_dayornight-->/<!--$hfc8_we_icon-->.png" alt="<!--$hfc8_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc8_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc8_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc8_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc8_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc8_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc8_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc8_w_dirdes--> a <!--$hfc8_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc8_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc8_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc9_hour-->:<!--$hfc9_min--><br>
+				  <span style="color: darkgrey"><!--$hfc9_day-->. <!--$hfc9_monthn_sh--> <!--$hfc9_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc9_dayornight-->/<!--$hfc9_we_icon-->.png" alt="<!--$hfc9_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc9_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc9_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc9_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc9_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc9_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc9_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc9_w_dirdes--> a <!--$hfc9_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc9_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc9_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc10_hour-->:<!--$hfc10_min--><br>
+				  <span style="color: darkgrey"><!--$hfc10_day-->. <!--$hfc10_monthn_sh--> <!--$hfc10_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc10_dayornight-->/<!--$hfc10_we_icon-->.png" alt="<!--$hfc10_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc10_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc10_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc10_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc10_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc10_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc10_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc10_w_dirdes--> a <!--$hfc10_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc10_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc10_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc11_hour-->:<!--$hfc11_min--><br>
+				  <span style="color: darkgrey"><!--$hfc11_day-->. <!--$hfc11_monthn_sh--> <!--$hfc11_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc11_dayornight-->/<!--$hfc11_we_icon-->.png" alt="<!--$hfc11_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc11_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc11_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc11_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc11_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc11_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc11_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc11_w_dirdes--> a <!--$hfc11_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc11_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc11_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc12_hour-->:<!--$hfc12_min--><br>
+				  <span style="color: darkgrey"><!--$hfc12_day-->. <!--$hfc12_monthn_sh--> <!--$hfc12_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc12_dayornight-->/<!--$hfc12_we_icon-->.png" alt="<!--$hfc12_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc12_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc12_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc12_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc12_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc12_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc12_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc12_w_dirdes--> a <!--$hfc12_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc12_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc12_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc13_hour-->:<!--$hfc13_min--><br>
+				  <span style="color: darkgrey"><!--$hfc13_day-->. <!--$hfc13_monthn_sh--> <!--$hfc13_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc13_dayornight-->/<!--$hfc13_we_icon-->.png" alt="<!--$hfc13_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc13_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc13_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc13_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc13_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc13_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc13_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc13_w_dirdes--> a <!--$hfc13_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc13_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc13_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc14_hour-->:<!--$hfc14_min--><br>
+				  <span style="color: darkgrey"><!--$hfc14_day-->. <!--$hfc14_monthn_sh--> <!--$hfc14_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc14_dayornight-->/<!--$hfc14_we_icon-->.png" alt="<!--$hfc14_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc14_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc14_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc14_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc14_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc14_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc14_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc14_w_dirdes--> a <!--$hfc14_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc14_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc14_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc15_hour-->:<!--$hfc15_min--><br>
+				  <span style="color: darkgrey"><!--$hfc15_day-->. <!--$hfc15_monthn_sh--> <!--$hfc15_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc15_dayornight-->/<!--$hfc15_we_icon-->.png" alt="<!--$hfc15_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc15_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc15_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc15_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc15_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc15_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc15_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc15_w_dirdes--> a <!--$hfc15_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc15_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc15_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc16_hour-->:<!--$hfc16_min--><br>
+				  <span style="color: darkgrey"><!--$hfc16_day-->. <!--$hfc16_monthn_sh--> <!--$hfc16_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc16_dayornight-->/<!--$hfc16_we_icon-->.png" alt="<!--$hfc16_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc16_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc16_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc16_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc16_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc16_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc16_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc16_w_dirdes--> a <!--$hfc16_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc16_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc16_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc17_hour-->:<!--$hfc17_min--><br>
+				  <span style="color: darkgrey"><!--$hfc17_day-->. <!--$hfc17_monthn_sh--> <!--$hfc17_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc17_dayornight-->/<!--$hfc17_we_icon-->.png" alt="<!--$hfc17_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc17_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc17_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc17_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc17_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc17_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc17_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc17_w_dirdes--> a <!--$hfc17_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc17_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc17_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc18_hour-->:<!--$hfc18_min--><br>
+				  <span style="color: darkgrey"><!--$hfc18_day-->. <!--$hfc18_monthn_sh--> <!--$hfc18_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc18_dayornight-->/<!--$hfc18_we_icon-->.png" alt="<!--$hfc18_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc18_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc18_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc18_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc18_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc18_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc18_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc18_w_dirdes--> a <!--$hfc18_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc18_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc18_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc19_hour-->:<!--$hfc19_min--><br>
+				  <span style="color: darkgrey"><!--$hfc19_day-->. <!--$hfc19_monthn_sh--> <!--$hfc19_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc19_dayornight-->/<!--$hfc19_we_icon-->.png" alt="<!--$hfc19_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc19_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc19_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc19_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc19_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc19_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc19_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc19_w_dirdes--> a <!--$hfc19_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc19_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc19_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc20_hour-->:<!--$hfc20_min--><br>
+				  <span style="color: darkgrey"><!--$hfc20_day-->. <!--$hfc20_monthn_sh--> <!--$hfc20_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc20_dayornight-->/<!--$hfc20_we_icon-->.png" alt="<!--$hfc20_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc20_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc20_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc20_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc20_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc20_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc20_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc20_w_dirdes--> a <!--$hfc20_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc20_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc20_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc21_hour-->:<!--$hfc21_min--><br>
+				  <span style="color: darkgrey"><!--$hfc21_day-->. <!--$hfc21_monthn_sh--> <!--$hfc21_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc21_dayornight-->/<!--$hfc21_we_icon-->.png" alt="<!--$hfc21_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc21_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc21_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc21_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc21_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc21_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc21_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc21_w_dirdes--> a <!--$hfc21_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc21_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc21_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc22_hour-->:<!--$hfc22_min--><br>
+				  <span style="color: darkgrey"><!--$hfc22_day-->. <!--$hfc22_monthn_sh--> <!--$hfc22_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc22_dayornight-->/<!--$hfc22_we_icon-->.png" alt="<!--$hfc22_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc22_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc22_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc22_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc22_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc22_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc22_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc22_w_dirdes--> a <!--$hfc22_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc22_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc22_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc23_hour-->:<!--$hfc23_min--><br>
+				  <span style="color: darkgrey"><!--$hfc23_day-->. <!--$hfc23_monthn_sh--> <!--$hfc23_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc23_dayornight-->/<!--$hfc23_we_icon-->.png" alt="<!--$hfc23_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc23_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc23_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc23_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc23_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc23_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc23_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc23_w_dirdes--> a <!--$hfc23_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc23_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc23_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc24_hour-->:<!--$hfc24_min--><br>
+				  <span style="color: darkgrey"><!--$hfc24_day-->. <!--$hfc24_monthn_sh--> <!--$hfc24_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc24_dayornight-->/<!--$hfc24_we_icon-->.png" alt="<!--$hfc24_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc24_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc24_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc24_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc24_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc24_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc24_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc24_w_dirdes--> a <!--$hfc24_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc24_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc24_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc25_hour-->:<!--$hfc25_min--><br>
+				  <span style="color: darkgrey"><!--$hfc25_day-->. <!--$hfc25_monthn_sh--> <!--$hfc25_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc25_dayornight-->/<!--$hfc25_we_icon-->.png" alt="<!--$hfc25_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc25_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc25_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc25_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc25_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc25_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc25_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc25_w_dirdes--> a <!--$hfc25_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc25_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc25_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc26_hour-->:<!--$hfc26_min--><br>
+				  <span style="color: darkgrey"><!--$hfc26_day-->. <!--$hfc26_monthn_sh--> <!--$hfc26_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc26_dayornight-->/<!--$hfc26_we_icon-->.png" alt="<!--$hfc26_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc26_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc26_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc26_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc26_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc26_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc26_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc26_w_dirdes--> a <!--$hfc26_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc26_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc26_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc27_hour-->:<!--$hfc27_min--><br>
+				  <span style="color: darkgrey"><!--$hfc27_day-->. <!--$hfc27_monthn_sh--> <!--$hfc27_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc27_dayornight-->/<!--$hfc27_we_icon-->.png" alt="<!--$hfc27_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc27_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc27_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc27_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc27_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc27_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc27_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc27_w_dirdes--> a <!--$hfc27_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc27_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc27_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc28_hour-->:<!--$hfc28_min--><br>
+				  <span style="color: darkgrey"><!--$hfc28_day-->. <!--$hfc28_monthn_sh--> <!--$hfc28_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc28_dayornight-->/<!--$hfc28_we_icon-->.png" alt="<!--$hfc28_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc28_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc28_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc28_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc28_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc28_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc28_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc28_w_dirdes--> a <!--$hfc28_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc28_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc28_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc29_hour-->:<!--$hfc29_min--><br>
+				  <span style="color: darkgrey"><!--$hfc29_day-->. <!--$hfc29_monthn_sh--> <!--$hfc29_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc29_dayornight-->/<!--$hfc29_we_icon-->.png" alt="<!--$hfc29_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc29_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc29_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc29_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc29_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc29_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc29_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc29_w_dirdes--> a <!--$hfc29_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc29_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc29_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc30_hour-->:<!--$hfc30_min--><br>
+				  <span style="color: darkgrey"><!--$hfc30_day-->. <!--$hfc30_monthn_sh--> <!--$hfc30_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc30_dayornight-->/<!--$hfc30_we_icon-->.png" alt="<!--$hfc30_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc30_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc30_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc30_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc30_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc30_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc30_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc30_w_dirdes--> a <!--$hfc30_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc30_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc30_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc31_hour-->:<!--$hfc31_min--><br>
+				  <span style="color: darkgrey"><!--$hfc31_day-->. <!--$hfc31_monthn_sh--> <!--$hfc31_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc31_dayornight-->/<!--$hfc31_we_icon-->.png" alt="<!--$hfc31_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc31_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc31_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc31_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc31_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc31_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc31_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc31_w_dirdes--> a <!--$hfc31_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc31_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc31_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc32_hour-->:<!--$hfc32_min--><br>
+				  <span style="color: darkgrey"><!--$hfc32_day-->. <!--$hfc32_monthn_sh--> <!--$hfc32_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc32_dayornight-->/<!--$hfc32_we_icon-->.png" alt="<!--$hfc32_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc32_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc32_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc32_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc32_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc32_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc32_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc32_w_dirdes--> a <!--$hfc32_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc32_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc32_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc33_hour-->:<!--$hfc33_min--><br>
+				  <span style="color: darkgrey"><!--$hfc33_day-->. <!--$hfc33_monthn_sh--> <!--$hfc33_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc33_dayornight-->/<!--$hfc33_we_icon-->.png" alt="<!--$hfc33_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc33_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc33_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc33_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc33_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc33_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc33_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc33_w_dirdes--> a <!--$hfc33_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc33_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc33_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc34_hour-->:<!--$hfc34_min--><br>
+				  <span style="color: darkgrey"><!--$hfc34_day-->. <!--$hfc34_monthn_sh--> <!--$hfc34_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc34_dayornight-->/<!--$hfc34_we_icon-->.png" alt="<!--$hfc34_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc34_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc34_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc34_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc34_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc34_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc34_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc34_w_dirdes--> a <!--$hfc34_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc34_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc34_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc35_hour-->:<!--$hfc35_min--><br>
+				  <span style="color: darkgrey"><!--$hfc35_day-->. <!--$hfc35_monthn_sh--> <!--$hfc35_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc35_dayornight-->/<!--$hfc35_we_icon-->.png" alt="<!--$hfc35_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc35_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc35_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc35_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc35_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc35_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc35_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc35_w_dirdes--> a <!--$hfc35_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc35_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc35_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+			<hr>
+			<table border=0 width="100%">
+				<tr>
+				<td rowspan=2 style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <!--$hfc36_hour-->:<!--$hfc36_min--><br>
+				  <span style="color: darkgrey"><!--$hfc36_day-->. <!--$hfc36_monthn_sh--> <!--$hfc36_year--></span>
+				</td>
+				<td style="text-align: left; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <img src="<!--$webpath-->/icons/<!--$iconset-->/<!--$hfc36_dayornight-->/<!--$hfc36_we_icon-->.png" alt="<!--$hfc36_we_icon-->" width="100" height="100">	
+				</td>
+				<td style="text-align: right; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Máxima: </span><!--$hfc36_tt--> &deg;C
+				  <span style="color: darkgrey">Sensación Termica: </span><!--$hfc36_tt_fl--> &deg;C<br>
+				  <span style="color: darkgrey">Posibilidad de Lluvia: </span><!--$hfc36_pop--> %<br>
+				  <span style="color: darkgrey">Precipitación: </span><!--$hfc36_prec--> mm<br>
+				  <span style="color: darkgrey">Humedad: </span><!--$hfc36_hu--> %<br>
+				</td>
+				</tr><tr>
+				<td colspan="2" style="text-align: center; padding: 10px; line-height: 1.5em; vertical-align: middle;">
+				  <span style="color: darkgrey">Pronóstico: </span><!--$hfc36_we_des--><br>
+				  <span style="color: darkgrey">Viento: </span>Desde <!--$hfc36_w_dirdes--> a <!--$hfc36_w_sp--> kmh<br>
+				  <span style="color: darkgrey">Índice UV: </span><!--$hfc36_uvi-->
+				  <span style="color: darkgrey">Nubosidad: </span><!--$hfc36_sky--> %<br>
+				</td>
+				</tr>
+			</table>
+	</div>
+	</div><!-- /content -->
+
+</div><!-- /page hfc -->
+
+</body>
+</html>
+

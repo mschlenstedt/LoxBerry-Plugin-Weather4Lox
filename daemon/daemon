@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# pluginname=$(basename $0 .sh)
+pluginname=REPLACELBPPLUGINDIR
+touch $LBPLOG/$pluginname/wu4lox.log > /dev/null 2>&1
+
+echo "DAEMON: Starting DAEMON script" >> $LBPLOG/$pluginname/wu4lox.log
+if [ -x /usr/bin/logger ]; then
+    /usr/bin/logger "loxberry-plugin-$pluginname - DAEMON Script from WU4Lox Plugin"
+fi
+
+# Creating logfiles and databases in RAM disk
+echo "DAEMON: Restoring databases and logfiles in RAM Disk" >> $LBPLOG/$pluginname/wu4lox.log
+if [ -x /usr/bin/logger ]; then
+    /usr/bin/logger "loxberry-plugin-$pluginname - Restoring databases and logfiles in RAM Disk"
+fi
+
+echo "DAEMON: Restore databases" >> $LBPLOG/$pluginname/wu4lox.log
+if [ ! -e $LBPLOG/$pluginname/current.dat ]; then
+	cp $LBPDATA/$pluginname/current.dat $LBPLOG/$pluginname/
+fi
+if [ ! -e $LBPLOG/$pluginname/dailyforecast.dat ]; then
+	cp $LBPDATA/$pluginname/dailyforecast.dat $LBPLOG/$pluginname/
+fi
+if [ ! -e $LBPLOG/$pluginname/hourlyforecast.dat ]; then
+	cp $LBPDATA/$pluginname/hourlyforecast.dat $LBPLOG/$pluginname/
+fi
+if [ ! -e $LBPLOG/$pluginname/hourlyhistory.dat ]; then
+	cp $LBPDATA/$pluginname/hourlyhistory.dat $LBPLOG/$pluginname/
+fi
+if [ ! -e $LBPLOG/$pluginname/webpage.html ]; then
+	cp $LBPDATA/$pluginname/webpage.html $LBPLOG/$pluginname/
+fi
+if [ ! -e $LBPLOG/$pluginname/webpage.map.html ]; then
+	cp $LBPDATA/$pluginname/webpage.map.html $LBPLOG/$pluginname/
+fi
+if [ ! -e $LBPLOG/$pluginname/webpage.dfc.html ]; then
+	cp $LBPDATA/$pluginname/webpage.dfc.html $LBPLOG/$pluginname/
+fi
+if [ ! -e $LBPLOG/$pluginname/webpage.hfc.html ]; then
+	cp $LBPDATA/$pluginname/webpage.hfc.html $LBPLOG/$pluginname/
+fi
+if [ ! -e $LBPLOG/$pluginname/weatherdata.html ]; then
+	cp $LBPDATA/$pluginname/weatherdata.html $LBPLOG/$pluginname/
+fi
+if [ ! -e $LBPLOG/$pluginname/index.txt ]; then
+	cp $LBPDATA/$pluginname/index.txt $LBPLOG/$pluginname/
+fi
+chown -vR loxberry:loxberry $LBPLOG/$pluginname/* 
+
+# Check for CloudEmu. If enabled, reinstall the config files just in case
+# the IP has changed
+# Source the iniparser
+. $LBHOMEDIR/libs/bashlib/iniparser.sh
+ 
+iniparser $LBPCONFIG/$pluginname/wu4lox.cfg "SERVER"
+
+if [ $SERVEREMU -eq 1 ]; then
+	echo "DAEMON: Reenable Cloud Emulator" >> $LBPLOG/$pluginname/wu4lox.log
+	if [ -x /usr/bin/logger ]; then
+		/usr/bin/logger "loxberry-plugin-$pluginname - Reenable Cloud Emulator"
+	fi
+	# Enable
+	$LBHOMEDIR/bin/plugins/$pluginname/cloudemu enable > /dev/null 2>&1
+fi
+
+# Exit with Status 0
+exit 0

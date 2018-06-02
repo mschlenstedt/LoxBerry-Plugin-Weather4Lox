@@ -1,0 +1,532 @@
+<TMPL_IF FORM1>
+									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=1">
+										<input type="hidden" name="saveformdata1" value="1">
+											<div class="form-group">
+												<table class="formtable" border="0" width="100%" cellpadding="10">
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+															<h2><TMPL_VAR SETTINGS.LABEL_WU_SETTINGS></h2>
+														</td>
+														<td align="right">
+														<a href="http://www.wunderground.com" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/wundergroundLogo_4c_horz_200.png"></a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+														</td>
+														<td width="50%">
+																<input id="apikey" name="apikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR SERVER.WUAPIKEY>" 
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<font size="-1"><a id="linkapikey" href="https://www.wunderground.com/weather/api" target="_blank"><TMPL_VAR SETTINGS.LABEL_APIKEY_URL></a></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelstationtyp"><TMPL_VAR SETTINGS.LABEL_WEATHERSTATION></label>
+														</td>
+														<td width="50%">
+															<fieldset data-role="controlgroup" data-type="horizontal">
+															<TMPL_VAR STATIONTYP>
+															</fieldset>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelstationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+														</td>
+														<td width="50%">
+																<input id="stationid" name="stationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR SERVER.STATIONID>" 
+																data-validation-allowing=":,." data-validation-optional="true" 
+                data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%" valign="top">
+															<br><label id="labelcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labelcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+															</td>
+															<td>
+															<input id="coordlat" name="coordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR SERVER.COORDLAT>" 
+																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+															</td>
+															<td>
+															<label id="labelcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+															</td>
+															<td>
+															<input id="coordlong" name="coordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR SERVER.COORDLONG>" 
+																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<a id="coordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+															data-role="button" id="btnaddresssearch" data-inline="true" data-mini="true"
+															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi',
+															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+															</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwulang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR WULANG>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelmetric"><TMPL_VAR SETTINGS.LABEL_UNITS></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR METRIC>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="20%">
+															<fieldset>
+															<TMPL_VAR GETWUDATA>
+															</fieldset>
+															</td>
+															<td>
+															<TMPL_VAR CRON>
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+												</table>
+											</div>
+									<p>
+										&nbsp;
+									</p>
+									<p>
+										<center>
+											<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=1"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
+												<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
+										</center>
+									</form>
+									</p>
+									<script>
+									// Activate on Load
+									disable();
+
+									// Add some attributes PERL::CGI doesn't provide
+									$('select[name=getwudata]').attr('data-role','flipswitch');
+									$('select[name=wulang]').attr('data-mini','true');
+									//$('select[name=wulang]').attr('data-native-menu','false');
+									$('select[name=metric]').attr('data-mini','true');
+									//$('select[name=metric]').attr('data-native-menu','false');
+									$('select[name=cron]').attr('data-mini','true');
+									//$('select[name=cron]').attr('data-native-menu','false');
+
+									// Disable some form elements depending on selected options
+									function disable() {
+										var click = $('input[name=stationtyp]:checked').val();
+										if ( click === "statid" ) {
+											$('#linkwundermap').removeClass('ui-disabled');
+											$('#labelstationid').removeClass('ui-disabled');
+											$('#stationid').removeClass('ui-disabled');
+											$('#labelcoord').addClass('ui-disabled');
+											$('#labelcoordlat').addClass('ui-disabled');
+											$('#labelcoordlong').addClass('ui-disabled');
+											$('#coordlat').addClass('ui-disabled');
+											$('#coordlong').addClass('ui-disabled');
+											$('#coordaddresssearch').addClass('ui-disabled');
+											$('#coordminiserver').addClass('ui-disabled');
+											$('#stationid').removeClass('ui-disabled');
+										}
+										if ( click === "coord" ) {
+											$('#linkwundermap').addClass('ui-disabled');
+											$('#labelstationid').addClass('ui-disabled');
+											$('#labelcoord').removeClass('ui-disabled');
+											$('#labelcoordlat').removeClass('ui-disabled');
+											$('#labelcoordlong').removeClass('ui-disabled');
+											$('#coordlat').removeClass('ui-disabled');
+											$('#coordlong').removeClass('ui-disabled');
+											$('#coordaddresssearch').removeClass('ui-disabled');
+											$('#coordminiserver').removeClass('ui-disabled');
+											$('#stationid').addClass('ui-disabled');
+										}
+										if ( click === "autoip" ) {
+											$('#linkwundermap').addClass('ui-disabled');
+											$('#labelstationid').addClass('ui-disabled');
+											$('#stationid').addClass('ui-disabled');
+											$('#labelcoord').addClass('ui-disabled');
+											$('#labelcoordlat').addClass('ui-disabled');
+											$('#labelcoordlong').addClass('ui-disabled');
+											$('#coordlat').addClass('ui-disabled');
+											$('#coordlong').addClass('ui-disabled');
+											$('#coordaddresssearch').addClass('ui-disabled');
+											$('#coordminiserver').addClass('ui-disabled');
+										}
+									}
+									</script>
+</TMPL_IF>
+<TMPL_IF FORM2>
+									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=2">
+										<input type="hidden" name="saveformdata2" value="1">
+											<div class="form-group">
+												<table class="formtable" border="0" width="100%" cellpadding="10">
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+														<h2><TMPL_VAR SETTINGS.LABEL_MINISERVERCONNECTION></h2>
+														</td>
+														<td align="right">
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelsendudp"><TMPL_VAR SETTINGS.LABEL_SENDBYUDP></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="20%">
+															<fieldset>
+															<TMPL_VAR SENDUDP>
+															</fieldset>
+															</td>
+															<td>
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labeludpport"><TMPL_VAR SETTINGS.LABEL_UDPPORT></label>
+															</td>
+															<td>
+																<input id="udpport" name="udpport" type="text" data-validation="number" class="textfield" value="<TMPL_VAR SERVER.UDPPORT>" 
+																data-validation-allowing="range[1;65000]"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_UDPPORT>">
+															</td>
+															</tr>
+															</table>
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_UDP></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelsendhtml"><TMPL_VAR SETTINGS.LABEL_SENDBYHTML></label>
+														</td>
+														<td width="50%">
+														  <table border=0>
+																<tr><td>
+														  <fieldset>
+														  	 <select id="sendhtml" name="sendhtml" data-role="flipswitch" disabled=disabled>
+														  		<option value="0"><TMPL_VAR SETTINGS.LABEL_OFF></option>
+														 	 	<option selected=selected value="1"><TMPL_VAR SETTINGS.LABEL_ON></option>
+														  		</select>
+														  </fieldset>
+																</td><td>
+																&nbsp;&nbsp;<font size="-1"><TMPL_VAR SETTINGS.LABEL_LINK>: <a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a></font>
+																</td></tr>
+																</table>
+														</td>
+														<td width="5%" valign="middle">
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_HTML></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labeldfc"><TMPL_VAR SETTINGS.LABEL_DFC></label>
+														</td>
+														<td width="50%">
+														<div data-role="collapsible">
+														<h4><TMPL_VAR SETTINGS.LABEL_PLEASECHOOSE></h4>
+														<fieldset data-role="controlgroup">
+														<TMPL_VAR DFC>
+														</fieldset>
+														</div>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<font size="-1"><TMPL_VAR SETTINGS.HINT_FORECAST></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelhfc"><TMPL_VAR SETTINGS.LABEL_HFC></label>
+														</td>
+														<td width="50%">
+														<div data-role="collapsible">
+														<h4><TMPL_VAR SETTINGS.LABEL_PLEASECHOOSE></h4>
+														<fieldset data-role="controlgroup">
+														<TMPL_VAR HFC>
+														</fieldset>
+														</div>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<font size="-1"><TMPL_VAR SETTINGS.HINT_FORECAST></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+												</table>
+											</div>
+									<p>
+										&nbsp;
+									</p>
+									<p>
+										<center>
+											<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=2"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
+												<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
+										</center>
+									</form>
+									</p>
+									<script>
+									// Add some attributes PERL::CGI doesn't provide
+									$('#sendudp').attr('data-role','flipswitch');
+									$('select[name=wulang]').attr('data-mini','true');
+									//$('select[name=wulang]').attr('data-native-menu','false');
+									$('select[name=metric]').attr('data-mini','true');
+									//$('select[name=metric]').attr('data-native-menu','false');
+									$('select[name=cron]').attr('data-mini','true');
+									//$('select[name=cron]').attr('data-native-menu','false');
+									</script>
+</TMPL_IF>
+<TMPL_IF FORM3>
+									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=3">
+										<input type="hidden" name="saveformdata3" value="1">
+											<div class="form-group">
+												<table class="formtable" border="0" width="100%" cellpadding="10">
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+														<h2><TMPL_VAR SETTINGS.LABEL_CLOUDEMU></h2>
+														</td>
+														<td align="right">
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelemu"><TMPL_VAR SETTINGS.LABEL_ENABLECLOUDEMU></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="20%">
+															<fieldset>
+															<TMPL_VAR EMU>
+															</fieldset>
+															</td>
+															<td>
+															<font color="red" size="-1"><b><TMPL_VAR EMUWARNING></b></font>
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_CLOUDEMU></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+														<h2><TMPL_VAR SETTINGS.LABEL_WEBSITE></h2>
+														</td>
+														<td align="right">
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+														<label id="labelURL"><TMPL_VAR SETTINGS.LABEL_LINK></label>
+														</td>
+														<td width="50%">
+														<a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labeltheme"><TMPL_VAR SETTINGS.LABEL_THEME></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR THEME>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<a href="#" data-role="button" id="preview1" data-inline="true" data-mini="true" onClick="preview();">
+														<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
+														</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labeliconset"><TMPL_VAR SETTINGS.LABEL_ICONSET></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR ICONSET>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<a href="#" data-role="button" id="preview2" data-inline="true" data-mini="true" onClick="preview();">
+														<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
+														</a>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+												</table>
+											</div>
+									<p>
+										&nbsp;
+									</p>
+									<p>
+										<center>
+											<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=3"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
+												<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
+										</center>
+									</form>
+									</p>
+									<script>
+									// Add some attributes PERL::CGI doesn't provide
+									$('select[name=emu]').attr('data-role','flipswitch');
+									$('select[name=theme]').attr('data-mini','true');
+									$('select[name=iconset]').attr('data-mini','true');
+
+									// Preview Link for theme and iconset
+									function preview() {
+										var url = './show.cgi?theme=' + $('#theme').val() + '&iconset=' + $('#iconset').val();
+										window.open(url, 'NewWindow');
+									}
+									</script>
+</TMPL_IF>
+<TMPL_IF ERROR>
+<center>
+	<table border=0>
+	<tr>
+		<td align="center">
+		<h2><TMPL_VAR HINT_ERROR></h2>
+		<p>
+		<TMPL_VAR ERRORMESSAGE>
+		</p>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+		<p>
+		<a id="btnok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=<TMPL_VAR FORMNO>"><TMPL_VAR SETTINGS.BUTTON_OK></a>
+		</p>
+		</td>
+	</tr>
+	</table>
+</center>
+</TMPL_IF>
+<TMPL_IF SAVE>
+<center>
+	<table border=0>
+	<tr>
+		<td align="center">
+		<h2><TMPL_VAR SETTINGS.HINT_OK></h2>
+		<p>
+		<TMPL_VAR SETTINGS.OK_SETTINGS_SAVED>
+		</p>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+		<p>
+		<a id="btnok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=<TMPL_VAR FORMNO>"><TMPL_VAR SETTINGS.BUTTON_OK></a>
+		</p>
+		</td>
+	</tr>
+	</table>
+</center>
+</TMPL_IF>

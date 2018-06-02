@@ -1,0 +1,42 @@
+#
+# Current Observation Database
+#
+#  0: Local Epoche Timestamp
+#  1: Date RFC822
+#  2: Timezone Short
+#  3: Timezone Long
+#  4: Timezone Offset
+#  5: Observation Location City
+#  6: Location Country
+#  7: Location Country Code
+#  8: Location Latitude
+#  9: Location Longitude
+# 10: Location Elevation (m)
+# 11: Temperature (C)
+# 12: Feelslike Temperature (C)
+# 13: Rel. Humidity (%)
+# 14: Wind Direction Description
+# 15: Wind Direction (Degrees)
+# 16: Wind Speed (km/h)
+# 17: Wind Gust (km/h)
+# 18: Windchill (C)
+# 19: Pressure (mbar)
+# 20: Dew Point (C)
+# 21: Visibility (km)
+# 22: Solar Radiation (W/sqm)
+# 23: Heat Index (C)
+# 24: UV Index
+# 25: Precipitation Today (mm)
+# 26: Precipitation 1hr (mm)
+# 27: Weather Icon
+# 28: Weather Code
+# 29: Weather Description
+# 30: Moon: Percent Illuminated (%)
+# 31: Moon: Age of Moon (d)
+# 32: Moon: Phase of Moon
+# 33: Moon: Hemisphere
+# 34: Time Sunrise HOUR
+# 35: Time Sunrise MINUTES
+# 36: Time Sunset HOUR
+# 37: Time Sunset MINUTES
+#

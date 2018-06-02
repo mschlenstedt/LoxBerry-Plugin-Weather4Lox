@@ -1,0 +1,34 @@
+#
+# Daily Forecast Database
+#
+#  0: Period (1: +1 Hour, 2: +2 Hour, etc.)
+#  1: Epoche Timestamp
+#  2: Date: DAY
+#  3: Date: MONTH
+#  4: Date: MONTHNAME
+#  5: Date: MONTHNAME SHORT
+#  6: Date: YEAR
+#  7: Date: HOUR
+#  8: Date: MINUTES
+#  9: Date: WEEKDAY
+# 10: Date: WEEKDAY SHORT
+# 11: Temperature (C)
+# 12: Feelslike Temperature (C)
+# 13: Heat Index (C)
+# 14: Humidity (%)
+# 15: Wind Direction Description
+# 16: Wind Direction (Dregrees)
+# 17: Wind Speed (kph)
+# 18: Windchill (kph)
+# 19: Pressure (mbar)
+# 20: Dewpoint (C)
+# 21: Sky (%)
+# 22: Sky Description / WX
+# 23: UV Index
+# 24: Quantitative Precipitation Forecast (mm)
+# 25: Snow Forecast (cm)
+# 26: Percent of Precipitation (%)
+# 27: Weather Code
+# 28: Icon Name
+# 29: Weather Description
+#
