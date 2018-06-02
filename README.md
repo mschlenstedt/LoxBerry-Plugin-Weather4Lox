@@ -1,4 +1,3 @@
-# LoxBerry-Plugin-WU4Lox
-A LoxBerry Plugin: http://plugins.loxberry.de/
+# LoxBerry-Plugin-Weather4Lox
 
-For Details visit http://www.loxwiki.eu:80/x/uYCm
+A LoxBerry Plugin: https://www.loxwiki.eu/display/LOXBERRY/Plugins
