@@ -45,7 +45,7 @@ $cgi->import_names('R');
 my $version = LoxBerry::System::pluginversion();
 
 # Settings
-my $cfg = new Config::Simple("$lbpconfigdir/wu4lox.cfg");
+my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $wuurl = $cfg->param("SERVER.WUURL");
 
 #########################################################################
@@ -53,12 +53,6 @@ my $wuurl = $cfg->param("SERVER.WUURL");
 #########################################################################
 
 my $error;
-
-# Set default if not available
-if (!$cfg->param("SERVER.EMU")) {
-        $cfg->param("SERVER.EMU", "0");
-        $cfg->save();
-}
 
 ##########################################################################
 # Main program
