@@ -29,4 +29,15 @@
 # 25: Icon Name
 # 26: Weather Code
 # 27: Weather Description
+# 28: Ozone (DU)
+# 29: MoonPhase (%)
+# 30: DewPoint (C)
+# 31: Pressure (mbar)
+# 32: UV Index
+# 33: Sunrise Time (Epoche)
+# 34: Sunrise Time HOUR
+# 35: Sunrise Time MINUTES
+# 36: Sunset Time (Epoche)
+# 37: Sunset Time HOUR
+# 38: Sunset Time MINUTES
 #

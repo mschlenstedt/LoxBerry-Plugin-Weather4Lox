@@ -55,7 +55,24 @@ my $country      = $pcfg->param("SERVER.DARKSKYCOUNTRY");
 my $countrycode  = $pcfg->param("SERVER.DARKSKYCOUNTRYCODE");
 
 # Read language phrases
-#my %L = LoxBerry::System::readlanguage("language.ini");
+
+######
+###### Workaround
+######
+use LoxBerry::Web;
+use CGI;
+my $cgi = CGI->new;
+# Template
+my $template = HTML::Template->new(
+    filename => "$lbptemplatedir/settings.html",
+    global_vars => 1,
+    loop_context_vars => 1,
+    die_on_bad_params => 0,
+);
+######
+######
+######
+my %L = LoxBerry::System::readlanguage($template, "language.ini");
 
 # Create a logging object
 my $log = LoxBerry::Log->new ( 	name => 'fetch',
@@ -134,11 +151,10 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F $pcfg->param("SERVER.DARKSKYCOORDLONG"), "|";
 	# Convert elevation from feet to meter
 	print F "-9999|";
-	print F sprintf("%.0f",$decoded_json->{currently}->{temperature}), "|";
-	print F sprintf("%.0f",$decoded_json->{currently}->{apparentTemperature}), "|";
+	print F sprintf("%.1f",$decoded_json->{currently}->{temperature}), "|";
+	print F sprintf("%.1f",$decoded_json->{currently}->{apparentTemperature}), "|";
 	print F $decoded_json->{currently}->{humidity} * 100, "|";
 	my $wdir = $decoded_json->{currently}->{windBearing};
-	print "Dir: $wdir $L{'SETTINGS.LABEL_N'}\n";
 	my $wdirdes;
 	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
 	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = $L{'SETTINGS.LABEL_NE'} }; # NorthEast
@@ -151,17 +167,17 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
 	print F "$wdirdes|";
 	print F "$decoded_json->{currently}->{windBearing}|";
-	print F sprintf("%.0f",$decoded_json->{currently}->{windSpeed} * 3.6), "|";
-	print F sprintf("%.0f",$decoded_json->{currently}->{windGust} * 3.6), "|";
+	print F sprintf("%.1f",$decoded_json->{currently}->{windSpeed} * 3.6), "|";
+	print F sprintf("%.1f",$decoded_json->{currently}->{windGust} * 3.6), "|";
 	print F sprintf("%.0f",$decoded_json->{currently}->{apparentTemperature}), "|";
 	print F "$decoded_json->{currently}->{pressure}|";
-	print F sprintf("%.0f",$decoded_json->{currently}->{dewPoint}), "|";
+	print F sprintf("%.1f",$decoded_json->{currently}->{dewPoint}), "|";
 	print F "$decoded_json->{currently}->{visibility}|";
 	print F "-9999|";
 	print F "-9999|";
 	print F "$decoded_json->{currently}->{uvIndex}|";
 	print F "-9999|";
-	print F "$decoded_json->{currently}->{precipIntensity}|";
+	print F sprintf("%.3f",$decoded_json->{currently}->{precipIntensity}), "|";
 	# Convert Weather string into Weather Code and convert icon name
 	my $weather = $decoded_json->{currently}->{icon};
 	$weather =~ s/\-night|\-day//; # No -night and -day
@@ -202,6 +218,9 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	$t = localtime($decoded_json->{daily}->{data}->[0]->{sunsetTime});
 	print F $t->hour, "|";
 	print F sprintf("%02d", $t->min), "|";
+	print F "$decoded_json->{currently}->{ozone}|";
+	print F $decoded_json->{currently}->{cloudCover}*100, "|";
+	print F $decoded_json->{currently}->{precipProbability}*100, "|";
 close(F);
 
 LOGOK "Saving current data to $lbplogdir/current.dat.tmp successfully.";
@@ -215,7 +234,7 @@ open(F,"<$lbplogdir/current.dat.tmp");
 		LOGDEB "$_";
 	}
 close (F);
-exit;
+
 # Saving new daily forecast data...
 $error = 0;
 open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
@@ -225,71 +244,92 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
-	for my $results( @{$decoded_json->{forecast}->{simpleforecast}->{forecastday}} ){
-		print F $results->{period} . "|";
-		print F $results->{date}->{epoch} . "|";
-		if(length($results->{date}->{month}) == 1) { $results->{date}->{month}="0$results->{date}->{month}"; }
-		if(length($results->{date}->{day}) == 1) { $results->{date}->{day}="0$results->{date}->{day}"; }
-		if(length($results->{date}->{hour}) == 1) { $results->{date}->{hour}="0$results->{date}->{hour}"; }
-		if(length($results->{date}->{min}) == 1) { $results->{date}->{min}="0$results->{date}->{min}"; }
-		print F "$results->{date}->{day}|";
-		print F "$results->{date}->{month}|";
-		print F "$results->{date}->{monthname}|";
-		print F "$results->{date}->{monthname_short}|";
-		print F "$results->{date}->{year}|";
-		print F "$results->{date}->{hour}|";
-		print F "$results->{date}->{min}|";
-		print F "$results->{date}->{weekday}|";
-		print F "$results->{date}->{weekday_short}|";
-		print F "$results->{high}->{celsius}|";
-		print F "$results->{low}->{celsius}|";
-		print F "$results->{pop}|";
-		print F "$results->{qpf_allday}->{mm}|";
-		print F "$results->{snow_allday}->{cm}|";
-		print F "$results->{maxwind}->{kph}|";
-		print F "$results->{maxwind}->{dir}|";
-		print F "$results->{maxwind}->{degrees}|";
-		print F "$results->{avewind}->{kph}|";
-		print F "$results->{avewind}->{dir}|";
-		print F "$results->{avewind}->{degrees}|";
-		print F "$results->{avehumidity}|";
-		print F "$results->{maxhumidity}|";
-		print F "$results->{minhumidity}|";
-		print F "$results->{icon}|";
-		# Convert Weather string into Weather Code
-		my $weather = $results->{icon};
-		#$weather =~ s/^Heavy//eg; # No Heavy
-		#$weather =~ s/^Light//eg; # No Light
-		#$weather =~ s/\ //eg; # No Spaces
+	my $i = 1;
+	for my $results( @{$decoded_json->{daily}->{data}} ){
+		print F "$i|";
+		$i++;
+		print F $results->{time}, "|";
+		$t = localtime($results->{time});
+		print F sprintf("%02d", $t->mday), "|";
+		print F sprintf("%02d", $t->mon), "|";
+		print F $t->fullmonth . "|";
+		print F $t->monname . "|";
+		print F $t->year . "|";
+		print F sprintf("%02d", $t->hour), "|";
+		print F sprintf("%02d", $t->min), "|";
+		print F $t->fullday . "|";
+		print F $t->wdayname . "|";
+		print F sprintf("%.1f",$results->{apparentTemperatureHigh}), "|";
+		print F sprintf("%.1f",$results->{apparentTemperatureLow}), "|";
+		print F $results->{precipProbability}*100, "|";
+		print F sprintf("%.3f",$results->{precipIntensity}), "|";
+		print F "-9999|";
+		print F sprintf("%.1f",$results->{windGust} * 3.6), "|";
+		$wdir = $results->{windBearing};
+		if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
+		if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = $L{'SETTINGS.LABEL_NE'} }; # NorthEast
+		if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = $L{'SETTINGS.LABEL_E'} }; # East
+		if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = $L{'SETTINGS.LABEL_SE'} }; # SouthEast
+		if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = $L{'SETTINGS.LABEL_S'} }; # South
+		if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = $L{'SETTINGS.LABEL_SW'} }; # SouthWest
+		if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = $L{'SETTINGS.LABEL_W'} }; # West
+		if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = $L{'SETTINGS.LABEL_NW'} }; # NorthWest
+		if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
+		print F "$wdirdes|";
+		print F "$results->{windBearing}|";
+		print F sprintf("%.1f",$results->{windSpeed} * 3.6), "|";
+		print F "$wdirdes|";
+		print F "$results->{windBearing}|";
+		print F $results->{humidity}*100, "|";
+		print F $results->{humidity}*100, "|";
+		print F $results->{humidity}*100, "|";
+		$weather = $results->{icon};
+		$weather =~ s/\-night|\-day//; # No -night and -day
+		$weather =~ s/\-//; # No -
 		$weather =~ tr/A-Z/a-z/; # All Lowercase
+		print F "$weather|"; # Icon
 		if ($weather eq "clear") {$weather = "1";}
-		elsif ($weather eq "sunny") {$weather = "1";}
-		elsif ($weather eq "partlysunny") {$weather = "3";}
-		elsif ($weather eq "mostlysunny") {$weather = "2";}
+		#elsif ($weather eq "sunny") {$weather = "1";}
+		#elsif ($weather eq "partlysunny") {$weather = "3";}
+		#elsif ($weather eq "mostlysunny") {$weather = "2";}
 		elsif ($weather eq "partlycloudy") {$weather = "2";}
-		elsif ($weather eq "mostlycloudy") {$weather = "3";}
+		#elsif ($weather eq "mostlycloudy") {$weather = "3";}
 		elsif ($weather eq "cloudy") {$weather = "4";}
-		elsif ($weather eq "overcast") {$weather = "4";}
-		elsif ($weather eq "chanceflurries") {$weather = "18";}
-		elsif ($weather eq "chancesleet") {$weather = "18";}
-		elsif ($weather eq "chancesnow") {$weather = "20";}
-		elsif ($weather eq "flurries") {$weather = "16";}
+		#elsif ($weather eq "overcast") {$weather = "4";}
+		#elsif ($weather eq "chanceflurries") {$weather = "18";}
+		#elsif ($weather eq "chancesleet") {$weather = "18";}
+		#elsif ($weather eq "chancesnow") {$weather = "20";}
+		#elsif ($weather eq "flurries") {$weather = "16";}
 		elsif ($weather eq "sleet") {$weather = "19";}
 		elsif ($weather eq "snow") {$weather = "21";}
-		elsif ($weather eq "chancerain") {$weather = "12";}
+		#elsif ($weather eq "chancerain") {$weather = "12";}
 		elsif ($weather eq "rain") {$weather = "13";}
-		elsif ($weather eq "chancetstorms") {$weather = "14";}
-		elsif ($weather eq "tstorms") {$weather = "15";}
+		#elsif ($weather eq "chancetstorms") {$weather = "14";}
+		#elsif ($weather eq "tstorms") {$weather = "15";}
 		elsif ($weather eq "fog") {$weather = "6";}
-		elsif ($weather eq "hazy") {$weather = "5";}
+		#elsif ($weather eq "hazy") {$weather = "5";}
+		elsif ($weather eq "wind") {$weather = "22";}
 		else {$weather = "0";}
 		print F "$weather|";
-		print F "$results->{conditions}";
+		print F "$results->{summary}|";
+		print F sprintf("%.1f",$results->{dewPoint}), "|";
+		print F $results->{moonPhase}*100, "|";
+		print F sprintf("%.1f",$results->{dewPoint}), "|";
+		print F "$results->{pressure}|";
+		print F "$results->{uvIndex}|";
+		print F "$results->{sunriseTime}|";
+		$t = localtime($results->{sunriseTime});
+		print F $t->hour, "|";
+		print F sprintf("%02d", $t->min), "|";
+		print F "$results->{sunsetTime}|";
+		$t = localtime($results->{sunsetTime});
+		print F $t->hour, "|";
+		print F sprintf("%02d", $t->min), "|";
 		print F "\n";
 	}
 close(F);
 
-LOGOK "Saving current data to $lbplogdir/dailyforecast.dat successfully.";
+LOGOK "Saving daily forecast data to $lbplogdir/dailyforecast.dat.tmp successfully.";
 
 LOGDEB "Database content:";
 open(F,"<$lbplogdir/dailyforecast.dat.tmp");
@@ -309,44 +349,84 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
-	my $i = 1;
-	for my $results( @{$decoded_json->{hourly_forecast}} ){
+	$i = 1;
+	for my $results( @{$decoded_json->{hourly}->{data}} ){
 		print F "$i|";
-		print F "$results->{FCTTIME}->{epoch}|";
-		print F "$results->{FCTTIME}->{mday_padded}|";
-		print F "$results->{FCTTIME}->{mon_padded}|";
-		print F "$results->{FCTTIME}->{month_name}|";
-		print F "$results->{FCTTIME}->{month_name_abbrev}|";
-		print F "$results->{FCTTIME}->{year}|";
-		print F "$results->{FCTTIME}->{hour_padded}|";
-		print F "$results->{FCTTIME}->{min}|";
-		print F "$results->{FCTTIME}->{weekday_name}|";
-		print F "$results->{FCTTIME}->{weekday_name_abbrev}|";
-		print F "$results->{temp}->{metric}|";
-		print F "$results->{feelslike}->{metric}|";
-		print F "$results->{heatindex}->{metric}|";
-		print F "$results->{humidity}|";
-		print F "$results->{wdir}->{dir}|";
-		print F "$results->{wdir}->{degrees}|";
-		print F "$results->{wspd}->{metric}|";
-		print F "$results->{windchill}->{metric}|";
-		print F "$results->{mslp}->{metric}|";
-		print F "$results->{dewpoint}->{metric}|";
-		print F "$results->{sky}|";
-		print F "$results->{wx}|";
-		print F "$results->{uvi}|";
-		print F "$results->{qpf}->{metric}|";
-		print F "$results->{snow}->{metric}|";
-		print F "$results->{pop}|";
-		print F "$results->{fctcode}|";
-		print F "$results->{icon}|";
-		print F "$results->{condition}";
-		print F "\n";
 		$i++;
+		print F $results->{time}, "|";
+		$t = localtime($results->{time});
+		print F sprintf("%02d", $t->mday), "|";
+		print F sprintf("%02d", $t->mon), "|";
+		print F $t->fullmonth . "|";
+		print F $t->monname . "|";
+		print F $t->year . "|";
+		print F sprintf("%02d", $t->hour), "|";
+		print F sprintf("%02d", $t->min), "|";
+		print F $t->fullday . "|";
+		print F $t->wdayname . "|";
+		print F sprintf("%.1f",$results->{temperature}), "|";
+		print F sprintf("%.1f",$results->{apparentTemperature}), "|";
+		print F "-9999|";
+		print F $results->{humidity}*100, "|";
+		$wdir = $results->{windBearing};
+		if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
+		if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = $L{'SETTINGS.LABEL_NE'} }; # NorthEast
+		if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = $L{'SETTINGS.LABEL_E'} }; # East
+		if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = $L{'SETTINGS.LABEL_SE'} }; # SouthEast
+		if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = $L{'SETTINGS.LABEL_S'} }; # South
+		if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = $L{'SETTINGS.LABEL_SW'} }; # SouthWest
+		if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = $L{'SETTINGS.LABEL_W'} }; # West
+		if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = $L{'SETTINGS.LABEL_NW'} }; # NorthWest
+		if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
+		print F "$wdirdes|";
+		print F "$results->{windBearing}|";
+		print F sprintf("%.1f",$results->{windSpeed} * 3.6), "|";
+		print F sprintf("%.1f",$results->{windGust} * 3.6), "|";
+		print F "$results->{pressure}|";
+		print F sprintf("%.1f",$results->{dewPoint}), "|";
+		print F $results->{cloudCover}*100, "|";
+		print F "-9999|";
+		print F "$results->{uvIndex}|";
+		print F sprintf("%.3f",$results->{precipIntensity}), "|";
+		print F "-9999|";
+		print F $results->{precipProbability}*100, "|";
+		$weather = $results->{icon};
+		$weather =~ s/\-night|\-day//; # No -night and -day
+		$weather =~ s/\-//; # No -
+		$weather =~ tr/A-Z/a-z/; # All Lowercase
+		my $icon = $weather;
+		if ($weather eq "clear") {$weather = "1";}
+		#elsif ($weather eq "sunny") {$weather = "1";}
+		#elsif ($weather eq "partlysunny") {$weather = "3";}
+		#elsif ($weather eq "mostlysunny") {$weather = "2";}
+		elsif ($weather eq "partlycloudy") {$weather = "2";}
+		#elsif ($weather eq "mostlycloudy") {$weather = "3";}
+		elsif ($weather eq "cloudy") {$weather = "4";}
+		#elsif ($weather eq "overcast") {$weather = "4";}
+		#elsif ($weather eq "chanceflurries") {$weather = "18";}
+		#elsif ($weather eq "chancesleet") {$weather = "18";}
+		#elsif ($weather eq "chancesnow") {$weather = "20";}
+		#elsif ($weather eq "flurries") {$weather = "16";}
+		elsif ($weather eq "sleet") {$weather = "19";}
+		elsif ($weather eq "snow") {$weather = "21";}
+		#elsif ($weather eq "chancerain") {$weather = "12";}
+		elsif ($weather eq "rain") {$weather = "13";}
+		#elsif ($weather eq "chancetstorms") {$weather = "14";}
+		#elsif ($weather eq "tstorms") {$weather = "15";}
+		elsif ($weather eq "fog") {$weather = "6";}
+		#elsif ($weather eq "hazy") {$weather = "5";}
+		elsif ($weather eq "wind") {$weather = "22";}
+		else {$weather = "0";}
+		print F "$weather|";
+		print F "$icon|"; # Icon
+		print F "$results->{summary}|";
+		print F "$results->{ozone}|";
+		print F "$results->{visibility}|";
+		print F "\n";
 	}
 close(F);
 
-LOGOK "Saving current data to $lbplogdir/hourlyforecast.dat.tmp successfully.";
+LOGOK "Saving hourly forecast data to $lbplogdir/hourlyforecast.dat.tmp successfully.";
 
 LOGDEB "Database content:";
 open(F,"<$lbplogdir/hourlyforecast.dat.tmp");

@@ -39,4 +39,7 @@
 # 35: Time Sunrise MINUTES
 # 36: Time Sunset HOUR
 # 37: Time Sunset MINUTES
+# 38: Ozone (DU)
+# 39: CloudCover (%)
+# 40: Precip Probability (%)
 #
