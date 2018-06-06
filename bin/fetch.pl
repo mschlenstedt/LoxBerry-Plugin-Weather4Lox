@@ -67,7 +67,7 @@ if (-e "$lbpbindir/grabber_$service.pl") {
   if ($verbose) { 
     system ("$lbpbindir/grabber_$service.pl -v");
   } else {
-    system ("$lbpbindir/grabber_$service.pl -v");
+    system ("$lbpbindir/grabber_$service.pl");
   }
 
 } else {

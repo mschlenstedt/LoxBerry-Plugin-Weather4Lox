@@ -79,7 +79,7 @@ if ($R::saveformdata1) {
 	$R::darkskycoordlong =~ tr/,/./;
 
 	# Check for Station : WUNDERGROUND
-	if ($R::weatherservice = "wu") {
+	if ($R::weatherservice eq "wu") {
 		our $url = $cfg->param("WUNDERGROUND.URL");
 		our $querystation;
 		our $wuquerystation;
@@ -134,7 +134,7 @@ if ($R::saveformdata1) {
 	}
 	
 	# Check for Station : DARKSKY
-	if ($R::weatherservice = "darksky") {
+	if ($R::weatherservice eq "darksky") {
 		our $url = $cfg->param("DARKSKY.URL");
 		our $querystation = $R::darkskycoordlat . "," . $R::darkskycoordlong;
 		# 1. attempt to query Darksky
