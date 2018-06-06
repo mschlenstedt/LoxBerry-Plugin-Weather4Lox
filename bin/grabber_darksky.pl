@@ -155,15 +155,15 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F $decoded_json->{currently}->{humidity} * 100, "|";
 	my $wdir = $decoded_json->{currently}->{windBearing};
 	my $wdirdes;
-	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
-	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = $L{'SETTINGS.LABEL_NE'} }; # NorthEast
-	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = $L{'SETTINGS.LABEL_E'} }; # East
-	if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = $L{'SETTINGS.LABEL_SE'} }; # SouthEast
-	if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = $L{'SETTINGS.LABEL_S'} }; # South
-	if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = $L{'SETTINGS.LABEL_SW'} }; # SouthWest
-	if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = $L{'SETTINGS.LABEL_W'} }; # West
-	if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = $L{'SETTINGS.LABEL_NW'} }; # NorthWest
-	if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
+	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
+	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
+	if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
+	if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
+	if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
+	if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
+	if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
+	if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 	print F "$wdirdes|";
 	print F "$decoded_json->{currently}->{windBearing}|";
 	print F sprintf("%.1f",$decoded_json->{currently}->{windSpeed} * 3.6), "|";
@@ -212,10 +212,10 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	print F "-9999|";
 	$t = localtime($decoded_json->{daily}->{data}->[0]->{sunriseTime});
-	print F $t->hour, "|";
+	print F sprintf("%02d", $t->hour), "|";
 	print F sprintf("%02d", $t->min), "|";
 	$t = localtime($decoded_json->{daily}->{data}->[0]->{sunsetTime});
-	print F $t->hour, "|";
+	print F sprintf("%02d", $t->hour), "|";
 	print F sprintf("%02d", $t->min), "|";
 	print F "$decoded_json->{currently}->{ozone}|";
 	print F $decoded_json->{currently}->{cloudCover}*100, "|";
@@ -251,12 +251,20 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		$t = localtime($results->{time});
 		print F sprintf("%02d", $t->mday), "|";
 		print F sprintf("%02d", $t->mon), "|";
-		print F $t->fullmonth . "|";
+		my @month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH'}) );
+		$t->mon_list(@month);
+		print F $t->monname . "|";
+		@month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH_SH'}) );
+		$t->mon_list(@month);
 		print F $t->monname . "|";
 		print F $t->year . "|";
 		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
-		print F $t->fullday . "|";
+		my @days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS'}) );
+		$t->day_list(@days);
+		print F $t->wdayname . "|";
+		@days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS_SH'}) );
+		$t->day_list(@days);
 		print F $t->wdayname . "|";
 		print F sprintf("%.1f",$results->{apparentTemperatureHigh}), "|";
 		print F sprintf("%.1f",$results->{apparentTemperatureLow}), "|";
@@ -265,15 +273,15 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "-9999|";
 		print F sprintf("%.1f",$results->{windGust} * 3.6), "|";
 		$wdir = $results->{windBearing};
-		if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
-		if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = $L{'SETTINGS.LABEL_NE'} }; # NorthEast
-		if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = $L{'SETTINGS.LABEL_E'} }; # East
-		if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = $L{'SETTINGS.LABEL_SE'} }; # SouthEast
-		if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = $L{'SETTINGS.LABEL_S'} }; # South
-		if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = $L{'SETTINGS.LABEL_SW'} }; # SouthWest
-		if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = $L{'SETTINGS.LABEL_W'} }; # West
-		if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = $L{'SETTINGS.LABEL_NW'} }; # NorthWest
-		if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
+		if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+		if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
+		if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
+		if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
+		if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
+		if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
+		if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
+		if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
+		if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 		print F "$wdirdes|";
 		print F "$results->{windBearing}|";
 		print F sprintf("%.1f",$results->{windSpeed} * 3.6), "|";
@@ -354,27 +362,35 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		$t = localtime($results->{time});
 		print F sprintf("%02d", $t->mday), "|";
 		print F sprintf("%02d", $t->mon), "|";
-		print F $t->fullmonth . "|";
+		my @month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH'}) );
+		$t->mon_list(@month);
+		print F $t->monname . "|";
+		@month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH_SH'}) );
+		$t->mon_list(@month);
 		print F $t->monname . "|";
 		print F $t->year . "|";
 		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
-		print F $t->fullday . "|";
+		my @days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS'}) );
+		$t->day_list(@days);
+		print F $t->wdayname . "|";
+		@days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS_SH'}) );
+		$t->day_list(@days);
 		print F $t->wdayname . "|";
 		print F sprintf("%.1f",$results->{temperature}), "|";
 		print F sprintf("%.1f",$results->{apparentTemperature}), "|";
 		print F "-9999|";
 		print F $results->{humidity}*100, "|";
 		$wdir = $results->{windBearing};
-		if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
-		if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = $L{'SETTINGS.LABEL_NE'} }; # NorthEast
-		if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = $L{'SETTINGS.LABEL_E'} }; # East
-		if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = $L{'SETTINGS.LABEL_SE'} }; # SouthEast
-		if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = $L{'SETTINGS.LABEL_S'} }; # South
-		if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = $L{'SETTINGS.LABEL_SW'} }; # SouthWest
-		if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = $L{'SETTINGS.LABEL_W'} }; # West
-		if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = $L{'SETTINGS.LABEL_NW'} }; # NorthWest
-		if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = $L{'SETTINGS.LABEL_N'} }; # North
+		if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+		if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
+		if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
+		if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
+		if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
+		if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
+		if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
+		if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
+		if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 		print F "$wdirdes|";
 		print F "$results->{windBearing}|";
 		print F sprintf("%.1f",$results->{windSpeed} * 3.6), "|";
