@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.2.0";
+my $version = "4.3.0";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -46,13 +46,12 @@ my $version = "4.2.0";
 #my $clouddns        = $cfg->param("BASE.CLOUDDNS");
 
 my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
-my $url          = $pcfg->param("SERVER.DARKSKYURL");
-my $apikey       = $pcfg->param("SERVER.DARKSKYAPIKEY");
-my $lang         = $pcfg->param("SERVER.DARKSKYLANG");
-my $stationid    = $pcfg->param("SERVER.DARKSKYCOORDLAT") . "," . $pcfg->param("SERVER.DARKSKYCOORDLONG");
-my $city         = $pcfg->param("SERVER.DARKSKYSTATION");
-my $country      = $pcfg->param("SERVER.DARKSKYCOUNTRY");
-my $countrycode  = $pcfg->param("SERVER.DARKSKYCOUNTRYCODE");
+my $url          = $pcfg->param("DARKSKY.URL");
+my $apikey       = $pcfg->param("DARKSKY.APIKEY");
+my $lang         = $pcfg->param("DARKSKY.LANG");
+my $stationid    = $pcfg->param("DARKSKY.COORDLAT") . "," . $pcfg->param("DARKSKY.COORDLONG");
+my $city         = $pcfg->param("DARKSKY.STATION");
+my $country      = $pcfg->param("DARKSKY.COUNTRY");
 
 # Read language phrases
 
@@ -75,7 +74,7 @@ my $template = HTML::Template->new(
 my %L = LoxBerry::System::readlanguage($template, "language.ini");
 
 # Create a logging object
-my $log = LoxBerry::Log->new ( 	name => 'fetch',
+my $log = LoxBerry::Log->new ( 	name => 'grabber_darksky',
 			filename => "$lbplogdir/weather4lox.log",
 			append => 1,
 );
@@ -93,7 +92,7 @@ if ($verbose) {
 	$log->loglevel(7);
 }
 
-LOGSTART "Weather4Lox FETCH process started";
+LOGSTART "Weather4Lox GRABBER_DARKSKY process started";
 LOGDEB "This is $0 Version $version";
 
 # Get data from Wunderground Server (API request) for current conditions
@@ -146,7 +145,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("+%04d", $decoded_json->{offset} * 100), "|";
 	print F "$city|";
 	print F "$country|";
-	print F "$countrycode|";
+	print F "-9999|";
 	print F $pcfg->param("SERVER.DARKSKYCOORDLAT"), "|";
 	print F $pcfg->param("SERVER.DARKSKYCOORDLONG"), "|";
 	# Convert elevation from feet to meter
@@ -317,13 +316,11 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F sprintf("%.1f",$results->{dewPoint}), "|";
 		print F "$results->{pressure}|";
 		print F "$results->{uvIndex}|";
-		print F "$results->{sunriseTime}|";
 		$t = localtime($results->{sunriseTime});
-		print F $t->hour, "|";
+		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
-		print F "$results->{sunsetTime}|";
 		$t = localtime($results->{sunsetTime});
-		print F $t->hour, "|";
+		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
 		print F "\n";
 	}
@@ -421,7 +418,6 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$icon|"; # Icon
 		print F "$results->{summary}|";
 		print F "$results->{ozone}|";
-		print F "$results->{visibility}|";
 		print F "\n";
 	}
 close(F);

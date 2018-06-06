@@ -32,7 +32,7 @@ use CGI qw/:standard/;
 ##########################################################################
 
 # Version of this script
-my $version = "4.1.1";
+my $version = "4.3.0";
 
 # Figure out in which subfolder we are installed
 our $psubfolder = abs_path($0);
@@ -44,7 +44,7 @@ our $cfg             = new Config::Simple("$home/config/system/general.cfg");
 our $installfolder   = $cfg->param("BASE.INSTALLFOLDER");
 our $lang            = $cfg->param("BASE.LANG");
 
-our $pcfg            = new Config::Simple("$installfolder/config/plugins/$psubfolder/wu4lox.cfg");
+our $pcfg            = new Config::Simple("$installfolder/config/plugins/$psubfolder/weather4lox.cfg");
 our $stdtheme        = $pcfg->param("WEB.THEME");
 our $stdiconset      = $pcfg->param("WEB.ICONSET");
 our $metric          = $pcfg->param("SERVER.METRIC");

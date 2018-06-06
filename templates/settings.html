@@ -5,109 +5,24 @@
 												<table class="formtable" border="0" width="100%" cellpadding="10">
 													<tr>
 														<td colspan=3 width="75%" valign="middle">
-															<h2><TMPL_VAR SETTINGS.LABEL_WU_SETTINGS></h2>
+															<h2><TMPL_VAR SETTINGS.LABEL_SERVER_SETTINGS></h2>
 														</td>
 														<td align="right">
-														<a href="http://www.wunderground.com" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/wundergroundLogo_4c_horz_200.png"></a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
-														</td>
-														<td width="50%">
-																<input id="apikey" name="apikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR SERVER.WUAPIKEY>" 
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-														<font size="-1"><a id="linkapikey" href="https://www.wunderground.com/weather/api" target="_blank"><TMPL_VAR SETTINGS.LABEL_APIKEY_URL></a></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelstationtyp"><TMPL_VAR SETTINGS.LABEL_WEATHERSTATION></label>
-														</td>
-														<td width="50%">
-															<fieldset data-role="controlgroup" data-type="horizontal">
-															<TMPL_VAR STATIONTYP>
-															</fieldset>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
 															&nbsp;
 														</td>
 													</tr>
 													<tr>
 														<td width="25%">
-															<label id="labelstationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+															<label id="labelweatherservice"><TMPL_VAR SETTINGS.LABEL_WEATHERSERVICE></label>
 														</td>
 														<td width="50%">
-																<input id="stationid" name="stationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR SERVER.STATIONID>" 
-																data-validation-allowing=":,." data-validation-optional="true" 
-                data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
+															<TMPL_VAR WEATHERSERVICE>
 														</td>
 														<td width="5%" valign="middle">
 															&nbsp;
 														</td>
 														<td width="20%">
-														<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%" valign="top">
-															<br><label id="labelcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
-														</td>
-														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td>
-															<label id="labelcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-															</td>
-															<td>
-															<input id="coordlat" name="coordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR SERVER.COORDLAT>" 
-																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-															</td>
-															<td>
-															<label id="labelcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-															</td>
-															<td>
-															<input id="coordlong" name="coordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR SERVER.COORDLONG>" 
-																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-															</td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<a id="coordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-															data-role="button" id="btnaddresssearch" data-inline="true" data-mini="true"
-															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi',
-															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
-															</a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelwulang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR WULANG>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_CONFIGUREWEATHERSERVICE></font>
 														</td>
 													</tr>
 													<tr>
@@ -133,7 +48,7 @@
 															<tr>
 															<td width="20%">
 															<fieldset>
-															<TMPL_VAR GETWUDATA>
+															<TMPL_VAR GETDATA>
 															</fieldset>
 															</td>
 															<td>
@@ -154,6 +69,221 @@
 														&nbsp;
 														</td>
 													</tr>
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+															<h2><TMPL_VAR SETTINGS.LABEL_DARKSKY_SETTINGS></h2>
+														</td>
+														<td align="right">
+														<a href="https://www.darksky.net/poweredby" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/poweredby-darksky_200.png"></a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labeldarkskyapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+														</td>
+														<td width="50%">
+																<input id="darkskyapikey" name="darkskyapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR DARKSKY.APIKEY>" 
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%" valign="top">
+															<br><label id="labeldarkskycoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labeldarkskycoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+															</td>
+															<td>
+															<input id="darkskycoordlat" name="darkskycoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR DARKSKY.COORDLAT>" 
+																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+															</td>
+															<td>
+															<label id="labeldarkskycoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+															</td>
+															<td>
+															<input id="darkskycoordlong" name="darkskycoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR DARKSKY.COORDLONG>" 
+																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<a id="darkskycoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+															data-role="button" id="btndarkskyaddresssearch" data-inline="true" data-mini="true"
+															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=darksky',
+															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+															</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwulang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR DARKSKYLANG>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labeldarkskycity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
+														</td>
+														<td width="50%">
+															<input id="darkskycity" name="darkskycity" type="text" class="textfield" value="<TMPL_VAR DARKSKY.STATION>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labeldarkskycountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
+														</td>
+														<td width="50%">
+															<input id="darkskycountry" name="darkskycountry" type="text" class="textfield" value="<TMPL_VAR DARKSKY.COUNTRY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+															<h2><TMPL_VAR SETTINGS.LABEL_WU_SETTINGS></h2>
+														</td>
+														<td align="right">
+														<a href="http://www.wunderground.com" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/wundergroundLogo_4c_horz_200.png"></a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwuapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+														</td>
+														<td width="50%">
+																<input id="wuapikey" name="wuapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.APIKEY>" 
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwustationtyp"><TMPL_VAR SETTINGS.LABEL_WEATHERSTATION></label>
+														</td>
+														<td width="50%">
+															<fieldset data-role="controlgroup" data-type="horizontal">
+															<TMPL_VAR WUSTATIONTYP>
+															</fieldset>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+														</td>
+														<td width="50%">
+																<input id="wustationid" name="wustationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" 
+																data-validation-allowing=":,." data-validation-optional="true" 
+                data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%" valign="top">
+															<br><label id="labelwucoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labelwucoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+															</td>
+															<td>
+															<input id="wucoordlat" name="wucoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLAT>" 
+																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+															</td>
+															<td>
+															<label id="labelwucoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+															</td>
+															<td>
+															<input id="wucoordlong" name="wucoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLONG>" 
+																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<a id="wucoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+															data-role="button" id="btnwuaddresssearch" data-inline="true" data-mini="true"
+															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=wu',
+															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+															</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwulang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR WULANG>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
 												</table>
 											</div>
 									<p>
@@ -171,8 +301,10 @@
 									disable();
 
 									// Add some attributes PERL::CGI doesn't provide
-									$('select[name=getwudata]').attr('data-role','flipswitch');
+									$('select[name=getdata]').attr('data-role','flipswitch');
+									$('select[name=weatherservice]').attr('data-mini','true');
 									$('select[name=wulang]').attr('data-mini','true');
+									$('select[name=darkskylang]').attr('data-mini','true');
 									//$('select[name=wulang]').attr('data-native-menu','false');
 									$('select[name=metric]').attr('data-mini','true');
 									//$('select[name=metric]').attr('data-native-menu','false');
@@ -181,43 +313,40 @@
 
 									// Disable some form elements depending on selected options
 									function disable() {
-										var click = $('input[name=stationtyp]:checked').val();
+										var click = $('input[name=wustationtyp]:checked').val();
 										if ( click === "statid" ) {
 											$('#linkwundermap').removeClass('ui-disabled');
-											$('#labelstationid').removeClass('ui-disabled');
-											$('#stationid').removeClass('ui-disabled');
-											$('#labelcoord').addClass('ui-disabled');
-											$('#labelcoordlat').addClass('ui-disabled');
-											$('#labelcoordlong').addClass('ui-disabled');
-											$('#coordlat').addClass('ui-disabled');
-											$('#coordlong').addClass('ui-disabled');
-											$('#coordaddresssearch').addClass('ui-disabled');
-											$('#coordminiserver').addClass('ui-disabled');
-											$('#stationid').removeClass('ui-disabled');
+											$('#labelwustationid').removeClass('ui-disabled');
+											$('#wustationid').removeClass('ui-disabled');
+											$('#labelwucoord').addClass('ui-disabled');
+											$('#labelwucoordlat').addClass('ui-disabled');
+											$('#labelwucoordlong').addClass('ui-disabled');
+											$('#wucoordlat').addClass('ui-disabled');
+											$('#wucoordlong').addClass('ui-disabled');
+											$('#wucoordaddresssearch').addClass('ui-disabled');
+											$('#wustationid').removeClass('ui-disabled');
 										}
 										if ( click === "coord" ) {
 											$('#linkwundermap').addClass('ui-disabled');
-											$('#labelstationid').addClass('ui-disabled');
-											$('#labelcoord').removeClass('ui-disabled');
-											$('#labelcoordlat').removeClass('ui-disabled');
-											$('#labelcoordlong').removeClass('ui-disabled');
-											$('#coordlat').removeClass('ui-disabled');
-											$('#coordlong').removeClass('ui-disabled');
-											$('#coordaddresssearch').removeClass('ui-disabled');
-											$('#coordminiserver').removeClass('ui-disabled');
-											$('#stationid').addClass('ui-disabled');
+											$('#labelwustationid').addClass('ui-disabled');
+											$('#labelwucoord').removeClass('ui-disabled');
+											$('#labelwucoordlat').removeClass('ui-disabled');
+											$('#labelwucoordlong').removeClass('ui-disabled');
+											$('#wucoordlat').removeClass('ui-disabled');
+											$('#wucoordlong').removeClass('ui-disabled');
+											$('#wucoordaddresssearch').removeClass('ui-disabled');
+											$('#wustationid').addClass('ui-disabled');
 										}
 										if ( click === "autoip" ) {
 											$('#linkwundermap').addClass('ui-disabled');
-											$('#labelstationid').addClass('ui-disabled');
-											$('#stationid').addClass('ui-disabled');
-											$('#labelcoord').addClass('ui-disabled');
-											$('#labelcoordlat').addClass('ui-disabled');
-											$('#labelcoordlong').addClass('ui-disabled');
-											$('#coordlat').addClass('ui-disabled');
-											$('#coordlong').addClass('ui-disabled');
-											$('#coordaddresssearch').addClass('ui-disabled');
-											$('#coordminiserver').addClass('ui-disabled');
+											$('#labelwustationid').addClass('ui-disabled');
+											$('#wustationid').addClass('ui-disabled');
+											$('#labelwucoord').addClass('ui-disabled');
+											$('#labelwucoordlat').addClass('ui-disabled');
+											$('#labelwucoordlong').addClass('ui-disabled');
+											$('#wucoordlat').addClass('ui-disabled');
+											$('#wucoordlong').addClass('ui-disabled');
+											$('#wucoordaddresssearch').addClass('ui-disabled');
 										}
 									}
 									</script>
@@ -353,12 +482,6 @@
 									<script>
 									// Add some attributes PERL::CGI doesn't provide
 									$('#sendudp').attr('data-role','flipswitch');
-									$('select[name=wulang]').attr('data-mini','true');
-									//$('select[name=wulang]').attr('data-native-menu','false');
-									$('select[name=metric]').attr('data-mini','true');
-									//$('select[name=metric]').attr('data-native-menu','false');
-									$('select[name=cron]').attr('data-mini','true');
-									//$('select[name=cron]').attr('data-native-menu','false');
 									</script>
 </TMPL_IF>
 <TMPL_IF FORM3>

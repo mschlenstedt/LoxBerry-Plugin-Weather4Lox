@@ -32,9 +32,9 @@ use DateTime;
 ##########################################################################
 
 # Version of this script
-my $version = "4.1.6";
+my $version = "4.3.0";
 
-our $pcfg             = new Config::Simple("$lbpconfigdir/wu4lox.cfg");
+our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
 my  $senddfc          = $pcfg->param("SERVER.SENDDFC");
 my  $sendhfc          = $pcfg->param("SERVER.SENDHFC");
@@ -48,8 +48,8 @@ our $stdiconset       = $pcfg->param("WEB.ICONSET");
 our $lang = lblanguage();
 
 # Create a logging object
-my $log = LoxBerry::Log->new (  name => 'fetch',
-                        filename => "$lbplogdir/wu4lox.log",
+my $log = LoxBerry::Log->new (  name => 'datatoloxone',
+                        filename => "$lbplogdir/weather4lox.log",
                         append => 1,
 );
 
@@ -60,13 +60,13 @@ GetOptions ('verbose' => \$verbose,
             'quiet'   => sub { $verbose = 0 });
 
 # Due to a bug in the Logging routine, set the loglevel fix to 3
-$log->loglevel(3);
+#$log->loglevel(3);
 if ($verbose) {
         $log->stdout(1);
         $log->loglevel(7);
 }
 
-LOGSTART "WU4Lox DATATOLOXONE process started";
+LOGSTART "Weather4Lox DATATOLOXONE process started";
 LOGDEB "This is $0 Version $version";
 
 ##########################################################################
@@ -309,6 +309,18 @@ $value = $sunrdate->epoch() - $dateref->epoch();
 
 $name = "cur_sun_s";
 $value = $sunsdate->epoch() - $dateref->epoch();
+&send;
+
+$name = "cur_ozone";
+$value = @fields[38];
+&send;
+
+$name = "cur_sky";
+$value = @fields[39];
+&send;
+
+$name = "cur_pop";
+$value = @fields[40];
 $udp = 1; # Really send now in one run
 &send;
 
@@ -345,6 +357,13 @@ foreach (@dfcdata){
   if (@fields[1] eq "") {
     @fields[1] = 1230764400;
   }
+
+  # Calculate Epoche Date
+  my $epochdatedfc = DateTime->from_epoch(
+      epoch      => @fields[1],
+  );
+  $epochdate->add( seconds => $tzseconds );
+
 
   $name = "dfc$per\_per";
   $value = $per;
@@ -452,12 +471,61 @@ foreach (@dfcdata){
 
   $name = "dfc$per\_we_code";
   $value = @fields[26];
-  $udp = 1; # Really send now in one run
   &send;
 
   $name = "dfc$per\_we_des";
   $value = @fields[27];
 #  &send;
+
+  $name = "dfc$per\_ozone";
+  $value = @fields[28];
+  &send;
+
+  $name = "dfc$per\_moon_p";
+  $value = @fields[29];
+  &send;
+
+  $name = "dfc$per\_dp";
+  if (!$metric) {$value = @fields[30]*1.8+32} else {$value = @fields[30];}
+  &send;
+
+  $name = "dfc$per\_pr";
+  if (!$metric) {$value = @fields[31]*0.0295301} else {$value = @fields[31]};
+  &send;
+
+  $name = "dfc$per\_uvi";
+  $value = @fields[32];
+  &send;
+
+  # Create Sunset/rise Date in Loxone Epoch Format (1.1.2009)
+  # Sunrise
+  $sunrdate = DateTime->new(
+      year      => $epochdatedfc -> year(),
+      month     => $epochdatedfc -> month(),
+      day       => $epochdatedfc -> day(),
+      hour      => @fields[33],
+      minute    => @fields[34],
+  );
+  #$sunrdate->add( seconds => $tzseconds );
+
+  # Sunset
+  $sunsdate = DateTime->new(
+      year      => $epochdatedfc -> year(),
+      month     => $epochdatedfc -> month(),
+      day       => $epochdatedfc -> day(),
+      hour      => @fields[35],
+      minute    => @fields[36],
+  );
+  #$sunsdate->add( seconds => $tzseconds );
+
+  $name = "dfc$per\_sun_r";
+  $value = $sunrdate->epoch() - $dateref->epoch();
+  &send;
+
+  $name = "dfc$per\_sun_s";
+  $value = $sunsdate->epoch() - $dateref->epoch();
+  $udp = 1; # Really send now in one run
+  &send;
 
 }
 
@@ -602,7 +670,6 @@ foreach (@hfcdata){
 
   $name = "hfc$per\_we_code";
   $value = @fields[27];
-  $udp = 1; # Really send now in one run
   &send;
 
   $name = "hfc$per\_we_icon";
@@ -613,6 +680,11 @@ foreach (@hfcdata){
   $name = "hfc$per\_we_des";
   $value = @fields[29];
 #  &send;
+
+  $name = "hfc$per\_ozone";
+  $value = @fields[30];
+  $udp = 1; # Really send now in one run
+  &send;
 
 }
 
@@ -1614,7 +1686,7 @@ sub send {
         PeerAddr =>  $miniservers{$ms}{IPAddress},
         );
         $sock->send($tmpudp);
-        LOGOK "$sendqueue: Send OK to " . $miniservers{$ms}{Name} . ". IP:" . $miniservers{$ms}{IPAddress} . " Port:$udpport Value:$name\@$value";
+        LOGOK "$sendqueue: Send OK to " . $miniservers{$ms}{Name} . ". IP:" . $miniservers{$ms}{IPAddress} . " Port:$udpport";
         $sendqueue++;
       }
       $udp = 0;

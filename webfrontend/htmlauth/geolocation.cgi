@@ -27,6 +27,7 @@ use LWP::UserAgent;
 use JSON qw( decode_json );
 use utf8;
 use Encode qw(encode_utf8);
+use URI::Escape;
 use warnings;
 use strict;
 
@@ -57,13 +58,16 @@ our $lat;
 our $long;
 our $numrestotal;
 our $template;
+our $city;
+our $country;
+our $addon;
 
 ##########################################################################
 # Read Settings
 ##########################################################################
 
 # Version of this script
-$version = "4.1.1";
+$version = "4.3.0";
 
 # Language
 our $lang = lblanguage();
@@ -76,7 +80,6 @@ my $cgi = CGI->new;
 $cgi->import_names('R');
 
 $search = $R::search;
-$search = quotemeta($search);
 
 # Template
 my $template = HTML::Template->new(
@@ -86,6 +89,9 @@ my $template = HTML::Template->new(
     die_on_bad_params => 0,
     #associate => $cfg,
 );
+
+my $service = $R::service;
+$template->param( "SERVICE", $service);
 
 ##########################################################################
 # Language Settings
@@ -100,7 +106,9 @@ my %L = LoxBerry::Web::readlanguage($template, "language.ini");
 
 if ($search) {
 
-  $queryurl = "http://maps.googleapis.com/maps/api/geocode/json?sensor=false&address=$search";
+  my $lang = lblanguage();
+  $search = uri_escape($search);
+  $queryurl = "https://nominatim.openstreetmap.org/search?q=$search&format=json&addressdetails=1&accept-language=$lang";
 
   # If we received a query, send it to Google API
   $ua = new LWP::UserAgent;
@@ -117,19 +125,26 @@ if ($search) {
 
   # Count results
   $numrestotal = 0;
-  for my $results( @{$decoded_json->{results}} ){
+  for my $results( @{$decoded_json} ){
     $numrestotal++;
   }
- 
+
   if (!$numrestotal) {
     $table = "<tr><td align=\"center\">" . $L{'SETTINGS.HINT_NO_SEARCH_RESULTS'} . "</td></tr>\n";
   } else { 
     $i = 1;
-      for $results( @{$decoded_json->{results}} ){
-        $lat = $results->{geometry}->{location}->{lat};
-        $long = $results->{geometry}->{location}->{lng};
-        $table = $table . "<tr><td align=\"right\">$i\.</td><td>$results->{formatted_address}</td>\n";
-        $table = "$table" ."<td style=\"vertical-align: middle; text-align: center\"><button type=\"button\" data-role=\"button\" data-inline=\"true\" data-mini=\"true\" onClick=\"window.opener.document.getElementById('coordlat').value = '$lat';window.opener.document.getElementById('coordlong').value = '$long';window.close()\"> <font size=\"-1\">" . $L{'SETTINGS.BUTTON_APPLY'} .  "</font></button></td></tr>\n";
+      for $results( @{$decoded_json} ){
+	$city = $results->{address}->{city};
+	$country = $results->{address}->{country};
+	$lat = $results->{lat};
+	$long = $results->{lon};
+	# Add City and Country for DarkSky
+	if ($service eq "darksky") {
+	  $addon = ";window.opener.document.getElementById('" . $service . "city').value = '$city'";
+	  $addon = $addon . ";window.opener.document.getElementById('" . $service . "country').value = '$country'";
+	}
+        $table = $table . "<tr><td align=\"right\">$i\.</td><td>$results->{display_name}</td>\n";
+        $table = "$table" ."<td style=\"vertical-align: middle; text-align: center\"><button type=\"button\" data-role=\"button\" data-inline=\"true\" data-mini=\"true\" onClick=\"window.opener.document.getElementById('" . $service . "coordlat').value = '$lat';window.opener.document.getElementById('" . $service . "coordlong').value = '$long'$addon;window.close()\"> <font size=\"-1\">" . $L{'SETTINGS.BUTTON_APPLY'} .  "</font></button></td></tr>\n";
         $i++;
       };
   }

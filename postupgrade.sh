@@ -18,9 +18,9 @@ rm -r /tmp/$ARGV1\_upgrade
 
 # Read config
 . $LBHOMEDIR/libs/bashlib/iniparser.sh
-iniparser $ARGV5/config/plugins/$ARGV3/wu4lox.cfg "SERVER"
+iniparser $ARGV5/config/plugins/$ARGV3/weather4lox.cfg "SERVER"
 
-echo "<INFO> Recreate cronjob for fetching data from Wunderground"
+echo "<INFO> Recreate cronjob for fetching data from Weather Services"
 if [ $SERVERCRON -eq 1 ]; then
 	ln -s $ARGV5/bin/plugins/$ARGV3/fetch.pl $ARGV5/system/cron/cron.01min/$ARGV3
 fi
@@ -48,9 +48,9 @@ if [ $SERVEREMU -eq 1 ]; then
         $ARGV5/bin/plugins/$ARGV3/cloudemu enable > /dev/null 2>&1
 fi
 
-echo "<INFO> Renaming some old theme files"
-/bin/sed -i "s#THEME=appv4#THEME=light#g" $ARGV5/config/plugins/$ARGV3/wu4lox.cfg > /dev/null 2>&1
-/bin/sed -i "s#THEME=classic#THEME=dark#g" $ARGV5/config/plugins/$ARGV3/wu4lox.cfg > /dev/null 2>&1
+#echo "<INFO> Renaming some old theme files"
+#/bin/sed -i "s#THEME=appv4#THEME=light#g" $ARGV5/config/plugins/$ARGV3/wu4lox.cfg > /dev/null 2>&1
+#/bin/sed -i "s#THEME=classic#THEME=dark#g" $ARGV5/config/plugins/$ARGV3/wu4lox.cfg > /dev/null 2>&1
 
 # Exit with Status 0
 exit 0

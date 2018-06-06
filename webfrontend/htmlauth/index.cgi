@@ -46,7 +46,6 @@ my $version = LoxBerry::System::pluginversion();
 
 # Settings
 my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
-my $wuurl = $cfg->param("SERVER.WUURL");
 
 #########################################################################
 # Parameter
@@ -74,82 +73,113 @@ my %L = LoxBerry::Web::readlanguage($template, "language.ini");
 if ($R::saveformdata1) {
 	
   	$template->param( FORMNO => '1' );
-	$R::coordlat =~ tr/,/./;
-	$R::coordlong =~ tr/,/./;
+	$R::wucoordlat =~ tr/,/./;
+	$R::wucoordlong =~ tr/,/./;
+	$R::darkskycoordlat =~ tr/,/./;
+	$R::darkskycoordlong =~ tr/,/./;
 
-	# Check for Station
-	our $querystation;
-	if ($R::stationtyp eq "statid") {
-		$querystation = $R::stationid;
-	} 
-	elsif ($R::stationtyp eq "coord") {
-		$querystation = $R::coordlat . "," . $R::coordlong;
-	}
-	else {
-		$querystation = "autoip";
-	}
-
-	# 1. attempt to query Wunderground
-	&wuquery;
-
-	$found = 0;
-	if ( $decoded_json->{current_observation}->{station_id} ) {
-		$found = 1;
-	}
-	if ( !$found && $decoded_json->{response}->{error}->{type} eq "keynotfound" ) {
-		$error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>WU Error Message:</b> $decoded_json->{response}->{error}->{description}";
-		&error;
-		exit;
-	}
-
-	# 2. attempt to query Wunderground
-	# Before giving up test if it is a PWS
-	if (!$found) {
-		$querystation = "pws:$querystation";
+	# Check for Station : WUNDERGROUND
+	if ($R::weatherservice = "wu") {
+		our $url = $cfg->param("WUNDERGROUND.URL");
+		our $querystation;
+		our $wuquerystation;
+		$wuquerystation = $querystation;
+		if ($R::wustationtyp eq "statid") {
+			$querystation = $R::wustationid;
+		} 
+		elsif ($R::stationtyp eq "coord") {
+			$querystation = $R::wucoordlat . "," . $R::wucoordlong;
+		}
+		else {
+			$querystation = "autoip";
+		}
+		# 1. attempt to query Wunderground
 		&wuquery;
+		$found = 0;
 		if ( $decoded_json->{current_observation}->{station_id} ) {
 			$found = 1;
+			$wuquerystation = $querystation;
+		}
+		if ( !$found && $decoded_json->{response}->{error}->{type} eq "keynotfound" ) {
+			$error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>WU Error Message:</b> $decoded_json->{response}->{error}->{description}";
+			&error;
+			exit;
+		}
+		# 2. attempt to query Wunderground
+		# Before giving up test if it is a PWS
+		if (!$found) {
+			$querystation = "pws:$querystation";
+			&wuquery;
+			if ( $decoded_json->{current_observation}->{station_id} ) {
+				$found = 1;
+				$wuquerystation = $querystation;
+			}
+		}
+		# 3. attempt to query Wunderground
+		# Before giving up test if it is a ZMW
+		if (!$found) {
+			$querystation = "zmw:$querystation";
+			&wuquery;
+			if ( $decoded_json->{current_observation}->{station_id} ) {
+				$found = 1;
+				$wuquerystation = $querystation;
+			}
+		}
+		# That was my last attempt - if we haven't found the station, we are giving up.
+		if (!$found) {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
+			&error;
+			exit;
 		}
 	}
-
-	# 3. attempt to query Wunderground
-	# Before giving up test if it is a ZMW
-	if (!$found) {
-		$querystation = "zmw:$querystation";
-		&wuquery;
-		if ( $decoded_json->{current_observation}->{station_id} ) {
+	
+	# Check for Station : DARKSKY
+	if ($R::weatherservice = "darksky") {
+		our $url = $cfg->param("DARKSKY.URL");
+		our $querystation = $R::darkskycoordlat . "," . $R::darkskycoordlong;
+		# 1. attempt to query Darksky
+		&darkskyquery;
+		$found = 0;
+		if ( $decoded_json->{latitude} ) {
 			$found = 1;
 		}
+		if ( !$found ) {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
+			&error;
+			exit;
+		}
 	}
-
-	# That was my last attempt - if we haven't found the station, we are giving up.
-	if (!$found) {
-		$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
-		&error;
-		exit;
-	}
-
+	
 	# OK - now installing...
 
 	# Write configuration file(s)
-	$cfg->param("SERVER.WUAPIKEY", "$R::apikey");
-	$cfg->param("SERVER.STATIONTYP", "$R::stationtyp");
+	$cfg->param("WUNDERGROUND.APIKEY", "$R::wuapikey");
+	$cfg->param("WUNDERGROUND.STATIONTYP", "$R::wustationtyp");
 	if ($R::stationtyp eq "statid") {
-		$cfg->param("SERVER.STATIONID", "$querystation");
+		$cfg->param("WUNDERGROUND.STATIONID", "$wuquerystation");
 	} else {
-		$cfg->param("SERVER.STATIONID", "$R::stationid");
+		$cfg->param("WUNDERGROUND.STATIONID", "$R::wustationid");
 	}
-	$cfg->param("SERVER.COORDLAT", "$R::coordlat");
-	$cfg->param("SERVER.COORDLONG", "$R::coordlong");
-	$cfg->param("SERVER.GETWUDATA", "$R::getwudata");
+	$cfg->param("WUNDERGROUND.COORDLAT", "$R::wucoordlat");
+	$cfg->param("WUNDERGROUND.COORDLONG", "$R::wucoordlong");
+	$cfg->param("WUNDERGROUND.LANG", "$R::wulang");
+
+	$cfg->param("DARKSKY.APIKEY", "$R::darkskyapikey");
+	$cfg->param("DARKSKY.COORDLAT", "$R::darkskycoordlat");
+	$cfg->param("DARKSKY.COORDLONG", "$R::darkskycoordlong");
+	$cfg->param("DARKSKY.LANG", "$R::darkskylang");
+	$cfg->param("DARKSKY.STATION", "$R::darkskycity");
+	$cfg->param("DARKSKY.COUNTRY", "$R::darkskycountry");
+
+	$cfg->param("SERVER.GETDATA", "$R::getdata");
 	$cfg->param("SERVER.CRON", "$R::cron");
 	$cfg->param("SERVER.METRIC", "$R::metric");
-	$cfg->param("SERVER.WULANG", "$R::wulang");
+	$cfg->param("SERVER.WEATHERSERVICE", "$R::weatherservice");
 
 	$cfg->save();
 		
 	# Create Cronjob
-	if ($R::getwudata eq "1") 
+	if ($R::getdata eq "1") 
 	{
 	  if ($R::cron eq "1") 
 	  {
@@ -246,7 +276,7 @@ if ($R::saveformdata2) {
   	$template->param( FORMNO => '2' );
 
 	my $dfc;
-	for (my $i=1;$i<=4;$i++) {
+	for (my $i=1;$i<=8;$i++) {
 		if ( ${"R::dfc$i"} ) {
 			if ( !$dfc ) {
 				$dfc = $i;
@@ -256,7 +286,7 @@ if ($R::saveformdata2) {
 		}
 	}
 	my $hfc;
-	for ($i=1;$i<=36;$i++) {
+	for ($i=1;$i<=48;$i++) {
 		if ( ${"R::hfc$i"} ) {
 			if ( !$hfc ) {
 				$hfc = $i;
@@ -309,7 +339,7 @@ if ($R::saveformdata3) {
 
 # Navbar
 our %navbar;
-$navbar{1}{Name} = "$L{'SETTINGS.LABEL_WU_SETTINGS'}";
+$navbar{1}{Name} = "$L{'SETTINGS.LABEL_SERVER_SETTINGS'}";
 $navbar{1}{URL} = 'index.cgi?form=1';
 
 $navbar{2}{Name} = "$L{'SETTINGS.LABEL_MINISERVERCONNECTION'}";
@@ -319,10 +349,10 @@ $navbar{3}{Name} = "$L{'SETTINGS.LABEL_CLOUDEMU'} / $L{'SETTINGS.LABEL_WEBSITE'}
 $navbar{3}{URL} = 'index.cgi?form=3';
 
 $navbar{4}{Name} = "$L{'SETTINGS.LABEL_LOG'}";
-$navbar{4}{URL} = "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/wu4lox.log&header=html&format=template&only=once";
+$navbar{4}{URL} = "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/weather4lox.log&header=html&format=template&only=once";
 $navbar{4}{target} = '_blank';
 
-# Menu: Wunderground
+# Menu: Server
 if ($R::form eq "1" || !$R::form) {
 
   $navbar{1}{active} = 1;
@@ -330,41 +360,21 @@ if ($R::form eq "1" || !$R::form) {
 
   my @values;
   my %labels;
-  
-  # Statiotyp
-  @values = ('statid', 'coord', 'autoip');
-  %labels = (
-        'statid' => $L{'SETTINGS.LABEL_STATIONID'},
-        'coord' => $L{'SETTINGS.LABEL_COORDINATES'},
-        'autoip' => $L{'SETTINGS.LABEL_IPADDRESS'},
-    );
-  my $stationtyp = $cgi->radio_group(
-        -name    => 'stationtyp',
-        -id      => 'stationtyp',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('SERVER.STATIONTYP'),
-	-onClick => "disable()",
-    );
-  $template->param( STATIONTYP => $stationtyp );
 
-  # WU Language
-  @values = ('CZ', 'DL', 'EN', 'SP', 'FR' );
+  # Weather Service
+  @values = ('darksky', 'wu' );
   %labels = (
-        'DL' => 'Deutsch',
-        'EN' => 'English',
-        'FR' => 'Francaise',
-        'SP' => 'Español',
-        'CZ' => 'Český',
+        'darksky' => 'Dark Sky',
+        'wu' => 'Wunderground',
     );
-  my $wulang = $cgi->popup_menu(
-        -name    => 'wulang',
-        -id      => 'wulang',
+  my $wservice = $cgi->popup_menu(
+        -name    => 'weatherservice',
+        -id      => 'weatherservice',
         -values  => \@values,
 	-labels  => \%labels,
-	-default => $cfg->param('SERVER.WULANG'),
+	-default => $cfg->param('SERVER.WEATHERSERVICE'),
     );
-  $template->param( WULANG => $wulang );
+  $template->param( WEATHERSERVICE => $wservice );
 
   # Units
   @values = ('1', '0' );
@@ -381,20 +391,20 @@ if ($R::form eq "1" || !$R::form) {
     );
   $template->param( METRIC => $metric );
 
-  # GetWUData
+  # GetData
   @values = ('0', '1' );
   %labels = (
         '0' => $L{'SETTINGS.LABEL_OFF'},
         '1' => $L{'SETTINGS.LABEL_ON'},
     );
-  my $getwudata = $cgi->popup_menu(
-        -name    => 'getwudata',
-        -id      => 'getwudata',
+  my $getdata = $cgi->popup_menu(
+        -name    => 'getdata',
+        -id      => 'getdata',
         -values  => \@values,
 	-labels  => \%labels,
-	-default => $cfg->param('SERVER.GETWUDATA'),
+	-default => $cfg->param('SERVER.GETDATA'),
     );
-  $template->param( GETWUDATA => $getwudata );
+  $template->param( GETDATA => $getdata );
 
   # Cron
   @values = ('1', '3', '5', '10', '15', '30', '60' );
@@ -415,6 +425,173 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.CRON'),
     );
   $template->param( CRON => $cron );
+
+  # DarkSky Language
+  @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'ja', 'ka', 'ko', 'kw', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tet', 'tr', 'uk', 'x-pig-latin', 'zh', 'zh-tw');
+
+  %labels = (
+	'ar' => 'Arabic',
+	'az' => 'Azerbaijani',
+	'be' => 'Belarusian',
+	'bg' => 'Bulgarian',
+	'bs' => 'Bosnian',
+	'ca' => 'Catalan',
+	'cs' => 'Czech',
+	'da' => 'Danish',
+	'de' => 'German',
+	'el' => 'Greek',
+	'en' => 'English',
+	'es' => 'Spanish',
+	'et' => 'Estonian',
+	'fi' => 'Finnish',
+	'fr' => 'French',
+	'hr' => 'Croatian',
+	'hu' => 'Hungarian',
+	'id' => 'Indonesian',
+	'is' => 'Icelandic',
+	'it' => 'Italian',
+	'ja' => 'Japanese',
+	'ka' => 'Georgian',
+	'ko' => 'Korean',
+	'kw' => 'Cornish',
+	'nb' => 'Norwegian Bokmål',
+	'nl' => 'Dutch',
+	'pl' => 'Polish',
+	'pt' => 'Portuguese',
+	'ro' => 'Romanian',
+	'ru' => 'Russian',
+	'sk' => 'Slovak',
+	'sl' => 'Slovenian',
+	'sr' => 'Serbian',
+	'sv' => 'Swedish',
+	'tet' => 'Tetum',
+	'tr' => 'Turkish',
+	'uk' => 'Ukrainian',
+	'x-pig-latin' => 'Igpay Atinlay',
+	'zh' => 'simplified Chinese',
+	'zh-tw' => 'traditional Chinese',
+    );
+  my $darkskylang = $cgi->popup_menu(
+        -name    => 'darkskylang',
+        -id      => 'darkskylang',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('DARKSKY.LANG'),
+    );
+  $template->param( DARKSKYLANG => $darkskylang );
+  
+  # Statiotyp
+  @values = ('statid', 'coord', 'autoip');
+  %labels = (
+        'statid' => $L{'SETTINGS.LABEL_STATIONID'},
+        'coord' => $L{'SETTINGS.LABEL_COORDINATES'},
+        'autoip' => $L{'SETTINGS.LABEL_IPADDRESS'},
+    );
+  my $stationtyp = $cgi->radio_group(
+        -name    => 'wustationtyp',
+        -id      => 'wustationtyp',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('WUNDERGROUND.STATIONTYP'),
+	-onClick => "disable()",
+    );
+  $template->param( WUSTATIONTYP => $stationtyp );
+
+  # WU Language
+  @values = ('AF', 'AL', 'AR', 'HY', 'AZ', 'EU', 'BY', 'BU', 'LI', 'MY', 'CA', 'CN', 'TW', 'CR', 'CZ', 'DK', 'DV', 'NL', 'EN', 'EO', 'ET', 'FA', 'FI', 'FR', 'FC', 'GZ', 'DL', 'KA', 'GR', 'GU', 'HT', 'IL', 'HI', 'HU', 'IS', 'IO', 'ID', 'IR', 'IT', 'JP', 'JW', 'KM', 'KR', 'KU', 'LA', 'LV', 'LT', 'ND', 'MK', 'MT', 'GM', 'MI', 'MR', 'MN', 'NO', 'OC', 'PS', 'GN', 'PL', 'BR', 'PA', 'RO', 'RU', 'SR', 'SK', 'SL', 'SP', 'SI', 'SW', 'CH', 'TL', 'TT', 'TH', 'TR', 'TK', 'UA', 'UZ', 'VU', 'CY', 'SN', 'JI', 'YI');
+  %labels = (
+	'AF' => 'Afrikaans',
+	'AL' => 'Albanian',
+	'AR' => 'Arabic',
+	'HY' => 'Armenian',
+	'AZ' => 'Azerbaijani',
+	'EU' => 'Basque',
+	'BY' => 'Belarusian',
+	'BU' => 'Bulgarian',
+	'LI' => 'British English',
+	'MY' => 'Burmese',
+	'CA' => 'Catalan',
+	'CN' => 'Chinese - Simplified',
+	'TW' => 'Chinese - Traditional',
+	'CR' => 'Croatian',
+	'CZ' => 'Czech',
+	'DK' => 'Danish',
+	'DV' => 'Dhivehi',
+	'NL' => 'Dutch',
+	'EN' => 'English',
+	'EO' => 'Esperanto',
+	'ET' => 'Estonian',
+	'FA' => 'Farsi',
+	'FI' => 'Finnish',
+	'FR' => 'French',
+	'FC' => 'French Canadian',
+	'GZ' => 'Galician',
+	'DL' => 'German',
+	'KA' => 'Georgian',
+	'GR' => 'Greek',
+	'GU' => 'Gujarati',
+	'HT' => 'Haitian Creole',
+	'IL' => 'Hebrew',
+	'HI' => 'Hindi',
+	'HU' => 'Hungarian',
+	'IS' => 'Icelandic',
+	'IO' => 'Ido',
+	'ID' => 'Indonesian',
+	'IR' => 'Irish Gaelic',
+	'IT' => 'Italian',
+	'JP' => 'Japanese',
+	'JW' => 'Javanese',
+	'KM' => 'Khmer',
+	'KR' => 'Korean',
+	'KU' => 'Kurdish',
+	'LA' => 'Latin',
+	'LV' => 'Latvian',
+	'LT' => 'Lithuanian',
+	'ND' => 'Low German',
+	'MK' => 'Macedonian',
+	'MT' => 'Maltese',
+	'GM' => 'Mandinka',
+	'MI' => 'Maori',
+	'MR' => 'Marathi',
+	'MN' => 'Mongolian',
+	'NO' => 'Norwegian',
+	'OC' => 'Occitan',
+	'PS' => 'Pashto',
+	'GN' => 'Plautdietsch',
+	'PL' => 'Polish',
+	'BR' => 'Portuguese',
+	'PA' => 'Punjabi',
+	'RO' => 'Romanian',
+	'RU' => 'Russian',
+	'SR' => 'Serbian',
+	'SK' => 'Slovak',
+	'SL' => 'Slovenian',
+	'SP' => 'Spanish',
+	'SI' => 'Swahili',
+	'SW' => 'Swedish',
+	'CH' => 'Swiss',
+	'TL' => 'Tagalog',
+	'TT' => 'Tatarish',
+	'TH' => 'Thai',
+	'TR' => 'Turkish',
+	'TK' => 'Turkmen',
+	'UA' => 'Ukrainian',
+	'UZ' => 'Uzbek',
+	'VU' => 'Vietnamese',
+	'CY' => 'Welsh',
+	'SN' => 'Wolof',
+	'JI' => 'Yiddish - transliterated',
+	'YI' => 'Yiddish - unicode',
+    );
+  my $wulang = $cgi->popup_menu(
+        -name    => 'wulang',
+        -id      => 'wulang',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('WUNDERGROUND.LANG'),
+    );
+  $template->param( WULANG => $wulang );
+
 
 # Menu: Miniserver
 } elsif ($R::form eq "2") {
@@ -442,7 +619,7 @@ if ($R::form eq "1" || !$R::form) {
   my $n;
   my $checked;
   my @fields = split(/;/,$cfg->param('SERVER.SENDDFC'));
-  for (my $i=1;$i<=4;$i++) {
+  for (my $i=1;$i<=8;$i++) {
     $checked = 0;
     foreach ( split( /;/,$cfg->param('SERVER.SENDDFC') ) ) {
       if ($_ eq $i) {
@@ -463,7 +640,7 @@ if ($R::form eq "1" || !$R::form) {
   # HFC
   my $hfc;
   @fields = split(/;/,$cfg->param('SERVER.SENDHFC'));
-  for ($i=1;$i<=36;$i++) {
+  for ($i=1;$i<=48;$i++) {
     $checked = 0;
     foreach ( split( /;/,$cfg->param('SERVER.SENDHFC') ) ) {
       if ($_ eq $i) {
@@ -564,7 +741,7 @@ sub wuquery
 {
 
         # Get data from Wunderground Server (API request) for testing API Key and Station
-        my $query = "$wuurl\/$R::apikey\/conditions\/pws:1\/lang:EN\/q\/$querystation\.json";
+        my $query = "$url\/$R::wuapikey\/conditions\/pws:1\/lang:EN\/q\/$querystation\.json";
 
         my $ua = new LWP::UserAgent;
         my $res = $ua->get($query);
@@ -576,6 +753,40 @@ sub wuquery
 
 	if ($urlstatuscode ne "200") {
                 $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+                &error;
+	}
+
+        # Decode JSON response from server
+        our $decoded_json = decode_json( $json );
+
+	return();
+
+}
+
+#####################################################
+# Query Dark Sky
+#####################################################
+
+sub darkskyquery
+{
+
+        # Get data from DarkSky Server (API request) for testing API Key
+        my $query = "$url\/forecast\/$R::darkskyapikey\/$querystation";
+        my $ua = new LWP::UserAgent;
+        my $res = $ua->get($query);
+        my $json = $res->decoded_content();
+
+        # Check status of request
+        my $urlstatus = $res->status_line;
+        my $urlstatuscode = substr($urlstatus,0,3);
+
+	if ($urlstatuscode ne "200" && $urlstatuscode ne "403" ) {
+                $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+                &error;
+	}
+
+	if ($urlstatuscode eq "403" ) {
+                $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
                 &error;
 	}
 

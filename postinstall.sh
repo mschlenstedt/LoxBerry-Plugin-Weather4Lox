@@ -29,11 +29,11 @@ ARGV4=$4 # Forth argument is Plugin version
 ARGV5=$5 # Fifth argument is Base folder of LoxBerry
 
 # Copy Apache2 configuration for WU4Lox
-echo "<INFO> Installing Apache2 configuration for WU4Lox"
+echo "<INFO> Installing Apache2 configuration for Weather4Lox"
 cp $LBHOMEDIR/config/plugins/$ARGV3/apache2.conf $LBHOMEDIR/system/apache2/sites-available/001-$ARGV3.conf > /dev/null 2>&1
 
 echo "<INFO> Installing Cronjob"
-ln -s REPLACELBPBINDIR/wu4lox_cronjob.sh $LBHOMEDIR/system/cron/cron.hourly/99-wu4lox_cronjob > /dev/null 2>&1
+ln -s REPLACELBPBINDIR/weather4lox_cronjob.sh $LBHOMEDIR/system/cron/cron.hourly/99-weather4lox_cronjob > /dev/null 2>&1
 
 # Copy Dummy files
 echo "<INFO> Copy dummy data files"
@@ -67,7 +67,7 @@ fi
 if [ ! -e $LBPLOG/REPLACELBPPLUGINDIR/index.txt ]; then
 	cp $LBPDATA/$ARGV3/dummies/index.txt $LBPLOG/$ARGV3/ > /dev/null 2>&1
 fi
-REPLACELBPBINDIR/wu4lox_cronjob.sh > /dev/null 2>&1
+REPLACELBPBINDIR/weather4lox_cronjob.sh > /dev/null 2>&1
 
 echo "<INFO> Creating Symlinks in Webfolder"
 ln -s $LBPLOG/REPLACELBPPLUGINDIR/webpage.html $LBHOMEDIR/webfrontend/html/plugins/REPLACELBPPLUGINDIR/webpage.html > /dev/null 2>&1
