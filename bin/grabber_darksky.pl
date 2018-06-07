@@ -126,9 +126,6 @@ my $decoded_json = decode_json( $json );
 my $t = localtime($decoded_json->{currently}->{time});
 LOGINF "Saving new Data for Timestamp $t to database.";
 
-#print "Debug: ", $tz, "\n";
-#exit;
-
 # Saving new current data...
 my $error = 0;
 open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
@@ -148,7 +145,6 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	print F $pcfg->param("SERVER.DARKSKYCOORDLAT"), "|";
 	print F $pcfg->param("SERVER.DARKSKYCOORDLONG"), "|";
-	# Convert elevation from feet to meter
 	print F "-9999|";
 	print F sprintf("%.1f",$decoded_json->{currently}->{temperature}), "|";
 	print F sprintf("%.1f",$decoded_json->{currently}->{apparentTemperature}), "|";
@@ -230,6 +226,7 @@ open(F,"<$lbplogdir/current.dat.tmp");
 	@filecontent = <F>;
 	foreach (@filecontent) {
 		chomp ($_);
+	# Convert elevation from feet to meter
 		LOGDEB "$_";
 	}
 close (F);

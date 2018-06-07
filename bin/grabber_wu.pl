@@ -30,13 +30,14 @@ use LWP::UserAgent;
 use JSON qw( decode_json ); 
 use File::Copy;
 use Getopt::Long;
+use Time::Piece;
 
 ##########################################################################
 # Read Settings
 ##########################################################################
 
 # Version of this script
-my $version = "4.2.0";
+my $version = "4.3.0";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -44,22 +45,42 @@ my $version = "4.2.0";
 #my $miniservers     = $cfg->param("BASE.MINISERVERS");
 #my $clouddns        = $cfg->param("BASE.CLOUDDNS");
 
-my $pcfg             = new Config::Simple("$lbpconfigdir/wu4lox.cfg");
-my $wuurl            = $pcfg->param("SERVER.WUURL");
-my $wuapikey         = $pcfg->param("SERVER.WUAPIKEY");
-my $wulang           = $pcfg->param("SERVER.WULANG");
+my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
+my $wuurl            = $pcfg->param("WUNDERGROUND.URL");
+my $wuapikey         = $pcfg->param("WUNDERGROUND.APIKEY");
+my $wulang           = $pcfg->param("WUNDERGROUND.LANG");
 my $stationid;
-if ($pcfg->param("SERVER.STATIONTYP") eq "statid") {
-	$stationid = $pcfg->param("SERVER.STATIONID");
-} elsif ($pcfg->param("SERVER.STATIONTYP") eq "coord") {
-	$stationid = $pcfg->param("SERVER.COORDLAT") . "," . $pcfg->param("SERVER.COORDLONG");
+if ($pcfg->param("WUNDERGROUND.STATIONTYP") eq "statid") {
+	$stationid = $pcfg->param("WUNDERGROUND.STATIONID");
+} elsif ($pcfg->param("WUNDERGROUND.STATIONTYP") eq "coord") {
+	$stationid = $pcfg->param("WUNDERGROUND.COORDLAT") . "," . $pcfg->param("WUNDERGROUND.COORDLONG");
 } else {
 	$stationid = "autoip"
 }
 
+# Read language phrases
+
+######
+###### Workaround
+######
+use LoxBerry::Web;
+use CGI;
+my $cgi = CGI->new;
+# Template
+my $template = HTML::Template->new(
+    filename => "$lbptemplatedir/settings.html",
+    global_vars => 1,
+    loop_context_vars => 1,
+    die_on_bad_params => 0,
+);
+######
+######
+######
+my %L = LoxBerry::System::readlanguage($template, "language.ini");
+
 # Create a logging object
-my $log = LoxBerry::Log->new ( 	name => 'fetch',
-			filename => "$lbplogdir/wu4lox.log",
+my $log = LoxBerry::Log->new ( 	name => 'grabber_wu',
+			filename => "$lbplogdir/weather4lox.log",
 			append => 1,
 );
 
@@ -70,7 +91,6 @@ GetOptions ('verbose' => \$verbose,
             'quiet'   => sub { $verbose = 0 });
 
 # Due to a bug in the Logging routine, set the loglevel fix to 3
-$log->loglevel(3);
 if ($verbose) {
 	$log->stdout(1);
 	$log->loglevel(7);
@@ -107,7 +127,8 @@ if ($urlstatuscode ne "200") {
 my $decoded_json = decode_json( $json );
 
 # Write location data into database
-LOGINF "Saving new Data for Timestamp $decoded_json->{current_observation}->{observation_time_rfc822} to database.";
+my $t = localtime($decoded_json->{current_observation}->{local_epoch});
+LOGINF "Saving new Data for Timestamp $t to database.";
 
 # Saving new current data...
 my $error = 0;
@@ -145,7 +166,19 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	my $humidity = $decoded_json->{current_observation}->{relative_humidity};
 	$humidity =~ s/(.*)\%$/$1/eg;
 	print F "$humidity|";
-	print F "$decoded_json->{current_observation}->{wind_dir}|";
+
+	my $wdir = $decoded_json->{current_observation}->{wind_degrees};
+        my $wdirdes;
+        if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+        if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
+        if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
+        if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
+        if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
+        if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
+        if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
+        if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
+        if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+        print F "$wdirdes|";
 	print F "$decoded_json->{current_observation}->{wind_degrees}|";
 	print F "$decoded_json->{current_observation}->{wind_kph}|";
 	print F "$decoded_json->{current_observation}->{wind_gust_kph}|";
@@ -196,6 +229,9 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$decoded_json->{sun_phase}->{sunrise}->{minute}|";
 	print F "$decoded_json->{sun_phase}->{sunset}->{hour}|";
 	print F "$decoded_json->{sun_phase}->{sunset}->{minute}";
+	print F "-9999|";
+	print F "-9999|";
+	print F "-9999|";
 close(F);
 
 LOGOK "Saving current data to $lbplogdir/current.dat.tmp successfully.";
@@ -241,10 +277,30 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$results->{qpf_allday}->{mm}|";
 		print F "$results->{snow_allday}->{cm}|";
 		print F "$results->{maxwind}->{kph}|";
-		print F "$results->{maxwind}->{dir}|";
+                $wdir = $results->{maxwind}->{degrees};
+                if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+                if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
+                if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
+                if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
+                if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
+                if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
+                if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
+                if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
+                if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+                print F "$wdirdes|";
 		print F "$results->{maxwind}->{degrees}|";
 		print F "$results->{avewind}->{kph}|";
-		print F "$results->{avewind}->{dir}|";
+                $wdir = $results->{avewind}->{degrees};
+                if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+                if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
+                if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
+                if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
+                if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
+                if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
+                if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
+                if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
+                if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+                print F "$wdirdes|";
 		print F "$results->{avewind}->{degrees}|";
 		print F "$results->{avehumidity}|";
 		print F "$results->{maxhumidity}|";
@@ -279,11 +335,20 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		else {$weather = "0";}
 		print F "$weather|";
 		print F "$results->{conditions}";
+		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
 		print F "\n";
 	}
 close(F);
 
-LOGOK "Saving current data to $lbplogdir/dailyforecast.dat successfully.";
+LOGOK "Saving daily forecast data to $lbplogdir/dailyforecast.dat.tmp successfully.";
 
 LOGDEB "Database content:";
 open(F,"<$lbplogdir/dailyforecast.dat.tmp");
@@ -320,7 +385,17 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$results->{feelslike}->{metric}|";
 		print F "$results->{heatindex}->{metric}|";
 		print F "$results->{humidity}|";
-		print F "$results->{wdir}->{dir}|";
+                $wdir = $results->{wdir}->{degrees};
+                if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+                if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
+                if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
+                if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
+                if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
+                if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
+                if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
+                if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
+                if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+                print F "$wdirdes|";
 		print F "$results->{wdir}->{degrees}|";
 		print F "$results->{wspd}->{metric}|";
 		print F "$results->{windchill}->{metric}|";
@@ -335,12 +410,13 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$results->{fctcode}|";
 		print F "$results->{icon}|";
 		print F "$results->{condition}";
+		print F "-9999|";
 		print F "\n";
 		$i++;
 	}
 close(F);
 
-LOGOK "Saving current data to $lbplogdir/hourlyforecast.dat.tmp successfully.";
+LOGOK "Saving hourly forecast data to $lbplogdir/hourlyforecast.dat.tmp successfully.";
 
 LOGDEB "Database content:";
 open(F,"<$lbplogdir/hourlyforecast.dat.tmp");
