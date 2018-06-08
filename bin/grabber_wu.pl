@@ -228,7 +228,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$decoded_json->{sun_phase}->{sunrise}->{hour}|";
 	print F "$decoded_json->{sun_phase}->{sunrise}->{minute}|";
 	print F "$decoded_json->{sun_phase}->{sunset}->{hour}|";
-	print F "$decoded_json->{sun_phase}->{sunset}->{minute}";
+	print F "$decoded_json->{sun_phase}->{sunset}->{minute}|";
 	print F "-9999|";
 	print F "-9999|";
 	print F "-9999|";
@@ -334,7 +334,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		elsif ($weather eq "hazy") {$weather = "5";}
 		else {$weather = "0";}
 		print F "$weather|";
-		print F "$results->{conditions}";
+		print F "$results->{conditions}|";
 		print F "-9999|";
 		print F "-9999|";
 		print F "-9999|";
@@ -409,7 +409,7 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$results->{pop}|";
 		print F "$results->{fctcode}|";
 		print F "$results->{icon}|";
-		print F "$results->{condition}";
+		print F "$results->{condition}|";
 		print F "-9999|";
 		print F "\n";
 		$i++;

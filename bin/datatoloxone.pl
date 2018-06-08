@@ -979,9 +979,9 @@ $value = $tmpsnow40;
 &send;
 $name = "calc+48\_snow";
 $value = $tmpsnow48;
+$udp = 1; # Really send now in one run
 &send;
 
-$udp = 1; # Really send now in one run
 
 #
 # Create Webpages
@@ -1073,6 +1073,9 @@ our $cur_prec_1hr   = @fields[26];
 
 our $cur_sun_r = "@fields[34]:@fields[35]";
 our $cur_sun_s = "@fields[36]:@fields[37]";
+our $cur_ozone = @fields[38];
+our $cur_sky = @fields[39];
+our $cur_pop = @fields[40];
 
 # Use night icons between sunset and sunrise
 our $hour_sun_r = @fields[34];
@@ -1173,6 +1176,8 @@ foreach (@dfcdata){
   ${dfc.$per._snow} = @fields[15]*0.393700787;
   ${dfc.$per._w_sp_h} = @fields[16]*0.621;
   ${dfc.$per._w_sp_a} = @fields[19]*0.621;
+  ${dfc.$per._pr} = @fields[31]*0.0295301;
+  ${dfc.$per._dp} = @fields[30]*1.8+32;
   } else {
   ${dfc.$per._tt_h} = @fields[11];
   ${dfc.$per._tt_l} = @fields[12];
@@ -1180,7 +1185,14 @@ foreach (@dfcdata){
   ${dfc.$per._snow} = @fields[15];
   ${dfc.$per._w_sp_h} = @fields[16];
   ${dfc.$per._w_sp_a} = @fields[19];
+  ${dfc.$per._pr} = @fields[31];
+  ${dfc.$per._dp} = @fields[30];
   }
+  ${dfc.$per._sun_r} = "@fields[34]:@fields[35]";
+  ${dfc.$per._sun_s} = "@fields[36]:@fields[37]";
+  ${dfc.$per._ozone} = @fields[28];
+  ${dfc.$per._moon_p} = @fields[29];
+  ${dfc.$per._uvi} = @fields[32];
   # Use night icons between sunset and sunrise
   #if (${dfc.$per._hour} > $hour_sun_s || ${dfc.$per._hour} < $hour_sun_r) {
   #  ${dfc.$per._dayornight} = "n";
@@ -1249,6 +1261,7 @@ foreach (@hfcdata){
   ${hfc.$per._we_code} = @fields[27];
   ${hfc.$per._we_icon} = @fields[28];
   ${hfc.$per._we_des} = @fields[29];
+  ${hfc.$per._ozone} = @fields[30];
   if (!$metric) {
   ${hfc.$per._tt} = @fields[11]*1.8+32;
   ${hfc.$per._tt_fl} = @fields[12]*1.8+32;
