@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Copy Apache2 configuration for WU4Lox
-echo "<INFO> Un-Installing Apache2 and DNSMasq configuration for WU4Lox"
+echo "<INFO> Un-Installing Apache2 and DNSMasq configuration for Weather4Lox"
 a2dissite 001-REPLACELBPPLUGINDIR > /dev/null 2>&1
 rm $LBHOMEDIR/system/apache2/sites-available/001-REPLACELBPPLUGINDIR.conf > /dev/null 2>&1
 service apache2 reload > /dev/null 2>&1
@@ -9,7 +9,7 @@ rm /etc/dnsmasq.d/REPLACELBPPLUGINDIR.conf > /dev/null 2>&1
 service dnsmasq restart > /dev/null 2>&1
 
 echo "<INFO> Installing Cronjob"
-rm $LBHOMEDIR/system/cron/cron.hourly/99-wu4lox_cronjob > /dev/null 2>&1
+rm $LBHOMEDIR/system/cron/cron.hourly/99-weather4lox_cronjob > /dev/null 2>&1
 
 # Exit with Status 0
 exit 0

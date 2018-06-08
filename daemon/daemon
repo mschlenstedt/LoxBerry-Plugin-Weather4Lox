@@ -2,20 +2,20 @@
 
 # pluginname=$(basename $0 .sh)
 pluginname=REPLACELBPPLUGINDIR
-touch $LBPLOG/$pluginname/wu4lox.log > /dev/null 2>&1
+touch $LBPLOG/$pluginname/weather4lox.log > /dev/null 2>&1
 
-echo "DAEMON: Starting DAEMON script" >> $LBPLOG/$pluginname/wu4lox.log
+echo "DAEMON: Starting DAEMON script" >> $LBPLOG/$pluginname/weather4lox.log
 if [ -x /usr/bin/logger ]; then
-    /usr/bin/logger "loxberry-plugin-$pluginname - DAEMON Script from WU4Lox Plugin"
+    /usr/bin/logger "loxberry-plugin-$pluginname - DAEMON Script from Weather4Lox Plugin"
 fi
 
 # Creating logfiles and databases in RAM disk
-echo "DAEMON: Restoring databases and logfiles in RAM Disk" >> $LBPLOG/$pluginname/wu4lox.log
+echo "DAEMON: Restoring databases and logfiles in RAM Disk" >> $LBPLOG/$pluginname/weather4lox.log
 if [ -x /usr/bin/logger ]; then
     /usr/bin/logger "loxberry-plugin-$pluginname - Restoring databases and logfiles in RAM Disk"
 fi
 
-echo "DAEMON: Restore databases" >> $LBPLOG/$pluginname/wu4lox.log
+echo "DAEMON: Restore databases" >> $LBPLOG/$pluginname/weather4lox.log
 if [ ! -e $LBPLOG/$pluginname/current.dat ]; then
 	cp $LBPDATA/$pluginname/current.dat $LBPLOG/$pluginname/
 fi
@@ -53,10 +53,10 @@ chown -vR loxberry:loxberry $LBPLOG/$pluginname/*
 # Source the iniparser
 . $LBHOMEDIR/libs/bashlib/iniparser.sh
  
-iniparser $LBPCONFIG/$pluginname/wu4lox.cfg "SERVER"
+iniparser $LBPCONFIG/$pluginname/weather4lox.cfg "SERVER"
 
 if [ $SERVEREMU -eq 1 ]; then
-	echo "DAEMON: Reenable Cloud Emulator" >> $LBPLOG/$pluginname/wu4lox.log
+	echo "DAEMON: Reenable Cloud Emulator" >> $LBPLOG/$pluginname/weather4lox.log
 	if [ -x /usr/bin/logger ]; then
 		/usr/bin/logger "loxberry-plugin-$pluginname - Reenable Cloud Emulator"
 	fi
