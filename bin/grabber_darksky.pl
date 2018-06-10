@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.2";
+my $version = "4.3.2.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -353,6 +353,10 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 	binmode F, ':encoding(UTF-8)';
 	$i = 1;
 	for my $results( @{$decoded_json->{hourly}->{data}} ){
+		# Skip first dataset (eq to current)
+		if ($i eq "1") {
+			next;
+		} 
 		print F "$i|";
 		$i++;
 		print F $results->{time}, "|";
