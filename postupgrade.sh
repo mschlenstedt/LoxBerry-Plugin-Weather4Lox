@@ -48,9 +48,5 @@ if [ $SERVEREMU -eq 1 ]; then
         $ARGV5/bin/plugins/$ARGV3/cloudemu enable > /dev/null 2>&1
 fi
 
-#echo "<INFO> Renaming some old theme files"
-#/bin/sed -i "s#THEME=appv4#THEME=light#g" $ARGV5/config/plugins/$ARGV3/wu4lox.cfg > /dev/null 2>&1
-#/bin/sed -i "s#THEME=classic#THEME=dark#g" $ARGV5/config/plugins/$ARGV3/wu4lox.cfg > /dev/null 2>&1
-
 # Exit with Status 0
 exit 0

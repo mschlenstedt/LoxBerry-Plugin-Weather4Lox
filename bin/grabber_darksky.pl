@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.0";
+my $version = "4.3.2";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -96,7 +96,7 @@ LOGSTART "Weather4Lox GRABBER_DARKSKY process started";
 LOGDEB "This is $0 Version $version";
 
 # Get data from Wunderground Server (API request) for current conditions
-my $queryurlcr = "$url\/forecast\/$apikey\/$stationid?lang=$lang&units=si&exclude=flags,alerts,minutely";
+my $queryurlcr = "$url\/forecast\/$apikey\/$stationid?lang=$lang&units=si&exclude=flags,alerts,minutely&extend=hourly";
 
 LOGINF "Fetching Data for Location $stationid";
 LOGDEB "URL: $queryurlcr";
