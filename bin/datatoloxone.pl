@@ -32,7 +32,7 @@ use DateTime;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.2";
+my $version = "4.3.3";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -1689,9 +1689,10 @@ sub send {
   
   if ($miniservers{1}{IPAddress} ne "" && $sendudp) {
     $tmpudp .= "$name\@$value; ";
+    LOGINF "Adding value to UDP send queue. Value:$name\@$value";
     if ($udp == 1) {
       foreach my $ms (sort keys %miniservers) {
-        LOGINF "$sendqueue: Send Data " . $miniservers{$ms}{Name};
+        LOGINF "$sendqueue: Send Data to " . $miniservers{$ms}{Name};
         # Send value
         my $sock = IO::Socket::INET->new(
         Proto    => 'udp',
