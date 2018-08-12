@@ -15,7 +15,7 @@ fi
 if [ -e $LBPLOG/REPLACELBPPLUGINDIR/webpage.html ]; then
 	cp $LBPLOG/REPLACELBPPLUGINDIR/webpage.html $LBPDATA/REPLACELBPPLUGINDIR
 fi
-if [ -e $LBPLOG/REPLACELBPPLUGINDIR/webpage..map.html ]; then
+if [ -e $LBPLOG/REPLACELBPPLUGINDIR/webpage.map.html ]; then
 	cp $LBPLOG/REPLACELBPPLUGINDIR/webpage.map.html $LBPDATA/REPLACELBPPLUGINDIR
 fi
 if [ -e $LBPLOG/REPLACELBPPLUGINDIR/webpage.dfc.html ]; then

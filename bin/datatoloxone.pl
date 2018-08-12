@@ -5,9 +5,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -246,39 +246,39 @@ $name = "cur_uvi";
 $value = @fields[24];
 &send;
 
-$name = "cur_prec_today"; 
+$name = "cur_prec_today";
 if (!$metric) {$value = @fields[25]*0.0393700787} else {$value = @fields[25]};
 &send;
 
-$name = "cur_prec_1hr"; 
+$name = "cur_prec_1hr";
 if (!$metric) {$value = @fields[26]*0.0393700787} else {$value = @fields[26]};
 &send;
 
-$name = "cur_we_icon"; 
+$name = "cur_we_icon";
 $value = @fields[27];
 #&send;
 
-$name = "cur_we_code"; 
+$name = "cur_we_code";
 $value = @fields[28];
 &send;
 
-$name = "cur_we_des"; 
+$name = "cur_we_des";
 $value = @fields[29];
 #&send;
 
-$name = "cur_moon_p"; 
+$name = "cur_moon_p";
 $value = @fields[30];
 &send;
 
-$name = "cur_moon_a"; 
+$name = "cur_moon_a";
 $value = @fields[31];
 &send;
 
-$name = "cur_moon_ph"; 
+$name = "cur_moon_ph";
 $value = @fields[32];
 #&send;
 
-$name = "cur_moon_h"; 
+$name = "cur_moon_h";
 $value = @fields[33];
 #&send;
 
@@ -789,7 +789,7 @@ foreach (@hfcdata){
     if ( $tmpttmax4 < @fields[11] ) { $tmpttmax4 = @fields[11]; }
     if ( $tmppopmin4 > @fields[26] ) { $tmppopmin4 = @fields[26]; }
     if ( $tmppopmax4 < @fields[26] ) { $tmppopmax4 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 8 ) {
     $tmpprec8 .+ @fields[24];
     $tmpsnow8 .+ @fields[25];
@@ -797,7 +797,7 @@ foreach (@hfcdata){
     if ( $tmpttmax8 < @fields[11] ) { $tmpttmax8 = @fields[11]; }
     if ( $tmppopmin8 > @fields[26] ) { $tmppopmin8 = @fields[26]; }
     if ( $tmppopmax8 < @fields[26] ) { $tmppopmax8 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 16 ) {
     $tmpprec16 .+ @fields[24];
     $tmpsnow16 .+ @fields[25];
@@ -805,7 +805,7 @@ foreach (@hfcdata){
     if ( $tmpttmax16 < @fields[11] ) { $tmpttmax16 = @fields[11]; }
     if ( $tmppopmin16 > @fields[26] ) { $tmppopmin16 = @fields[26]; }
     if ( $tmppopmax16 < @fields[26] ) { $tmppopmax16 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 24 ) {
     $tmpprec24 .+ @fields[24];
     $tmpsnow24 .+ @fields[25];
@@ -813,7 +813,7 @@ foreach (@hfcdata){
     if ( $tmpttmax24 < @fields[11] ) { $tmpttmax24 = @fields[11]; }
     if ( $tmppopmin24 > @fields[26] ) { $tmppopmin24 = @fields[26]; }
     if ( $tmppopmax24 < @fields[26] ) { $tmppopmax24 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 32 ) {
     $tmpprec32 .+ @fields[24];
     $tmpsnow32 .+ @fields[25];
@@ -821,7 +821,7 @@ foreach (@hfcdata){
     if ( $tmpttmax32 < @fields[11] ) { $tmpttmax32 = @fields[11]; }
     if ( $tmppopmin32 > @fields[26] ) { $tmppopmin32 = @fields[26]; }
     if ( $tmppopmax32 < @fields[26] ) { $tmppopmax32 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 40 ) {
     $tmpprec40 .+ @fields[24];
     $tmpsnow40 .+ @fields[25];
@@ -829,7 +829,7 @@ foreach (@hfcdata){
     if ( $tmpttmax40 < @fields[11] ) { $tmpttmax40 = @fields[11]; }
     if ( $tmppopmin40 > @fields[26] ) { $tmppopmin40 = @fields[26]; }
     if ( $tmppopmax40 < @fields[26] ) { $tmppopmax40 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 48 ) {
     $tmpprec48 .+ @fields[24];
     $tmpsnow48 .+ @fields[25];
@@ -837,7 +837,7 @@ foreach (@hfcdata){
     if ( $tmpttmax48 < @fields[11] ) { $tmpttmax48 = @fields[11]; }
     if ( $tmppopmin48 > @fields[26] ) { $tmppopmin48 = @fields[26]; }
     if ( $tmppopmax48 < @fields[26] ) { $tmppopmax48 = @fields[26]; }
-  } 
+  }
 
 }
 
@@ -1320,7 +1320,7 @@ LOGOK "Webpages created successfully.";
 #        ^                  ^                          ^                  ^            ^        ^
 #        URL                Port                       MS MAC             Coord        Format   Height
 #
-# The format could be 1 or 2, although Miniserver only seems to use format=1 
+# The format could be 1 or 2, although Miniserver only seems to use format=1
 # (format=2 is xml-output, but with less weather data)
 # The height is the geogr. height of your installation (seems to be used for windspeed etc.). You
 # can give the heights in meter or set this to auto or left blank (=auto).
@@ -1353,7 +1353,7 @@ if ($emu) {
     print F "</mb_metadata><valid_until>2030-12-31</valid_until>\n";
     print F "<station>\n";
     print F ";@fields[5];@fields[9];@fields[8];@fields[10];@fields[6];@fields[2];UTC" . substr (@fields[4], 0, 3) . "." . substr (@fields[4], 3, 2);
-    print F ";@fields[34]:@fields[35];@fields[36]:@fields[37];\n"; 
+    print F ";@fields[34]:@fields[35];@fields[36]:@fields[37];\n";
     print F $epochdate->dmy('.') . ";";
     print F $epochdate->day_abbr() . ";";
     printf ( F "%02d",$epochdate->hour() );
@@ -1378,11 +1378,11 @@ if ($emu) {
     print F ";";
     print F "     0;";
     # Convert WU Weathercode to Lox Weathercode
-    # WU: https://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary 
+    # WU: https://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary
     # Lox: https://www.loxone.com/dede/kb/weather-service/ seems not to be right (anymore),
     # correct Loxone Weather Types are:
     #  1 - wolkenlos
-    #  2 - heiter 
+    #  2 - heiter
     #  3 - heiter
     #  4 - heiter
     #  5 - heiter
@@ -1550,11 +1550,11 @@ if ($emu) {
       print F ";";
       print F "     0;";
       # Convert WU Weathercode to Lox Weathercode
-      # WU: https://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary 
+      # WU: https://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary
       # Lox: https://www.loxone.com/dede/kb/weather-service/ seems not to be right (anymore),
       # correct Loxone Weather Types are:
       #  1 - wolkenlos
-      #  2 - heiter 
+      #  2 - heiter
       #  3 - heiter
       #  4 - heiter
       #  5 - heiter
@@ -1686,7 +1686,7 @@ sub send {
   # Send by UDP
   my %miniservers;
   %miniservers = LoxBerry::System::get_miniservers();
-  
+
   if ($miniservers{1}{IPAddress} ne "" && $sendudp) {
     $tmpudp .= "$name\@$value; ";
     LOGINF "Adding value to UDP send queue. Value:$name\@$value";
