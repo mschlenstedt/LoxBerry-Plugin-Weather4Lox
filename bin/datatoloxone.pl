@@ -284,31 +284,43 @@ $value = @fields[33];
 
 # Create Sunset/rise Date in Loxone Epoch Format (1.1.2009)
 # Sunrise
-my $sunrdate = DateTime->new(
-      year      => $epochdate -> year(),
-      month     => $epochdate -> month(),
-      day       => $epochdate -> day(),
-      hour      => @fields[34],
-      minute    => @fields[35],
-);
-#$sunrdate->add( seconds => $tzseconds );
-
-# Sunset
-my $sunsdate = DateTime->new(
-      year      => $epochdate -> year(),
-      month     => $epochdate -> month(),
-      day       => $epochdate -> day(),
-      hour      => @fields[36],
-      minute    => @fields[37],
-);
-#$sunsdate->add( seconds => $tzseconds );
-
-$name = "cur_sun_r";
-$value = $sunrdate->epoch() - $dateref->epoch();
+my $sunrdate;
+if (@fields[34] < 24 && @fields[34] >=0 && @fields[35] < 60 && @fields[35] >= 0) {
+	$sunrdate = DateTime->new(
+	      year      => $epochdate -> year(),
+	      month     => $epochdate -> month(),
+	      day       => $epochdate -> day(),
+	      hour      => @fields[34],
+	      minute    => @fields[35],
+	);
+	#$sunrdate->add( seconds => $tzseconds );
+	$name = "cur_sun_r";
+	$value = $sunrdate->epoch() - $dateref->epoch();
+} else {
+	$sunrdate = "-9999";
+	$name = "cur_sun_r";
+	$value = $sunrdate;
+}
 &send;
 
-$name = "cur_sun_s";
-$value = $sunsdate->epoch() - $dateref->epoch();
+# Sunset
+my $sunsdate;
+if (@fields[36] < 24 && @fields[36] >=0 && @fields[37] < 60 && @fields[37] >= 0) {
+	$sunsdate = DateTime->new(
+	      year      => $epochdate -> year(),
+	      month     => $epochdate -> month(),
+	      day       => $epochdate -> day(),
+	      hour      => @fields[36],
+	      minute    => @fields[37],
+	);
+	#$sunsdate->add( seconds => $tzseconds );
+	$name = "cur_sun_s";
+	$value = $sunsdate->epoch() - $dateref->epoch();
+} else {
+	$sunsdate = "-9999";
+	$name = "cur_sun_s";
+	$value = $sunsdate;
+}
 &send;
 
 $name = "cur_ozone";
@@ -499,31 +511,43 @@ foreach (@dfcdata){
 
   # Create Sunset/rise Date in Loxone Epoch Format (1.1.2009)
   # Sunrise
-  $sunrdate = DateTime->new(
-      year      => $epochdatedfc -> year(),
-      month     => $epochdatedfc -> month(),
-      day       => $epochdatedfc -> day(),
-      hour      => @fields[33],
-      minute    => @fields[34],
-  );
-  #$sunrdate->add( seconds => $tzseconds );
-
-  # Sunset
-  $sunsdate = DateTime->new(
-      year      => $epochdatedfc -> year(),
-      month     => $epochdatedfc -> month(),
-      day       => $epochdatedfc -> day(),
-      hour      => @fields[35],
-      minute    => @fields[36],
-  );
-  #$sunsdate->add( seconds => $tzseconds );
-
-  $name = "dfc$per\_sun_r";
-  $value = $sunrdate->epoch() - $dateref->epoch();
+  my $sunrdate;
+  if (@fields[33] < 24 && @fields[33] >=0 && @fields[34] < 60 && @fields[34] >= 0) {
+	$sunrdate = DateTime->new(
+	      year      => $epochdate -> year(),
+	      month     => $epochdate -> month(),
+	      day       => $epochdate -> day(),
+	      hour      => @fields[33],
+	      minute    => @fields[34],
+	);
+	#$sunrdate->add( seconds => $tzseconds );
+	$name = "dfc$per\_sun_r";
+	$value = $sunrdate->epoch() - $dateref->epoch();
+  } else {
+	$sunrdate = "-9999";
+	$name = "dfc$per\_sun_r";
+	$value = $sunrdate;
+  }
   &send;
 
-  $name = "dfc$per\_sun_s";
-  $value = $sunsdate->epoch() - $dateref->epoch();
+  # Sunset
+  my $sunsdate;
+  if (@fields[35] < 24 && @fields[35] >=0 && @fields[36] < 60 && @fields[36] >= 0) {
+	$sunsdate = DateTime->new(
+	      year      => $epochdate -> year(),
+	      month     => $epochdate -> month(),
+	      day       => $epochdate -> day(),
+	      hour      => @fields[36],
+	      minute    => @fields[37],
+	);
+	#$sunsdate->add( seconds => $tzseconds );
+  	$name = "dfc$per\_sun_s";
+	$value = $sunsdate->epoch() - $dateref->epoch();
+  } else {
+	$sunsdate = "-9999";
+  	$name = "dfc$per\_sun_s";
+	$value = $sunsdate;
+  }
   $udp = 1; # Really send now in one run
   &send;
 
