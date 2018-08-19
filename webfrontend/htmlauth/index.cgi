@@ -155,11 +155,7 @@ if ($R::saveformdata1) {
 	# Write configuration file(s)
 	$cfg->param("WUNDERGROUND.APIKEY", "$R::wuapikey");
 	$cfg->param("WUNDERGROUND.STATIONTYP", "$R::wustationtyp");
-	if ($R::stationtyp eq "statid") {
-		$cfg->param("WUNDERGROUND.STATIONID", "$wuquerystation");
-	} else {
-		$cfg->param("WUNDERGROUND.STATIONID", "$R::wustationid");
-	}
+	$cfg->param("WUNDERGROUND.STATIONID", "$wuquerystation");
 	$cfg->param("WUNDERGROUND.COORDLAT", "$R::wucoordlat");
 	$cfg->param("WUNDERGROUND.COORDLONG", "$R::wucoordlong");
 	$cfg->param("WUNDERGROUND.LANG", "$R::wulang");
