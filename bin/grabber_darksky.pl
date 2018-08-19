@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.2.2";
+my $version = "4.3.3.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -143,8 +143,8 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$city|";
 	print F "$country|";
 	print F "-9999|";
-	print F $pcfg->param("SERVER.DARKSKYCOORDLAT"), "|";
-	print F $pcfg->param("SERVER.DARKSKYCOORDLONG"), "|";
+	print F $pcfg->param("DARKSKY.COORDLAT"), "|";
+	print F $pcfg->param("DARKSKY.COORDLONG"), "|";
 	print F "-9999|";
 	print F sprintf("%.1f",$decoded_json->{currently}->{temperature}), "|";
 	print F sprintf("%.1f",$decoded_json->{currently}->{apparentTemperature}), "|";
