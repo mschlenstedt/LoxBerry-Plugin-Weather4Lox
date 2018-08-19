@@ -87,7 +87,7 @@ if ($R::saveformdata1) {
 		if ($R::wustationtyp eq "statid") {
 			$querystation = $R::wustationid;
 		} 
-		elsif ($R::stationtyp eq "coord") {
+		elsif ($R::wustationtyp eq "coord") {
 			$querystation = $R::wucoordlat . "," . $R::wucoordlong;
 		}
 		else {
