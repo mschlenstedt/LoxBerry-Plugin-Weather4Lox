@@ -32,7 +32,7 @@ use DateTime;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.3.1";
+my $version = "4.3.3.2";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -1667,9 +1667,9 @@ if ($emu) {
       } elsif (@fields[27] eq "21") {
         $loxweathercode = "24";
       } elsif (@fields[27] eq "22") {
-        $loxweathercode = "24";
+        $loxweathercode = "22";
       } elsif (@fields[27] eq "23") {
-        $loxweathercode = "24";
+        $loxweathercode = "23";
       } elsif (@fields[27] eq "24") {
         $loxweathercode = "24";
       } else {
