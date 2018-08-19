@@ -32,7 +32,7 @@ use DateTime;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.3";
+my $version = "4.3.3.1";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -1687,21 +1687,24 @@ sub send {
   my %miniservers;
   %miniservers = LoxBerry::System::get_miniservers();
   
-  if ($miniservers{1}{IPAddress} ne "" && $sendudp) {
+  #if ($miniservers{1}{IPAddress} ne "" && $sendudp) {
+  if ($sendudp) {
     $tmpudp .= "$name\@$value; ";
     LOGINF "Adding value to UDP send queue. Value:$name\@$value";
     if ($udp == 1) {
       foreach my $ms (sort keys %miniservers) {
-        LOGINF "$sendqueue: Send Data to " . $miniservers{$ms}{Name};
-        # Send value
-        my $sock = IO::Socket::INET->new(
-        Proto    => 'udp',
-        PeerPort => $udpport,
-        PeerAddr =>  $miniservers{$ms}{IPAddress},
-        );
-        $sock->send($tmpudp);
-        LOGOK "$sendqueue: Send OK to " . $miniservers{$ms}{Name} . ". IP:" . $miniservers{$ms}{IPAddress} . " Port:$udpport";
-        $sendqueue++;
+	if ($miniservers{$ms}{IPAddress} ne "" && $udpport ne "") {
+	        LOGINF "$sendqueue: Send Data to " . $miniservers{$ms}{Name};
+	      	# Send value
+	        my $sock = IO::Socket::INET->new(
+	        Proto    => 'udp',
+	        PeerPort => $udpport,
+	        PeerAddr =>  $miniservers{$ms}{IPAddress},
+	        );
+	        $sock->send($tmpudp);
+	        LOGOK "$sendqueue: Send OK to " . $miniservers{$ms}{Name} . ". IP:" . $miniservers{$ms}{IPAddress} . " Port:$udpport";
+	        $sendqueue++;
+	}
       }
       $udp = 0;
       $tmpudp = "";
