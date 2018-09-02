@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.0";
+my $version = "4.3.2";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -58,8 +58,6 @@ if ($pcfg->param("WUNDERGROUND.STATIONTYP") eq "statid") {
 	$stationid = "autoip"
 }
 
-# Read language phrases
-
 ######
 ###### Workaround
 ######
@@ -76,6 +74,7 @@ my $template = HTML::Template->new(
 ######
 ######
 ######
+# Read language phrases
 my %L = LoxBerry::System::readlanguage($template, "language.ini");
 
 # Create a logging object
@@ -96,7 +95,7 @@ if ($verbose) {
 	$log->loglevel(7);
 }
 
-LOGSTART "WU4Lox FETCH process started";
+LOGSTART "Weather4Lox GRABBER_WUNDERGROUND process started";
 LOGDEB "This is $0 Version $version";
 
 # Get data from Wunderground Server (API request) for current conditions
@@ -340,10 +339,15 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "-9999|";
 		print F "-9999|";
 		print F "-9999|";
-		print F "-9999|";
-		print F "-9999|";
-		print F "-9999|";
-		print F "-9999|";
+		#Roger Steger 17.7.2018 change values of "-9999" to "0"; dataloxone.pl script cannot handle that value for the sunrise time. 
+		#The change is uncritical since sunrise time is not really fetched from wunderground. Instead of that fix we could handle such values also
+		#in dataloxone.pl. I have added also 2 more values to be compliant the data format (dailyforecast.format).
+		print F "0|";
+		print F "0|";
+		print F "0|";
+		print F "0|";
+		print F "0|";
+		print F "0|";
 		print F "\n";
 	}
 close(F);
