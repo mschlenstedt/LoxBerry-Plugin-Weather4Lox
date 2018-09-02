@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Loxone Weer</title>
@@ -10,56 +11,59 @@
     <script src="<!--$webpath-->/jquery/js/jquery-1.12.4.min.js"></script>
     <script src="<!--$webpath-->/jquery/js/jquery.mobile-1.4.5.min.js"></script>
 </head>
+
 <body>
+    <!-- Start of first page: #Actueel -->
+    <div data-role="page" id="start">
+        <div data-role="header">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="<!--$themeurlmain-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">Aktuell</a></li>
+                    <li><a href="<!--$themeurldfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">4 Dagen</a></li>
+                    <li><a href="<!--$themeurlhfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">36 Uur</a></li>
+                    <li><a href="#start" class="ui-btn-active ui-state-persist" style="font-size: 1em; line-height: 1.5em">Kaarten</a></li>
+                </ul>
+            </div>
+            <!-- /navbar -->
+        </div>
+        <!-- /header -->
 
-<!-- Start of first page: #Actueel -->
-<div data-role="page" id="start">
-	<div data-role="header">
-		<div data-role="navbar">
-			<ul>
-			<li><a href="<!--$themeurlmain-->"  data-transition="slide" style="font-size: 1em; line-height: 1.5em">Aktuell</a></li>
-			<li><a href="<!--$themeurldfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">4 Dagen</a></li>
-			<li><a href="<!--$themeurlhfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">36 Uur</a></li>
-			<li><a href="#start" class="ui-btn-active ui-state-persist" style="font-size: 1em; line-height: 1.5em">Kaarten</a></li>
-			</ul>
-		</div><!-- /navbar -->
-	</div><!-- /header -->
+        <div role="main" class="ui-content">
+            <div class="ui-body ui-body-a ui-corner-all">
+                <div data-role="collapsible-set" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d">
+                    <div data-role="collapsible" data-collapsed="false">
+                        <h3>Nederland Actueel</h3>
+                        <center>
+                            <img src="https://cdn.knmi.nl/knmi/map/current/weather/forecast/kaart_verwachtingen_Vandaag_dag.gif" width="425" height="445">
+                        </center>
+                    </div>
+                    <div data-role="collapsible">
+                        <h3>Nederland Buienradar</h3>
+                        <center>
+                            <img src="https://cdn.knmi.nl/knmi/map/page/weer/actueel-weer/neerslagradar/WWWRADAR_loop.gif" width="425"  height="445">
+                        </center>
+                    </div>
+                    <div data-role="collapsible">
+                        <h3>Nederland Voorspelling Nacht/Morgen</h3>
+                        <center>
+                            <img src="https://cdn.knmi.nl/knmi/map/current/weather/forecast/kaart_verwachtingen_Morgen_nacht.gif" width="425"  height="445">
+                            <br><br>
 
-	<div role="main" class="ui-content">
-	<div class="ui-body ui-body-a ui-corner-all">
-		<div data-role="collapsible-set" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d">
-		<div data-role="collapsible" data-collapsed="false">
-			<h3>Duitsland Actueel</h3>
-			<center>
-                        <img src="http://www.dwd.de/DE/wetter/wetterundklima_vorort/_functions/bildgalerie/wetter_aktuell.jpg?view=nasImage&nn=561906" width="500" height="463">
-			</center>
-		</div>
-		<div data-role="collapsible">
-			<h3>Duitsland Buienradar</h3>
-			<center>
-                        <img src="http://www.dwd.de/DWD/wetter/radar/radfilm_brd_akt.gif" width="500" height="463">
-			</center>
-		</div>
-		<div data-role="collapsible">
-			<h3>Duitsland Voorspelling Morgen</h3>
-			<center>
-                        <img src="http://www.dwd.de/DWD/wetter/wv_allg/deutschland/bilder/vhs_brd_morgenfrueh.jpg" width="500" height="463">
-			<br><br>
-                        <img src="http://www.dwd.de/DWD/wetter/wv_allg/deutschland/bilder/vhs_brd_morgenspaet.jpg" width="500" height="463">
-			</center>
-		</div>
-		<div data-role="collapsible">
-			<h3>Weer in Europa</h3>
-			<center>
-                        <img src="http://www.dwd.de/DE/wetter/wetter_weltweit/europa/bildgalerie/wetter_aktuell.jpg?view=nasImage&nn=453604" width="500" height="400">
-			</center>
-		</div>
-		</div>
-	</div>
-
-	</div><!-- /content -->
-
-</div><!-- /page Kaarten -->
-
+                            <img src="https://cdn.knmi.nl/knmi/map/current/weather/forecast/kaart_verwachtingen_Morgen_dag.gif" width="425"  height="445">
+                        </center>
+                    </div>
+                    <div data-role="collapsible">
+                        <h3>Weer in Europa</h3>
+                        <center>
+                            <img src="http://www.dwd.de/DE/wetter/wetter_weltweit/europa/bildgalerie/wetter_aktuell.jpg?view=nasImage&nn=453604" width="500" height="400">
+                        </center>
+                    </div>
+                </div>
+            </div>
+            <!-- /content -->
+        </div>
+        <!-- /page Kaarten -->
+    </div>
 </body>
+
 </html>
