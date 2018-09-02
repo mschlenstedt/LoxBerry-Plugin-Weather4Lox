@@ -32,7 +32,7 @@ use DateTime;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.3.2";
+my $version = "4.3.4.0";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -537,8 +537,8 @@ foreach (@dfcdata){
 	      year      => $epochdate -> year(),
 	      month     => $epochdate -> month(),
 	      day       => $epochdate -> day(),
-	      hour      => @fields[36],
-	      minute    => @fields[37],
+	      hour      => @fields[35],
+	      minute    => @fields[36],
 	);
 	#$sunsdate->add( seconds => $tzseconds );
   	$name = "dfc$per\_sun_s";
