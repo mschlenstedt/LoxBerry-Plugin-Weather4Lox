@@ -33,7 +33,7 @@ use Getopt::Long;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.0";
+my $version = "4.3.4";
 
 my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $service          = $pcfg->param("SERVER.WEATHERSERVICE");

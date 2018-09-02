@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.3.1";
+my $version = "4.3.4.0";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -140,7 +140,9 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	print F "$decoded_json->{timezone}|";
 	print F sprintf("+%04d", $decoded_json->{offset} * 100), "|";
+	$city = Encode::decode("UTF-8", $city);
 	print F "$city|";
+	$country = Encode::decode("UTF-8", $country);
 	print F "$country|";
 	print F "-9999|";
 	print F $pcfg->param("DARKSKY.COORDLAT"), "|";
