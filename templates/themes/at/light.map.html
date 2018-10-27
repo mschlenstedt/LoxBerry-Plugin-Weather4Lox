@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Loxone Weather</title>
+    <meta name="viewport" content="width=600, initial-scale=1">
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/themes/LoxoneV4.min.css" />
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/themes/jquery.mobile.icons.min.css" />
+    <link rel="stylesheet" href="<!--$webpath-->/jquery/css/jquery.mobile.structure-1.4.5.min.css" /> 
+    <script src="<!--$webpath-->/jquery/js/jquery-1.12.4.min.js"></script>
+    <script src="<!--$webpath-->/jquery/js/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+
+<!-- Start of first page: #current -->
+<div data-role="page" id="start">
+	<div data-role="header">
+		<div data-role="navbar">
+			<ul>
+			<li><a href="<!--$themeurlmain-->"  data-transition="slide" style="font-size: 1em; line-height: 1.5em">Aktuell</a></li>
+			<li><a href="<!--$themeurldfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">4 Tage</a></li>
+			<li><a href="<!--$themeurlhfc-->" data-transition="slide" style="font-size: 1em; line-height: 1.5em">36 Stunden</a></li>
+			<li><a href="#start" class="ui-btn-active ui-state-persist" style="font-size: 1em; line-height: 1.5em">Karte</a></li>
+			</ul>
+		</div><!-- /navbar -->
+	</div><!-- /header -->
+
+	<div role="main" class="ui-content">
+	<div class="ui-body ui-body-a ui-corner-all">
+		<div data-role="collapsible-set" data-collapsed-icon="arrow-r" data-expanded-icon="arrow-d">
+		<div data-role="collapsible" data-collapsed="false">
+			<h3>Österreich Aktuell</h3>
+			<center>
+                        <img src="https://file.wetter.at/mowis/mobil2014/aut_d0.jpg" width="500">
+			</center>
+		</div>
+		<div data-role="collapsible">
+			<h3>Österreich Regenradar</h3>
+			<center>
+                        <img src="https://www.austrocontrol.at/jart/met/radar/loop.gif" width="500">
+			<br><br>
+                        <img src="https://www.austrocontrol.at/jart/met/radar/satloop.gif" width="500">
+			</center>
+		</div>
+		<div data-role="collapsible">
+			<h3>Osterreich Vorhersage Morgen</h3>
+			<center>
+                        <img src="https://file.wetter.at/mowis/mobil2014/aut_d1_vorm.jpg" width="500">
+			<br><br>
+                        <img src="https://file.wetter.at/mowis/mobil2014/aut_d1_nachm.jpg" width="500">
+			</center>
+		</div>
+		<div data-role="collapsible">
+			<h3>Europawetter</h3>
+			<center>
+                        <img src="http://www.dwd.de/DE/wetter/wetter_weltweit/europa/bildgalerie/wetter_aktuell.jpg?view=nasImage&nn=453604" width="500">
+			</center>
+		</div>
+		</div>
+	</div>
+
+	</div><!-- /content -->
+
+</div><!-- /page map -->
