@@ -32,7 +32,7 @@ use DateTime;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.4.0";
+my $version = "4.4.0.0";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -48,9 +48,12 @@ our $stdiconset       = $pcfg->param("WEB.ICONSET");
 our $lang = lblanguage();
 
 # Create a logging object
-my $log = LoxBerry::Log->new (  name => 'datatoloxone',
-                        filename => "$lbplogdir/weather4lox.log",
-                        append => 1,
+my $log = LoxBerry::Log->new (
+	package => 'weather4lox',
+	name => 'datatoloxone',
+	logdir => "$lbplogdir",
+	#filename => "$lbplogdir/weather4lox.log",
+	#append => 1,
 );
 
 # Commandline options
@@ -76,9 +79,11 @@ LOGDEB "This is $0 Version $version";
 my $i;
 
 # Clear HTML databse
-open(F,">$lbplogdir/weatherdata.html");
-  print F "";
-close(F);
+#open(F,">$lbplogdir/weatherdata.html");
+#  flock(F,2);
+#  print F "";
+#  flock(F,8);
+#close(F);
 
 # Date Reference: Convert into Loxone Epoche (1.1.2009)
 my $dateref = DateTime->new(
@@ -1119,12 +1124,14 @@ if (!-e "$lbptemplatedir/themes/$lang/$theme.main.html") {
 	$theme = "dark";
 }
 open(F1,">$lbplogdir/webpage.html");
+flock(F1,2);
 open(F,"<$lbptemplatedir/themes/$lang/$theme.main.html");
 while (<F>) {
   $_ =~ s/<!--\$(.*?)-->/${$1}/g;
   print F1 $_;
 }
 close(F);
+flock(F1,8);
 close(F1);
 
 if (-e "$lbplogdir/webpage.html") {
@@ -1144,12 +1151,14 @@ if (!-e "$lbptemplatedir/themes/$lang/$theme.map.html") {
 	$theme = "dark";
 }
 open(F1,">$lbplogdir/webpage.map.html");
+flock(F1,2);
 open(F,"<$lbptemplatedir/themes/$lang/$theme.map.html");
   while (<F>) {
     $_ =~ s/<!--\$(.*?)-->/${$1}/g;
     print F1 $_;
   }
 close(F);
+flock(F1,8);
 close(F1);
 
 if (-e "$lbplogdir/webpage.map.html") {
@@ -1235,12 +1244,14 @@ if (!-e "$lbptemplatedir/themes/$lang/$theme.dfc.html") {
 	$theme = "dark";
 }
 open(F1,">$lbplogdir/webpage.dfc.html");
+flock(F1,2);
 open(F,"<$lbptemplatedir/themes/$lang/$theme.dfc.html");
   while (<F>) {
     $_ =~ s/<!--\$(.*?)-->/${$1}/g;
     print F1 $_;
   }
 close(F);
+flock(F1,8);
 close(F1);
 
 if (-e "$lbplogdir/webpage.dfc.html") {
@@ -1321,12 +1332,14 @@ if (!-e "$lbptemplatedir/themes/$lang/$theme.hfc.html") {
 	$theme = "dark";
 }
 open(F1,">$lbplogdir/webpage.hfc.html");
+flock(F1,2);
 open(F,"<$lbptemplatedir/themes/$lang/$theme.hfc.html");
   while (<F>) {
     $_ =~ s/<!--\$(.*?)-->/${$1}/g;
     print F1 $_;
   }
 close(F);
+flock(F1,8);
 close(F1);
 
 if (-e "$lbplogdir/webpage.hfc.html") {
@@ -1371,6 +1384,7 @@ if ($emu) {
   @fields = split(/\|/,$curdata);
 
   open(F,">$lbplogdir/index.txt");
+    flock(F,2);
     print F "<mb_metadata>\n";
     print F "id;name;longitude;latitude;height (m.asl.);country;timezone;utc-timedifference;sunrise;sunset;";
     print F "local date;weekday;local time;temperature(C);feeledTemperature(C);windspeed(km/h);winddirection(degr);wind gust(km/h);low clouds(%);medium clouds(%);high clouds(%);precipitation(mm);probability of Precip(%);snowFraction;sea level pressure(hPa);relative humidity(%);CAPE;picto-code;radiation (W/m2);\n";
@@ -1441,21 +1455,6 @@ if ($emu) {
     # 34 - leichter Schneeschauer
     # 35 - Schneeregen
     my $loxweathercode;
-    #if (@fields[28] eq "16") {
-    #  $loxweathercode = "21";
-    #} elsif (@fields[28] eq "19") {
-    #  $loxweathercode = "26";
-    #} elsif (@fields[28] eq "12") {
-    #  $loxweathercode = "10";
-    #} elsif (@fields[28] eq "13") {
-    #  $loxweathercode = "11";
-    #} elsif (@fields[28] eq "14") {
-    #  $loxweathercode = "18";
-    #} elsif (@fields[28] eq "15") {
-    #  $loxweathercode = "18";
-    #} else {
-    #  $loxweathercode = @fields[28];
-    #}
     if (@fields[28] eq "2") {
       $loxweathercode = "7";
     } elsif (@fields[28] eq "3") {
@@ -1495,11 +1494,7 @@ if ($emu) {
     } elsif (@fields[28] eq "21") {
       $loxweathercode = "24";
     } elsif (@fields[28] eq "22") {
-      $loxweathercode = "24";
-    } elsif (@fields[28] eq "23") {
-      $loxweathercode = "24";
-    } elsif (@fields[28] eq "24") {
-      $loxweathercode = "24";
+      $loxweathercode = "7";
     } else {
       $loxweathercode = @fields[28];
     }
@@ -1507,6 +1502,7 @@ if ($emu) {
     print F ";";
     printf ( F "%4d", @fields[22]);
     print F ";\n";
+  flock(F,8);
   close(F);
 
   #############################################
@@ -1525,6 +1521,7 @@ if ($emu) {
   my $hfcdate;
 
   open(F,">>$lbplogdir/index.txt");
+  flock(F,2);
 
     foreach (@hfcdata) {
 
@@ -1613,21 +1610,6 @@ if ($emu) {
       # 34 - leichter Schneeschauer
       # 35 - Schneeregen
       my $loxweathercode;
-      #if (@fields[28] eq "16") {
-      #  $loxweathercode = "21";
-      #} elsif (@fields[28] eq "19") {
-      #  $loxweathercode = "26";
-      #} elsif (@fields[28] eq "12") {
-      #  $loxweathercode = "10";
-      #} elsif (@fields[28] eq "13") {
-      #  $loxweathercode = "11";
-      #} elsif (@fields[28] eq "14") {
-      #  $loxweathercode = "18";
-      #} elsif (@fields[28] eq "15") {
-      #  $loxweathercode = "18";
-      #} else {
-      #  $loxweathercode = @fields[28];
-      #}
       if (@fields[27] eq "2") {
         $loxweathercode = "7";
       } elsif (@fields[27] eq "3") {
@@ -1667,11 +1649,7 @@ if ($emu) {
       } elsif (@fields[27] eq "21") {
         $loxweathercode = "24";
       } elsif (@fields[27] eq "22") {
-        $loxweathercode = "22";
-      } elsif (@fields[27] eq "23") {
-        $loxweathercode = "23";
-      } elsif (@fields[27] eq "24") {
-        $loxweathercode = "24";
+        $loxweathercode = "7";
       } else {
         $loxweathercode = @fields[27];
       }
@@ -1684,6 +1662,7 @@ if ($emu) {
 
     print F "</station>\n";
 
+  flock(F,8);
   close(F);
 
   LOGOK "Files for Cloud Weather Emulator created successfully.";
@@ -1692,7 +1671,6 @@ if ($emu) {
 
 # Finish
 LOGOK "We are done. Good bye.";
-LOGEND "Exit.";
 exit;
 
 #
@@ -1738,6 +1716,11 @@ sub send {
   return();
 
 }
-
-LOGEND "Exit.";
 exit;
+
+
+END
+{
+	LOGEND;
+}
+

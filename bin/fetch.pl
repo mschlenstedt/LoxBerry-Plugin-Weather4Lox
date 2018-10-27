@@ -33,15 +33,18 @@ use Getopt::Long;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.4";
+my $version = "4.4.0";
 
 my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $service          = $pcfg->param("SERVER.WEATHERSERVICE");
 
 # Create a logging object
-my $log = LoxBerry::Log->new ( 	name => 'fetch',
-			filename => "$lbplogdir/weather4lox.log",
-			append => 1,
+my $log = LoxBerry::Log->new (
+	package => 'weather4lox',
+	name => 'fetch',
+	logdir => "$lbplogdir",
+	#filename => "$lbplogdir/weather4lox.log",
+	#append => 1,
 );
 
 # Commandline options
@@ -73,7 +76,6 @@ if (-e "$lbpbindir/grabber_$service.pl") {
 } else {
 
   LOGCRIT "Cannot find grabber script for service $service.";
-  LOGEND "Exit.";
   exit (1);
 
 }
@@ -91,5 +93,10 @@ if ($verbose) {
 
 # Exit
 $log->open;
-LOGEND "Exit.";
 exit;
+
+END
+{
+	LOGEND;
+}
+

@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.3.4.0";
+my $version = "4.4.0.0";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -58,25 +58,28 @@ my $country      = $pcfg->param("DARKSKY.COUNTRY");
 ######
 ###### Workaround
 ######
-use LoxBerry::Web;
-use CGI;
-my $cgi = CGI->new;
+#use LoxBerry::Web;
+#use CGI;
+#my $cgi = CGI->new;
 # Template
-my $template = HTML::Template->new(
-    filename => "$lbptemplatedir/settings.html",
-    global_vars => 1,
-    loop_context_vars => 1,
-    die_on_bad_params => 0,
-);
+#my $template = HTML::Template->new(
+#    filename => "$lbptemplatedir/settings.html",
+#    global_vars => 1,
+#    loop_context_vars => 1,
+#    die_on_bad_params => 0,
+#);
 ######
 ######
 ######
 my %L = LoxBerry::System::readlanguage($template, "language.ini");
 
 # Create a logging object
-my $log = LoxBerry::Log->new ( 	name => 'grabber_darksky',
-			filename => "$lbplogdir/weather4lox.log",
-			append => 1,
+my $log = LoxBerry::Log->new (
+	package => 'weather4lox',
+	name => 'grabber_darksky',
+	logdir => "$lbplogdir",
+	#filename => "$lbplogdir/weather4lox.log",
+	#append => 1,
 );
 
 # Commandline options
@@ -113,7 +116,6 @@ LOGDEB "Status: $urlstatus";
 
 if ($urlstatuscode ne "200") {
   LOGCRIT "Failed to fetch data for $stationid\. Status Code: $urlstatuscode";
-  LOGEND "Exit.";
   exit 2;
 } else {
   LOGOK "Data fetched successfully for $stationid";
@@ -131,7 +133,6 @@ my $error = 0;
 open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	if ($error) {
 		LOGCRIT "Cannot open $lbpconfigdir/current.dat.tmp";
-  		LOGEND "Exit.";
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
@@ -238,7 +239,6 @@ $error = 0;
 open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 	if ($error) {
 		LOGCRIT "Cannot open $lbplogdir/dailyforecast.dat.tmp";
-  		LOGEND "Exit.";
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
@@ -349,7 +349,6 @@ $error = 0;
 open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 	if ($error) {
 		LOGCRIT "Cannot open $lbplogdir/hourlyforecast.dat.tmp";
-  		LOGEND "Exit.";
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
@@ -545,6 +544,10 @@ if ($hourlysize > 100) {
 LOGOK "Current Data and Forecasts saved successfully.";
 
 # Exit
-LOGEND "Exit.";
 exit;
+
+END
+{
+	LOGEND;
+}
 
