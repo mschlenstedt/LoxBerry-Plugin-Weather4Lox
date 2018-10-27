@@ -582,6 +582,20 @@
 														</td>
 													</tr>
 													<tr>
+														<td width="25%">
+															<label id="labelthemelang"><TMPL_VAR SETTINGS.LABEL_THEMELANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR THEMELANG>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+																						&nbsp;
+														</td>
+													</tr>
+													<tr>
 														<td colspan=4>
 														&nbsp;
 														</td>
@@ -603,10 +617,11 @@
 									$('select[name=emu]').attr('data-role','flipswitch');
 									$('select[name=theme]').attr('data-mini','true');
 									$('select[name=iconset]').attr('data-mini','true');
+									$('select[name=lang]').attr('datalang'true');
 
 									// Preview Link for theme and iconset
 									function preview() {
-										var url = './show.cgi?theme=' + $('#theme').val() + '&iconset=' + $('#iconset').val();
+										var url = './show.cgi?theme=' + $('#theme').val() + '&iconset=' + $('#iconset').val() + '&lang=' + $('#themelang').val();
 										window.open(url, 'NewWindow');
 									}
 									</script>

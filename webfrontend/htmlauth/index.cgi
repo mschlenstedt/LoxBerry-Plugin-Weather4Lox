@@ -316,6 +316,7 @@ if ($R::saveformdata3) {
 	$cfg->param("SERVER.EMU", "$R::emu");
 	$cfg->param("WEB.THEME", "$R::theme");
 	$cfg->param("WEB.ICONSET", "$R::iconset");
+	$cfg->param("WEB.LANG", "$R::themelang");
 
 	$cfg->save();
 	
@@ -716,6 +717,24 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('WEB.ICONSET'),
     );
   $template->param( ICONSET => $iconset );
+
+  # Theme LANG
+  @values = ('at', 'nl', 'en', 'de', 'es' );
+  %labels = (
+        'at' => "Austrian",
+        'nl' => "Dutch",
+        'en' => "English",
+        'de' => "German",
+        'es' => "Spanish",
+    );
+  my $themelang = $cgi->popup_menu(
+        -name    => 'themelang',
+        -id      => 'themelang',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('WEB.LANG'),
+    );
+  $template->param( THEMELANG => $themelang );
 
 }
 
