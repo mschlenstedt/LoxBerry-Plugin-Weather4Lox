@@ -662,7 +662,7 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		if ($weather eq "900") { $icon = "rain" };
 		if (!$icon) { $icon = "rain" };
 		print F "$icon|"; 
-		$weather = $results->{weather}->{description};
+		print F "$results->{weather}->{description}|";
 		print F "$results->{ozone}|";
 		print F "$results->{ghi}|";
 		print F "$results->{vis}|";
