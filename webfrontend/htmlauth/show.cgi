@@ -32,7 +32,7 @@ use CGI qw/:standard/;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0";
+my $version = "4.4.0.1";
 
 # Figure out in which subfolder we are installed
 our $psubfolder = abs_path($0);
@@ -50,7 +50,7 @@ our $stdiconset      = $pcfg->param("WEB.ICONSET");
 our $metric          = $pcfg->param("SERVER.METRIC");
 
 # If Theme Lang is set, us it instead of system lang
-if (!defined $pcfg->param("WEB.LANG")) {
+if (defined $pcfg->param("WEB.LANG")) {
 	$lang = $pcfg->param("WEB.LANG");
 }
 

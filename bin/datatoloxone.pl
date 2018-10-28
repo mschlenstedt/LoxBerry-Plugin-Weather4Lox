@@ -32,7 +32,7 @@ use DateTime;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.0";
+my $version = "4.4.0.1";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -1026,6 +1026,19 @@ our $themeurlhfc = "./webpage.hfc.html";
 our $themeurlmap = "./webpage.map.html";
 our $webpath = "/plugins/$lbpplugindir";
 
+my $themelang;
+if (defined $pcfg->param("WEB.LANG")) {
+	$themelang = $pcfg->param("WEB.LANG");
+} else {
+	$themelang = $lang;
+}
+if (!-e "$lbptemplatedir/themes/$themelang/$theme.hfc.html") {
+	$themelang = "en";
+}
+if (!-e "$lbptemplatedir/themes/$themelang/$theme.hfc.html") {
+	$theme = "dark";
+}
+
 #############################################
 # CURRENT CONDITIONS
 #############################################
@@ -1116,16 +1129,9 @@ our  $cur_dayornight = "d";
 }
 
 # Write cached weboage
-$lang = lblanguage();
-if (!-e "$lbptemplatedir/themes/$lang/$theme.main.html") {
-	$lang = "en";
-}
-if (!-e "$lbptemplatedir/themes/$lang/$theme.main.html") {
-	$theme = "dark";
-}
 open(F1,">$lbplogdir/webpage.html");
 flock(F1,2);
-open(F,"<$lbptemplatedir/themes/$lang/$theme.main.html");
+open(F,"<$lbptemplatedir/themes/$themelang/$theme.main.html");
 while (<F>) {
   $_ =~ s/<!--\$(.*?)-->/${$1}/g;
   print F1 $_;
@@ -1143,16 +1149,9 @@ if (-e "$lbplogdir/webpage.html") {
 #############################################
 
 # Write cached weboage
-$lang = lblanguage();
-if (!-e "$lbptemplatedir/themes/$lang/$theme.map.html") {
-	$lang = "en";
-}
-if (!-e "$lbptemplatedir/themes/$lang/$theme.map.html") {
-	$theme = "dark";
-}
 open(F1,">$lbplogdir/webpage.map.html");
 flock(F1,2);
-open(F,"<$lbptemplatedir/themes/$lang/$theme.map.html");
+open(F,"<$lbptemplatedir/themes/$themelang/$theme.map.html");
   while (<F>) {
     $_ =~ s/<!--\$(.*?)-->/${$1}/g;
     print F1 $_;
@@ -1236,16 +1235,9 @@ foreach (@dfcdata){
 }
 
 # Write cached weboage
-$lang = lblanguage();
-if (!-e "$lbptemplatedir/themes/$lang/$theme.dfc.html") {
-	$lang = "en";
-}
-if (!-e "$lbptemplatedir/themes/$lang/$theme.dfc.html") {
-	$theme = "dark";
-}
 open(F1,">$lbplogdir/webpage.dfc.html");
 flock(F1,2);
-open(F,"<$lbptemplatedir/themes/$lang/$theme.dfc.html");
+open(F,"<$lbptemplatedir/themes/$themelang/$theme.dfc.html");
   while (<F>) {
     $_ =~ s/<!--\$(.*?)-->/${$1}/g;
     print F1 $_;
@@ -1324,16 +1316,10 @@ foreach (@hfcdata){
 }
 
 # Write cached weboage
-$lang = lblanguage();
-if (!-e "$lbptemplatedir/themes/$lang/$theme.hfc.html") {
-	$lang = "en";
-}
-if (!-e "$lbptemplatedir/themes/$lang/$theme.hfc.html") {
-	$theme = "dark";
-}
+# If Theme Lang is set, us it instead of system lang
 open(F1,">$lbplogdir/webpage.hfc.html");
 flock(F1,2);
-open(F,"<$lbptemplatedir/themes/$lang/$theme.hfc.html");
+open(F,"<$lbptemplatedir/themes/$themelang/$theme.hfc.html");
   while (<F>) {
     $_ =~ s/<!--\$(.*?)-->/${$1}/g;
     print F1 $_;
