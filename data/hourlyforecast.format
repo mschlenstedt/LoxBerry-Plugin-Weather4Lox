@@ -32,4 +32,6 @@
 # 28: Icon Name
 # 29: Weather Description
 # 30: Ozone (DU)
+# 31: Solar Radiation (W/sqm)
+# 32: Visability (km)
 #

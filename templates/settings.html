@@ -132,7 +132,7 @@
 													</tr>
 													<tr>
 														<td width="25%">
-															<label id="labelwulang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+															<label id="labeldarkskylang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
 														</td>
 														<td width="50%">
 															<TMPL_VAR DARKSKYLANG>
@@ -164,6 +164,119 @@
 														</td>
 														<td width="50%">
 															<input id="darkskycountry" name="darkskycountry" type="text" class="textfield" value="<TMPL_VAR DARKSKY.COUNTRY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+															<h2><TMPL_VAR SETTINGS.LABEL_WEATHERBIT_SETTINGS></h2>
+														</td>
+														<td align="right">
+																						<a href="https://www.weatherbit.io/" target="_blank"><b>Powered by the Weatherbit API</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherbitapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+														</td>
+														<td width="50%">
+																<input id="weatherbitapikey" name="weatherbitapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WEATHERBIT.APIKEY>" 
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%" valign="top">
+															<br><label id="labelweatherbitcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labelweatherbitcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+															</td>
+															<td>
+															<input id="weatherbitcoordlat" name="weatherbitcoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLAT>" 
+																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+															</td>
+															<td>
+															<label id="labelweatherbitcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+															</td>
+															<td>
+															<input id="weatherbitcoordlong" name="weatherbitcoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLONG>" 
+																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<a id="weatherbitcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+															data-role="button" id="btnweatherbitaddresssearch" data-inline="true" data-mini="true"
+															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=weatherbit',
+															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+															</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherbitlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR WEATHERBITLANG>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherbitcity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
+														</td>
+														<td width="50%">
+															<input id="weatherbitcity" name="weatherbitcity" type="text" class="textfield" value="<TMPL_VAR WEATHERBIT.STATION>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherbitcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
+														</td>
+														<td width="50%">
+															<input id="weatherbitcountry" name="weatherbitcountry" type="text" class="textfield" value="<TMPL_VAR WEATHERBIT.COUNTRY>">
 														</td>
 														<td width="5%" valign="middle">
 															&nbsp;
@@ -267,6 +380,9 @@
 															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=wu',
 															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
 															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+															<!-- Needed for compatibility reasons for OSM address search -->
+															<input id="wucity" name="wucity" type="hidden" value="">
+															<input id="wucountry" name="wucountry" type="hidden" value="">
 															</a>
 														</td>
 													</tr>

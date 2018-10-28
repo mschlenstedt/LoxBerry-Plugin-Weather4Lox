@@ -32,7 +32,7 @@ use DateTime;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.1";
+my $version = "4.4.0.2";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -338,6 +338,10 @@ $value = @fields[39];
 
 $name = "cur_pop";
 $value = @fields[40];
+&send;
+
+$name = "cur_snow";
+$value = @fields[41];
 $udp = 1; # Really send now in one run
 &send;
 
@@ -553,6 +557,10 @@ foreach (@dfcdata){
   	$name = "dfc$per\_sun_s";
 	$value = $sunsdate;
   }
+  &send;
+
+  $name = "dfc$per\_vis";
+  $value = @fields[37];
   $udp = 1; # Really send now in one run
   &send;
 
@@ -712,6 +720,14 @@ foreach (@hfcdata){
 
   $name = "hfc$per\_ozone";
   $value = @fields[30];
+  &send;
+
+  $name = "hfc$per\_sr";
+  $value = @fields[31];
+  &send;
+
+  $name = "hfc$per\_vis";
+  $value = @fields[32];
   $udp = 1; # Really send now in one run
   &send;
 
@@ -1640,7 +1656,9 @@ if ($emu) {
         $loxweathercode = @fields[27];
       }
       printf ( F "%2d", $loxweathercode);
-      print F ";   0;\n";
+      print F ";";
+      printf ( F "%4d", @fields[31]);
+      print F ";\n";
 
       $i++;
 

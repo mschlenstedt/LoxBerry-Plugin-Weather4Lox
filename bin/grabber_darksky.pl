@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.0";
+my $version = "4.4.0.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -71,7 +71,8 @@ my $country      = $pcfg->param("DARKSKY.COUNTRY");
 ######
 ######
 ######
-my %L = LoxBerry::System::readlanguage($template, "language.ini");
+#my %L = LoxBerry::System::readlanguage($template, "language.ini");
+my %L = LoxBerry::System::readlanguage("language.ini");
 
 # Create a logging object
 my $log = LoxBerry::Log->new (
@@ -318,7 +319,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		else {$weather = "0";}
 		print F "$weather|";
 		print F "$results->{summary}|";
-		print F sprintf("%.1f",$results->{dewPoint}), "|";
+		print F sprintf("%.1f",$results->{ozone}), "|";
 		print F $results->{moonPhase}*100, "|";
 		print F sprintf("%.1f",$results->{dewPoint}), "|";
 		print F "$results->{pressure}|";
@@ -329,6 +330,8 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		$t = localtime($results->{sunsetTime});
 		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
+		print F "-9999|";
+		print F "-9999|";
 		print F "\n";
 	}
 close(F);
@@ -438,6 +441,8 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$icon|"; # Icon
 		print F "$results->{summary}|";
 		print F "$results->{ozone}|";
+		print F "-9999|";
+		print F "-9999|";
 		print F "\n";
 	}
 close(F);

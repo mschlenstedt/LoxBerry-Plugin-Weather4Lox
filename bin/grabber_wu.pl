@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.1";
+my $version = "4.4.0.2";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -233,6 +233,8 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	print F "-9999|";
 	print F "-9999|";
+	print F "-9999|";
+	print F "\n";
 close(F);
 
 LOGOK "Saving current data to $lbplogdir/current.dat.tmp successfully.";
@@ -349,6 +351,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "0|";
 		print F "0|";
 		print F "0|";
+		print F "-9999|";
 		print F "\n";
 	}
 close(F);
@@ -414,6 +417,8 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$results->{fctcode}|";
 		print F "$results->{icon}|";
 		print F "$results->{condition}|";
+		print F "-9999|";
+		print F "-9999|";
 		print F "-9999|";
 		print F "\n";
 		$i++;

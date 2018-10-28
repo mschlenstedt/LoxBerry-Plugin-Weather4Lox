@@ -34,10 +34,9 @@
 # 30: DewPoint (C)
 # 31: Pressure (mbar)
 # 32: UV Index
-# 33: Sunrise Time (Epoche)
-# 34: Sunrise Time HOUR
-# 35: Sunrise Time MINUTES
-# 36: Sunset Time (Epoche)
-# 37: Sunset Time HOUR
-# 38: Sunset Time MINUTES
+# 33: Sunrise Time HOUR
+# 34: Sunrise Time MINUTES
+# 35: Sunset Time HOUR
+# 36: Sunset Time MINUTES
+# 37: Visability (km)
 #

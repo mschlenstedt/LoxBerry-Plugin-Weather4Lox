@@ -67,7 +67,7 @@ our $addon;
 ##########################################################################
 
 # Version of this script
-$version = "4.3.0";
+$version = "4.4.0.0";
 
 # Language
 our $lang = lblanguage();
@@ -139,10 +139,8 @@ if ($search) {
 	$lat = $results->{lat};
 	$long = $results->{lon};
 	# Add City and Country for DarkSky
-	if ($service eq "darksky") {
 	  $addon = ";window.opener.document.getElementById('" . $service . "city').value = '$city'";
 	  $addon = $addon . ";window.opener.document.getElementById('" . $service . "country').value = '$country'";
-	}
         $table = $table . "<tr><td align=\"right\">$i\.</td><td>$results->{display_name}</td>\n";
         $table = "$table" ."<td style=\"vertical-align: middle; text-align: center\"><button type=\"button\" data-role=\"button\" data-inline=\"true\" data-mini=\"true\" onClick=\"window.opener.document.getElementById('" . $service . "coordlat').value = '$lat';window.opener.document.getElementById('" . $service . "coordlong').value = '$long'$addon;window.close()\"> <font size=\"-1\">" . $L{'SETTINGS.BUTTON_APPLY'} .  "</font></button></td></tr>\n";
         $i++;

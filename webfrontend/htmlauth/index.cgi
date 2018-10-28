@@ -47,6 +47,11 @@ my $version = LoxBerry::System::pluginversion();
 # Settings
 my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
+$cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
+$cfg->param("DARKSKY.URL", "https://api.darksky.net");
+$cfg->param("WUNDERGROUND.URL", "http://api.wunderground.com/api");
+$cfg->save();
+
 #########################################################################
 # Parameter
 #########################################################################
@@ -69,7 +74,7 @@ my $template = HTML::Template->new(
 # Language
 my %L = LoxBerry::Web::readlanguage($template, "language.ini");
 
-# Save Form 1 (Wunderground)
+# Save Form 1 (Server Settings)
 if ($R::saveformdata1) {
 	
   	$template->param( FORMNO => '1' );
@@ -150,6 +155,23 @@ if ($R::saveformdata1) {
 		}
 	}
 	
+	# Check for Station : WEATHERBIT
+	if ($R::weatherservice eq "weatherbit") {
+		our $url = $cfg->param("WEATHERBIT.URL");
+		our $querystation = "lat=" . $R::weatherbitcoordlat . "&lon=" . $R::weatherbitcoordlong;
+		# 1. attempt to query Weatherbit
+		&weatherbitquery;
+		$found = 0;
+		if ( $decoded_json->{count} ) {
+			$found = 1;
+		}
+		if ( !$found ) {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
+			&error;
+			exit;
+		}
+	}
+	
 	# OK - now installing...
 
 	# Write configuration file(s)
@@ -166,6 +188,14 @@ if ($R::saveformdata1) {
 	$cfg->param("DARKSKY.LANG", "$R::darkskylang");
 	$cfg->param("DARKSKY.STATION", "$R::darkskycity");
 	$cfg->param("DARKSKY.COUNTRY", "$R::darkskycountry");
+
+	$cfg->param("WEATHERBIT.APIKEY", "$R::weatherbitapikey");
+	$cfg->param("WEATHERBIT.APIKEY", "$R::weatherbitapikey");
+	$cfg->param("WEATHERBIT.COORDLAT", "$R::weatherbitcoordlat");
+	$cfg->param("WEATHERBIT.COORDLONG", "$R::weatherbitcoordlong");
+	$cfg->param("WEATHERBIT.LANG", "$R::weatherbitlang");
+	$cfg->param("WEATHERBIT.STATION", "$R::weatherbitcity");
+	$cfg->param("WEATHERBIT.COUNTRY", "$R::weatherbitcountry");
 
 	$cfg->param("SERVER.GETDATA", "$R::getdata");
 	$cfg->param("SERVER.CRON", "$R::cron");
@@ -359,9 +389,10 @@ if ($R::form eq "1" || !$R::form) {
   my %labels;
 
   # Weather Service
-  @values = ('darksky', 'wu' );
+  @values = ('darksky', 'weatherbit', 'wu' );
   %labels = (
         'darksky' => 'Dark Sky',
+        'weatherbit' => 'Weatherbit',
         'wu' => 'Wunderground',
     );
   my $wservice = $cgi->popup_menu(
@@ -476,6 +507,62 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('DARKSKY.LANG'),
     );
   $template->param( DARKSKYLANG => $darkskylang );
+
+  # Weatherbit Language
+  @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'kw', 'lt', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tet', 'tr', 'uk', 'x-pig-latin', 'zh', 'zh-tw');
+
+  %labels = (
+	'ar' => 'Arabic',
+	'az' => 'Azerbaijani',
+	'be' => 'Belarusian',
+	'bg' => 'Bulgarian',
+	'bs' => 'Bosnian',
+	'ca' => 'Catalan',
+	'cs' => 'Czech',
+	'da' => 'Danish',
+	'de' => 'German',
+	'el' => 'Greek',
+	'en' => 'English',
+	'es' => 'Spanish',
+	'et' => 'Estonian',
+	'fi' => 'Finnish',
+	'fr' => 'French',
+	'hr' => 'Croatian',
+	'hu' => 'Hungarian',
+	'id' => 'Indonesian',
+	'is' => 'Icelandic',
+	'it' => 'Italian',
+#	'ja' => 'Japanese',
+#	'ka' => 'Georgian',
+#	'ko' => 'Korean',
+	'kw' => 'Cornish',
+	'lt' => 'Lithuanian',
+	'nb' => 'Norwegian Bokmål',
+	'nl' => 'Dutch',
+	'pl' => 'Polish',
+	'pt' => 'Portuguese',
+	'ro' => 'Romanian',
+	'ru' => 'Russian',
+	'sk' => 'Slovak',
+	'sl' => 'Slovenian',
+	'sr' => 'Serbian',
+	'sv' => 'Swedish',
+#	'tet' => 'Tetum',
+	'tr' => 'Turkish',
+	'uk' => 'Ukrainian',
+#	'x-pig-latin' => 'Igpay Atinlay',
+	'zh' => 'simplified Chinese',
+	'zh-tw' => 'traditional Chinese',
+    );
+  my $weatherbitlang = $cgi->popup_menu(
+        -name    => 'weatherbitlang',
+        -id      => 'weatherbitlang',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('WEATHERBIT.LANG'),
+    );
+  $template->param( WEATHERBITLANG => $weatherbitlang );
+  
   
   # Statiotyp
   @values = ('statid', 'coord', 'autoip');
@@ -802,6 +889,45 @@ sub darkskyquery
 
 	if ($urlstatuscode eq "403" ) {
                 $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+                &error;
+	}
+
+        # Decode JSON response from server
+        our $decoded_json = decode_json( $json );
+
+	return();
+
+}
+
+#####################################################
+# Query Weatherbit
+#####################################################
+
+sub weatherbitquery
+{
+
+        # Get data from Weatherbit Server (API request) for testing API Key
+        my $query = "$url\/current?key=$R::weatherbitapikey&$querystation";
+        my $ua = new LWP::UserAgent;
+        my $res = $ua->get($query);
+        my $json = $res->decoded_content();
+
+        # Check status of request
+        my $urlstatus = $res->status_line;
+        my $urlstatuscode = substr($urlstatus,0,3);
+
+	if ($urlstatuscode ne "200" && $urlstatuscode ne "403" ) {
+                $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+                &error;
+	}
+
+	if ($urlstatuscode eq "403" ) {
+                $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+                &error;
+	}
+
+	if ( $decoded_json->{error} ) {
+                $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode" . "<br><b>ERROR:</b> $decoded_json->{error}";
                 &error;
 	}
 
