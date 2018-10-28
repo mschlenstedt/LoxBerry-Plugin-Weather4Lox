@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.0";
+my $version = "4.4.0.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -75,7 +75,8 @@ if ($pcfg->param("WUNDERGROUND.STATIONTYP") eq "statid") {
 ######
 ######
 # Read language phrases
-my %L = LoxBerry::System::readlanguage($template, "language.ini");
+#my %L = LoxBerry::System::readlanguage($template, "language.ini");
+my %L = LoxBerry::System::readlanguage("language.ini");
 
 # Create a logging object
 my $log = LoxBerry::Log->new ( 	
