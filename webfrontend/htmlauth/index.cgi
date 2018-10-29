@@ -194,7 +194,6 @@ if ($R::saveformdata1) {
 	$cfg->param("WEATHERBIT.COORDLAT", "$R::weatherbitcoordlat");
 	$cfg->param("WEATHERBIT.COORDLONG", "$R::weatherbitcoordlong");
 	$cfg->param("WEATHERBIT.LANG", "$R::weatherbitlang");
-	$cfg->param("WEATHERBIT.STATION", "$R::weatherbitcity");
 	$cfg->param("WEATHERBIT.COUNTRY", "$R::weatherbitcountry");
 
 	$cfg->param("SERVER.GETDATA", "$R::getdata");

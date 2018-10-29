@@ -259,24 +259,12 @@
 													</tr>
 													<tr>
 														<td width="25%">
-															<label id="labelweatherbitcity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
-														</td>
-														<td width="50%">
-															<input id="weatherbitcity" name="weatherbitcity" type="text" class="textfield" value="<TMPL_VAR WEATHERBIT.STATION>">
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
 															<label id="labelweatherbitcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
 														</td>
 														<td width="50%">
 															<input id="weatherbitcountry" name="weatherbitcountry" type="text" class="textfield" value="<TMPL_VAR WEATHERBIT.COUNTRY>">
+															<!-- Only for compatibility to address search -->
+															<input type="hidden" id="weatherbitcity" name="weatherbitcity" class="textfield" value="">
 														</td>
 														<td width="5%" valign="middle">
 															&nbsp;
