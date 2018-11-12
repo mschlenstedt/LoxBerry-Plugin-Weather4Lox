@@ -828,7 +828,7 @@ if ($R::form eq "1" || !$R::form) {
 $template->param( "LBPPLUGINDIR", $lbpplugindir);
 
 # Template
-LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Wunderground4Loxone", "help.html");
+LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Weather4Loxone", "help.html");
 print $template->output();
 LoxBerry::Web::lbfooter();
 
