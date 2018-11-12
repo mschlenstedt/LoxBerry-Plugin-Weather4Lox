@@ -374,9 +374,9 @@ $navbar{2}{URL} = 'index.cgi?form=2';
 $navbar{3}{Name} = "$L{'SETTINGS.LABEL_CLOUDEMU'} / $L{'SETTINGS.LABEL_WEBSITE'}";
 $navbar{3}{URL} = 'index.cgi?form=3';
 
-$navbar{4}{Name} = "$L{'SETTINGS.LABEL_LOG'}";
-$navbar{4}{URL} = "/admin/system/tools/logfile.cgi?logfile=plugins/$lbpplugindir/weather4lox.log&header=html&format=template&only=once";
-$navbar{4}{target} = '_blank';
+$navbar{99}{Name} = "$L{'SETTINGS.LABEL_LOG'}";
+$navbar{99}{URL} = LoxBerry::Web::loglist_url();
+$navbar{99}{target} = '_blank';
 
 # Menu: Server
 if ($R::form eq "1" || !$R::form) {
