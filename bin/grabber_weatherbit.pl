@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.0";
+my $version = "4.4.0.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -141,7 +141,9 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	print F "-9999|";
 	print F "$decoded_json->{data}->[0]->{timezone}|";
-	print F "-9999|";
+	my $tz = `date +%z`;
+	chomp ($tz);
+	print F "$tz|"; # Workaround - Weatherbit does not provide this, so use local one
 	print F "$decoded_json->{data}->[0]->{city_name}|";
 	$country = Encode::decode("UTF-8", $country);
 	print F "$country|";
@@ -168,7 +170,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("%.1f",$decoded_json->{data}->[0]->{wind_spd} * 3.6), "|";
 	print F "-9999|";
 	print F sprintf("%.1f",$decoded_json->{data}->[0]->{app_temp}), "|";
-	print F "$decoded_json->{data}->[0]->{pres}|";
+	print F sprintf("%.0f",$decoded_json->{data}->[0]->{pres}), "|";
 	print F "$decoded_json->{data}->[0]->{dewpt}|";
 	print F "$decoded_json->{data}->[0]->{vis}|";
 	print F "$decoded_json->{data}->[0]->{ghi}|";
@@ -462,7 +464,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$results->{weather}->{description}|";
 		print F sprintf("%.0f",$results->{moon_phase}*100), "|";
 		print F sprintf("%.1f",$results->{dewpt}), "|";
-		print F "$results->{pres}|";
+		print F sprintf("%.0f",$results->{pres}), "|";
 		print F sprintf("%.1f",$results->{uv}),"|";
 		$t = localtime($results->{sunrise_ts});
 		print F sprintf("%02d", $t->hour), "|";
@@ -570,7 +572,7 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$results->{wind_dir}|";
 		print F sprintf("%.1f",$results->{wind_spd} * 3.6), "|";
 		print F sprintf("%.1f",$results->{wind_gust_spd} * 3.6), "|";
-		print F "$results->{pres}|";
+		print F sprintf("%.0f",$results->{pres}), "|";
 		print F sprintf("%.1f",$results->{dewpt}), "|";
 		print F "$results->{clouds}|";
 		print F "-9999|";
