@@ -224,7 +224,7 @@
 															<label id="labelweatherbitcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
 															</td>
 															<td>
-															<input id="weatherbitcoordlong" name="weatherbitcoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLONG>" 
+															<input id="weatherbitcoordlong" name="weatherbitcoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLONG>"
 																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
 															</td>
@@ -409,6 +409,7 @@
 									$('select[name=weatherservice]').attr('data-mini','true');
 									$('select[name=wulang]').attr('data-mini','true');
 									$('select[name=darkskylang]').attr('data-mini','true');
+									$('select[name=weatherbitlang]').attr('data-mini','true');
 									//$('select[name=wulang]').attr('data-native-menu','false');
 									$('select[name=metric]').attr('data-mini','true');
 									//$('select[name=metric]').attr('data-native-menu','false');

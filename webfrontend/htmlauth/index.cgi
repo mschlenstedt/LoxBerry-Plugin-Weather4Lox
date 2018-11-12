@@ -508,7 +508,7 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( DARKSKYLANG => $darkskylang );
 
   # Weatherbit Language
-  @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'kw', 'lt', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tet', 'tr', 'uk', 'x-pig-latin', 'zh', 'zh-tw');
+  @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'kw', 'lt', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tr', 'uk', 'zh', 'zh-tw');
 
   %labels = (
 	'ar' => 'Arabic',
@@ -517,7 +517,7 @@ if ($R::form eq "1" || !$R::form) {
 	'bg' => 'Bulgarian',
 	'bs' => 'Bosnian',
 	'ca' => 'Catalan',
-	'cs' => 'Czech',
+	'cz' => 'Czech',
 	'da' => 'Danish',
 	'de' => 'German',
 	'el' => 'Greek',
@@ -945,7 +945,7 @@ sub error
 {
 	$template->param( "ERROR", 1);
 	$template->param( "ERRORMESSAGE", $error);
-	LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Wunderground4Loxone", "help.html");
+	LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Weather4Loxone", "help.html");
 	print $template->output();
 	LoxBerry::Web::lbfooter();
 
@@ -959,7 +959,7 @@ sub error
 sub save
 {
 	$template->param( "SAVE", 1);
-	LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Wunderground4Loxone", "help.html");
+	LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Weather4Loxone", "help.html");
 	print $template->output();
 	LoxBerry::Web::lbfooter();
 
