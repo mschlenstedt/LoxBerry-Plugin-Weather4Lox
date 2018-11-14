@@ -32,7 +32,7 @@ use DateTime;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.2";
+my $version = "4.4.0.3";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -79,11 +79,11 @@ LOGDEB "This is $0 Version $version";
 my $i;
 
 # Clear HTML databse
-#open(F,">$lbplogdir/weatherdata.html");
-#  flock(F,2);
-#  print F "";
-#  flock(F,8);
-#close(F);
+open(F,">$lbplogdir/weatherdata.html");
+  flock(F,2);
+  print F "";
+  flock(F,8);
+close(F);
 
 # Date Reference: Convert into Loxone Epoche (1.1.2009)
 my $dateref = DateTime->new(
