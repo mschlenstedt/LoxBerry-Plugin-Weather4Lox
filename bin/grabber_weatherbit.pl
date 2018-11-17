@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.3.1";
+my $version = "4.4.3.2";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -267,15 +267,25 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	if (!$code) { $code = "13" };
 	print F "$code|";
 	print F "$decoded_json->{data}->[0]->{weather}->{description}|";
-	print F "-9999|";
+	print F "MOONPERCENT|";
 	print F "-9999|";
 	print F "-9999|";
 	print F "-9999|";
 	my ($srhour, $srmin) = split /:/, $decoded_json->{data}->[0]->{sunrise};
+	# Sunrise/Sunset time is not in local time but UTC
+	my $offset = qx(TZ="$decoded_json->{data}->[0]->{timezone}" date +%:::z);
+	chomp ($offset);
+	my $srhour = qx(date --date "$decoded_json->{data}->[0]->{sunrise} +$offset hours" +%H);
+	chomp ($srhour);
 	print F "$srhour|";
+	my $srmin = qx(date --date "$decoded_json->{data}->[0]->{sunrise} +$offset hours" +%M);
+	chomp ($srmin);
 	print F "$srmin|";
-	my ($sshour, $ssmin) = split /:/, $decoded_json->{data}->[0]->{sunset};
+	my $sshour = qx(date --date "$decoded_json->{data}->[0]->{sunset} +$offset hours" +%H);
+	chomp ($sshour);
 	print F "$sshour|";
+	my $ssmin = qx(date --date "$decoded_json->{data}->[0]->{sunset} +$offset hours" +%M);
+	chomp ($ssmin);
 	print F "$ssmin|";
 	print F "-9999|";
 	print F "$decoded_json->{data}->[0]->{clouds}|";
@@ -327,6 +337,7 @@ if ($urlstatuscode ne "200") {
 $decoded_json = decode_json( "$json" );
 
 $error = 0;
+my $moonpercent;
 open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
   flock(F,2);
 	if ($error) {
@@ -467,6 +478,10 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$code|";
 		print F "$results->{weather}->{description}|";
 		print F sprintf("%.0f",$results->{moon_phase}*100), "|";
+		# Save today's moon phase to include it in current.dat
+		if ($i eq "2") {
+			$moonpercent = sprintf("%.0f",$results->{moon_phase}*100);
+		}
 		print F sprintf("%.1f",$results->{dewpt}), "|";
 		print F sprintf("%.0f",$results->{pres}), "|";
 		print F sprintf("%.1f",$results->{uv}),"|";
@@ -955,6 +970,7 @@ open(F,"+<$lbplogdir/current.dat.tmp");
 		s/\|NA\|/"|-9999.00|"/eg;
 		s/\|n\/a\|/"|-9999.00|"/eg;
 		s/\|N\/A\|/"|-9999.00|"/eg;
+		s/MOONPERCENT/$moonpercent/eg;
 		LOGDEB "Cleaned:  $_";
 		print F "$_\n";
 	}
