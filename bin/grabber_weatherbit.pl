@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.2";
+my $version = "4.4.2.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -168,7 +168,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$wdirdes|";
 	print F "$decoded_json->{data}->[0]->{wind_dir}|";
 	print F sprintf("%.1f",$decoded_json->{data}->[0]->{wind_spd} * 3.6), "|";
-	print F "-9999|";
+	print F sprintf("%.1f",$decoded_json->{data}->[0]->{wind_spd} * 3.6), "|";
 	print F sprintf("%.1f",$decoded_json->{data}->[0]->{app_temp}), "|";
 	print F sprintf("%.0f",$decoded_json->{data}->[0]->{pres}), "|";
 	print F "$decoded_json->{data}->[0]->{dewpt}|";
