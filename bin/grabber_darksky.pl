@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.1";
+my $version = "4.4.3.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -139,7 +139,9 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	binmode F, ':encoding(UTF-8)';
 	print F "$decoded_json->{currently}->{time}|";
 	print F $t, " ", sprintf("+%04d", $decoded_json->{offset} * 100), "|";
-	print F "-9999|";
+	my $tz_short = qx(TZ='$decoded_json->{timezone}' date +%Z);
+	chomp ($tz_short);
+	print F "$tz_short|";
 	print F "$decoded_json->{timezone}|";
 	print F sprintf("+%04d", $decoded_json->{offset} * 100), "|";
 	$city = Encode::decode("UTF-8", $city);

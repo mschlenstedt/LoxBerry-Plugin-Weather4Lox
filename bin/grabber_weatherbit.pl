@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.2.1";
+my $version = "4.4.3.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -138,12 +138,16 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	}
 	binmode F, ':encoding(UTF-8)';
 	print F "$decoded_json->{data}->[0]->{ts}|";
-	print F "-9999|";
-	print F "-9999|";
+	my $date = qx(date -R -d "\@$decoded_json->{data}->[0]->{ts}");
+	chomp ($date);
+	print F "$date|";
+	my $tz_short = qx(TZ='$decoded_json->{data}->[0]->{timezone}' date +%Z);
+	chomp ($tz_short);
+	print F "$tz_short|";
 	print F "$decoded_json->{data}->[0]->{timezone}|";
-	my $tz = `date +%z`;
-	chomp ($tz);
-	print F "$tz|"; # Workaround - Weatherbit does not provide this, so use local one
+	my $tz_offset = qx(TZ="$decoded_json->{data}->[0]->{timezone}" date +%z);
+	chomp ($tz_offset);
+	print F "$tz_offset|";
 	print F "$decoded_json->{data}->[0]->{city_name}|";
 	$country = Encode::decode("UTF-8", $country);
 	print F "$country|";
