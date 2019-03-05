@@ -26,6 +26,7 @@ use LoxBerry::Log;
 use Getopt::Long;
 use IO::Socket; # For sending UDP packages
 use DateTime;
+use Time::HiRes;
 
 ##########################################################################
 # Read settings
@@ -1698,22 +1699,23 @@ sub send {
     $tmpudp .= "$name\@$value; ";
     LOGINF "Adding value to UDP send queue. Value:$name\@$value";
     if ($udp == 1) {
-      foreach my $ms (sort keys %miniservers) {
-	if ($miniservers{$ms}{IPAddress} ne "" && $udpport ne "") {
-	        LOGINF "$sendqueue: Send Data to " . $miniservers{$ms}{Name};
-	      	# Send value
-	        my $sock = IO::Socket::INET->new(
-	        Proto    => 'udp',
-	        PeerPort => $udpport,
-	        PeerAddr =>  $miniservers{$ms}{IPAddress},
-	        );
-	        $sock->send($tmpudp);
-	        LOGOK "$sendqueue: Send OK to " . $miniservers{$ms}{Name} . ". IP:" . $miniservers{$ms}{IPAddress} . " Port:$udpport";
-	        $sendqueue++;
-	}
-      }
-      $udp = 0;
-      $tmpudp = "";
+		foreach my $ms (sort keys %miniservers) {
+			if ($miniservers{$ms}{IPAddress} ne "" && $udpport ne "") {
+					LOGINF "$sendqueue: Send Data to " . $miniservers{$ms}{Name};
+					# Send value
+					my $sock = IO::Socket::INET->new(
+					Proto    => 'udp',
+					PeerPort => $udpport,
+					PeerAddr =>  $miniservers{$ms}{IPAddress},
+					);
+					$sock->send($tmpudp);
+					LOGOK "$sendqueue: Sent OK to " . $miniservers{$ms}{Name} . ". IP:" . $miniservers{$ms}{IPAddress} . " Port:$udpport";
+					$sendqueue++;
+					Time::HiRes::usleep (10000); # 10 Milliseconds
+			}
+		}
+		$udp = 0;
+		$tmpudp = "";
     }
   }
 
