@@ -39,11 +39,8 @@ use Time::Piece;
 # Version of this script
 my $version = "4.4.3.1";
 
-#my $cfg             = new Config::Simple("$home/config/system/general.cfg");
-#my $lang            = $cfg->param("BASE.LANG");
-#my $installfolder   = $cfg->param("BASE.INSTALLFOLDER");
-#my $miniservers     = $cfg->param("BASE.MINISERVERS");
-#my $clouddns        = $cfg->param("BASE.CLOUDDNS");
+my $currentnametmp = "$lbplogdir/current.dat.tmp";
+my $currentname    = "$lbplogdir/current.dat";
 
 my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
@@ -85,19 +82,20 @@ my @lox_weather_arr;
 my $response_success;
 
 # VI-Name => ColNr.
-# ColNr beginning with 1
+# ColNr beginning with 0
+# See data/current.format
 %lox_weather_vi = (
-	"w4l_cur_tt" => 12,
-	"w4l_cur_tt_fl" => 13, 
-	"w4l_cur_hu" => 14, 
-	"w4l_cur_w_dir" => 16, 
-	"w4l_cur_w_sp" => 17, 
-	"w4l_cur_w_gu" => 18, 
-	"w4l_cur_w_ch" => 19,
-	"w4l_cur_pr" => 20,
-	"w4l_cur_dp" => 21,
-	"w4l_cur_sr" => 23,
-	"w4l_cur_we_code" => 29
+	"w4l_cur_tt" => 11,
+	"w4l_cur_tt_fl" => 12,
+	"w4l_cur_hu" => 13,
+	"w4l_cur_w_dir" => 15,
+	"w4l_cur_w_sp" => 16,
+	"w4l_cur_w_gu" => 17,
+	"w4l_cur_w_ch" => 18,
+	"w4l_cur_pr" => 19,
+	"w4l_cur_dp" => 20,
+	"w4l_cur_sr" => 22,
+	"w4l_cur_we_code" => 28
 );
 
 # Generate VI array from hash
@@ -124,8 +122,12 @@ if( !$response_success ) {
 	exit 0;
 };
 
-LOGINF "Reading current.dat";
-my $datafile_str = LoxBerry::System::read_file("$lbplogdir/current.dat");
+LOGDEB "Copying current.dat to current.dat.tmp";
+copy($currentname, $currentnametmp);
+
+LOGINF "Reading current.dat.tmp";
+
+my $datafile_str = LoxBerry::System::read_file($currentnametmp);
 
 LOGDEB "Old line: $datafile_str";
 
@@ -134,7 +136,7 @@ my @values = split /\|/, $datafile_str;
 foreach my $resp (keys %lox_response) {
     # print STDERR "Object $resp has value " . $lox_response{$resp};
 	if($lox_response{$resp} and $lox_weather_vi{$resp} ) {
-		my $col = $lox_weather_vi{$resp} - 1;
+		my $col = $lox_weather_vi{$resp};
 		$values[$col] = $lox_response{$resp};
 		LOGDEB "  Response from $resp (value $values[$col]) is set to column $col";
 	}
@@ -147,23 +149,22 @@ LOGDEB "New line: $newline";
 
 # Write patched file
 eval {
-	open(my $fh, ">$lbplogdir/current.dat.tmp");
+	open(my $fh, ">$currentnametmp");
 	#binmode $fh, ':encoding(UTF-8)';
 	print $fh $newline;
 	close $fh;
-}; 
-if ($@) {
-    LOGCRIT "Could not write $lbpconfigdir/current.dat.tmp";
+} 
+or do {
+    LOGCRIT "Could not write $currentnametmp: $@";
 	exit 2;
 }
 
 # Test file
-my $currentname = "$lbplogdir/current.dat.tmp";
-my $currentsize = -s ($currentname);
+my $currentsize = -s ($currentnametmp);
 if ($currentsize > 100) {
-        move($currentname, "$lbplogdir/current.dat");
+        move($currentnametmp, $currentname);
 } else {
-	LOGCRIT "File size below 100 bytes - no new file created: $lbplogdir/current.dat.tmp";
+	LOGCRIT "File size below 100 bytes - no new file created: $currentnametmp";
 	exit 2;
 }
 
@@ -177,4 +178,3 @@ END
 {
 	LOGEND;
 }
-
