@@ -157,7 +157,7 @@ eval {
 or do {
     LOGCRIT "Could not write $currentnametmp: $@";
 	exit 2;
-}
+};
 
 # Test file
 my $currentsize = -s ($currentnametmp);
