@@ -700,7 +700,7 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( "WEBSITE", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/weatherdata.html");
 
   # Miniserver
-  my $mshtml = mslist_select_html( FORMID => 'msno', SELECTED => $cfg->param('SERVER.MSNO', DATA_MINI => 1 );
+  my $mshtml = mslist_select_html( FORMID => 'msno', SELECTED => $cfg->param('SERVER.MSNO'), DATA_MINI => 1 );
   $template->param( MINISERVER => $mshtml );
 
   # SendUDP

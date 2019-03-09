@@ -33,7 +33,7 @@ use Getopt::Long;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.0";
+my $version = "4.5.0.1";
 
 my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $service          = $pcfg->param("SERVER.WEATHERSERVICE");
@@ -82,6 +82,7 @@ if (-e "$lbpbindir/grabber_$service.pl") {
 
 # Grab some data from Loxone Miniserver
 if ( $pcfg->param("SERVER.LOXGRABBER") ) {
+	LOGINF "Starting Grabber grabber_loxone.pl";
 	if ($verbose) { 
 		system ("$lbpbindir/grabber_loxone.pl -v");
 	} else {
