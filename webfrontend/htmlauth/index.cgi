@@ -196,6 +196,7 @@ if ($R::saveformdata1) {
 	$cfg->param("WEATHERBIT.LANG", "$R::weatherbitlang");
 	$cfg->param("WEATHERBIT.COUNTRY", "$R::weatherbitcountry");
 
+	$cfg->param("SERVER.LOXGRABBER", "$R::loxgrabber");
 	$cfg->param("SERVER.GETDATA", "$R::getdata");
 	$cfg->param("SERVER.CRON", "$R::cron");
 	$cfg->param("SERVER.METRIC", "$R::metric");
@@ -326,6 +327,7 @@ if ($R::saveformdata2) {
 	$cfg->param("SERVER.SENDHFC", "$hfc");
 	$cfg->param("SERVER.SENDUDP", "$R::sendudp");
 	$cfg->param("SERVER.UDPPORT", "$R::udpport");
+	$cfg->param("SERVER.MSNO", "$R::msno");
 
 	$cfg->save();
 	
@@ -417,6 +419,21 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.METRIC'),
     );
   $template->param( METRIC => $metric );
+
+  # LoxGrabber
+  @values = ('0', '1' );
+  %labels = (
+        '0' => $L{'SETTINGS.LABEL_OFF'},
+        '1' => $L{'SETTINGS.LABEL_ON'},
+    );
+  my $loxgrabber = $cgi->popup_menu(
+        -name    => 'loxgrabber',
+        -id      => 'loxgrabber',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.LOXGRABBER'),
+    );
+  $template->param( LOXGRABBER => $loxgrabber );
 
   # GetData
   @values = ('0', '1' );
@@ -681,6 +698,10 @@ if ($R::form eq "1" || !$R::form) {
   $navbar{2}{active} = 1;
   $template->param( "FORM2", 1);
   $template->param( "WEBSITE", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/weatherdata.html");
+
+  # Miniserver
+  my $mshtml = mslist_select_html( FORMID => 'msno', SELECTED => $cfg->param('SERVER.MSNO', DATA_MINI => 1 );
+  $template->param( MINISERVER => $mshtml );
 
   # SendUDP
   @values = ('0', '1' );

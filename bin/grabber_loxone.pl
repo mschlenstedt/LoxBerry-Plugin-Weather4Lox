@@ -3,6 +3,7 @@
 # Grabber for overwriting data by Loxone data
 
 # Copyright 2016-2018 Michael Schlenstedt, michael@loxberry.de
+# 			Christian Fenzl, christian@loxberry.de
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,7 +38,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.3.1";
+my $version = "4.5.0.0";
 
 my $currentnametmp = "$lbplogdir/current.dat.tmp";
 my $currentname    = "$lbplogdir/current.dat";
@@ -45,7 +46,6 @@ my $currentname    = "$lbplogdir/current.dat";
 my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
 # Read language phrases
-
 my %L = LoxBerry::System::readlanguage("language.ini");
 
 # Create a logging object

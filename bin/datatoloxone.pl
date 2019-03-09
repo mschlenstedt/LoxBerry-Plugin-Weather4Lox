@@ -33,7 +33,7 @@ use Time::HiRes;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.3";
+my $version = "4.5.0.0";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -79,7 +79,7 @@ LOGDEB "This is $0 Version $version";
 
 my $i;
 
-# Clear HTML databse
+# Clear HTML database
 open(F,">$lbplogdir/weatherdata.html");
   flock(F,2);
   print F "";
@@ -1684,42 +1684,39 @@ exit;
 
 sub send {
 
-  # Create HTML webpage
-  LOGINF "Adding value to weatherdata.html. Value:$name\@$value";
-  open(F,">>$lbplogdir/weatherdata.html");
-    print F "$name\@$value<br>\n";
-  close(F);
+	# Create HTML webpage
+	LOGINF "Adding value to weatherdata.html. Value:$name\@$value";
+	open(F,">>$lbplogdir/weatherdata.html");
+		print F "$name\@$value<br>\n";
+	close(F);
 
-  # Send by UDP
-  my %miniservers;
-  %miniservers = LoxBerry::System::get_miniservers();
-  
-  #if ($miniservers{1}{IPAddress} ne "" && $sendudp) {
-  if ($sendudp) {
-    $tmpudp .= "$name\@$value; ";
-    LOGINF "Adding value to UDP send queue. Value:$name\@$value";
-    if ($udp == 1) {
-		foreach my $ms (sort keys %miniservers) {
-			if ($miniservers{$ms}{IPAddress} ne "" && $udpport ne "") {
-					LOGINF "$sendqueue: Send Data to " . $miniservers{$ms}{Name};
-					# Send value
-					my $sock = IO::Socket::INET->new(
-					Proto    => 'udp',
-					PeerPort => $udpport,
-					PeerAddr =>  $miniservers{$ms}{IPAddress},
-					);
-					$sock->send($tmpudp);
-					LOGOK "$sendqueue: Sent OK to " . $miniservers{$ms}{Name} . ". IP:" . $miniservers{$ms}{IPAddress} . " Port:$udpport";
-					$sendqueue++;
-					Time::HiRes::usleep (10000); # 10 Milliseconds
+	# Send by UDP
+	my $msno = defined $pcfg->param("SERVER.MSNO") ? $pcfg->param("SERVER.MSNO") : 1;
+	my %miniservers = LoxBerry::System::get_miniservers();
+	
+	#if ($miniservers{1}{IPAddress} ne "" && $sendudp) {
+	if ($sendudp) {
+		$tmpudp .= "$name\@$value; ";
+		LOGINF "Adding value to UDP send queue. Value:$name\@$value";
+		if ($udp == 1) {
+			if ($miniservers{$msno}{IPAddress} ne "" && $udpport ne "") {
+				LOGINF "$sendqueue: Send Data to " . $miniservers{$msno}{Name};
+				# Send value
+				my $sock = IO::Socket::INET->new(
+				Proto    => 'udp',
+				PeerPort => $udpport,
+				PeerAddr => $miniservers{$msno}{IPAddress},
+				);
+				$sock->send($tmpudp);
+				LOGOK "$sendqueue: Sent OK to " . $miniservers{$msno}{Name} . ". IP:" . $miniservers{$msno}{IPAddress} . " Port:$udpport";
+				$sendqueue++;
+				Time::HiRes::usleep (10000); # 10 Milliseconds
 			}
+			$udp = 0;
+			$tmpudp = "";
 		}
-		$udp = 0;
-		$tmpudp = "";
-    }
-  }
-
-  return();
+	}
+	return();
 
 }
 exit;

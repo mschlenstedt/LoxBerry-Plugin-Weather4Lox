@@ -41,6 +41,20 @@
 													</tr>
 													<tr>
 														<td width="25%">
+															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_LOXGRABBER></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR LOXGRABBER>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_LOXGRABBER></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
 															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
 														</td>
 														<td width="50%">
@@ -406,6 +420,7 @@
 
 									// Add some attributes PERL::CGI doesn't provide
 									$('select[name=getdata]').attr('data-role','flipswitch');
+									$('select[name=loxgrabber]').attr('data-role','flipswitch');
 									$('select[name=weatherservice]').attr('data-mini','true');
 									$('select[name=wulang]').attr('data-mini','true');
 									$('select[name=darkskylang]').attr('data-mini','true');
@@ -471,6 +486,20 @@
 													</tr>
 													<tr>
 														<td width="25%">
+															<label id="labelminiserver"><TMPL_VAR SETTINGS.LABEL_MINISERVER></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR MINISERVER>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_MINISERVER></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
 															<label id="labelsendudp"><TMPL_VAR SETTINGS.LABEL_SENDBYUDP></label>
 														</td>
 														<td width="50%">
@@ -529,34 +558,6 @@
 															<font size="-1"><TMPL_VAR SETTINGS.HINT_HTML></font>
 														</td>
 													</tr>
-													
-													<!-- Patch data with local Miniserver VI's -->
-													
-													<!-- 
-													<tr>
-														<td width="25%">
-															<label id="labelquerylocaldata"><TMPL_VAR SETTINGS.LABEL_QUERYLOCALDATA></label>
-														</td>
-														<td width="50%">
-														  <table border=0>
-																<tr><td>
-														  <fieldset>
-														  	 <select id="querylocaldata" name="querylocaldata" data-role="flipswitch">
-														  		<option value="0"><TMPL_VAR SETTINGS.LABEL_OFF></option>
-														 	 	<option selected=selected value="1"><TMPL_VAR SETTINGS.LABEL_ON></option>
-														  		</select>
-														  </fieldset>
-																</td></tr>
-																</table>
-														</td>
-														<td width="5%" valign="middle">
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_QUERYLOCALDATA></font>
-														</td>
-													</tr>
-													-->
-													
 													<tr>
 														<td width="25%">
 															<label id="labeldfc"><TMPL_VAR SETTINGS.LABEL_DFC></label>
