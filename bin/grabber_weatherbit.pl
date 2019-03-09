@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.3.2";
+my $version = "4.5.0.0";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -590,7 +590,8 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$wdirdes|";
 		print F "$results->{wind_dir}|";
 		print F sprintf("%.1f",$results->{wind_spd} * 3.6), "|";
-		print F sprintf("%.1f",$results->{wind_gust_spd} * 3.6), "|";
+		#print F sprintf("%.1f",$results->{wind_gust_spd} * 3.6), "|";
+		print F sprintf("%.1f",$results->{app_temp}), "|";
 		print F sprintf("%.0f",$results->{pres}), "|";
 		print F sprintf("%.1f",$results->{dewpt}), "|";
 		print F "$results->{clouds}|";

@@ -133,8 +133,6 @@ if ($R::saveformdata1) {
 		# That was my last attempt - if we haven't found the station, we are giving up.
 		if (!$found) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
-			&error;
-			exit;
 		}
 	}
 	
@@ -150,8 +148,6 @@ if ($R::saveformdata1) {
 		}
 		if ( !$found ) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
-			&error;
-			exit;
 		}
 	}
 	
@@ -167,8 +163,6 @@ if ($R::saveformdata1) {
 		}
 		if ( !$found ) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
-			&error;
-			exit;
 		}
 	}
 	
@@ -289,9 +283,16 @@ if ($R::saveformdata1) {
 	  unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
 	}
 
-	# Template output
-	&save;
+	# Error template
+	if ($error) {
+		# Template output
+		&error;
 
+	# Save template
+	} else {
+		# Template output
+		&save;
+	}
 	exit;
 
 }

@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.2";
+my $version = "4.5.0.0";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");

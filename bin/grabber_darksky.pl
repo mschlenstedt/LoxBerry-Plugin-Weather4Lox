@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.3.1";
+my $version = "4.5.0.0";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -54,24 +54,6 @@ my $city         = $pcfg->param("DARKSKY.STATION");
 my $country      = $pcfg->param("DARKSKY.COUNTRY");
 
 # Read language phrases
-
-######
-###### Workaround
-######
-#use LoxBerry::Web;
-#use CGI;
-#my $cgi = CGI->new;
-# Template
-#my $template = HTML::Template->new(
-#    filename => "$lbptemplatedir/settings.html",
-#    global_vars => 1,
-#    loop_context_vars => 1,
-#    die_on_bad_params => 0,
-#);
-######
-######
-######
-#my %L = LoxBerry::System::readlanguage($template, "language.ini");
 my %L = LoxBerry::System::readlanguage("language.ini");
 
 # Create a logging object
@@ -403,7 +385,8 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$wdirdes|";
 		print F "$results->{windBearing}|";
 		print F sprintf("%.1f",$results->{windSpeed} * 3.6), "|";
-		print F sprintf("%.1f",$results->{windGust} * 3.6), "|";
+		#print F sprintf("%.1f",$results->{windGust} * 3.6), "|";
+		print F sprintf("%.1f",$results->{apparentTemperature}), "|";
 		print F "$results->{pressure}|";
 		print F sprintf("%.1f",$results->{dewPoint}), "|";
 		print F $results->{cloudCover}*100, "|";
