@@ -33,7 +33,7 @@ use Time::HiRes;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.0";
+my $version = "4.5.0.1";
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");
@@ -1491,7 +1491,7 @@ if ($emu) {
     } elsif (@fields[28] eq "18") {
       $loxweathercode = "32";
     } elsif (@fields[28] eq "19") {
-      $loxweathercode = "33";
+      $loxweathercode = "34";
     } elsif (@fields[28] eq "20") {
       $loxweathercode = "24";
     } elsif (@fields[28] eq "21") {
