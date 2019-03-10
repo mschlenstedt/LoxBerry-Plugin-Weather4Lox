@@ -38,7 +38,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.0";
+my $version = "4.5.0.1";
 
 my $currentnametmp = "$lbplogdir/current.dat.tmp";
 my $currentname    = "$lbplogdir/current.dat";
@@ -128,6 +128,7 @@ copy($currentname, $currentnametmp);
 LOGINF "Reading current.dat.tmp";
 
 my $datafile_str = LoxBerry::System::read_file($currentnametmp);
+chomp($datafile_str);
 
 LOGDEB "Old line: $datafile_str";
 
@@ -138,6 +139,7 @@ foreach my $resp (keys %lox_response) {
 	if($lox_response{$resp} and $lox_weather_vi{$resp} ) {
 		my $col = $lox_weather_vi{$resp};
 		$values[$col] = $lox_response{$resp};
+		$values[$col] =~ s/^([-\d\.]+).*/$1/g;
 		LOGDEB "  Response from $resp (value $values[$col]) is set to column $col";
 	}
 }
