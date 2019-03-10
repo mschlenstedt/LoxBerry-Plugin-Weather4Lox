@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.0";
+my $version = "4.5.0.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -275,10 +275,10 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	# Sunrise/Sunset time is not in local time but UTC
 	my $offset = qx(TZ="$decoded_json->{data}->[0]->{timezone}" date +%:::z);
 	chomp ($offset);
-	my $srhour = qx(date --date "$decoded_json->{data}->[0]->{sunrise} +$offset hours" +%H);
+	$srhour = qx(date --date "$decoded_json->{data}->[0]->{sunrise} +$offset hours" +%H);
 	chomp ($srhour);
 	print F "$srhour|";
-	my $srmin = qx(date --date "$decoded_json->{data}->[0]->{sunrise} +$offset hours" +%M);
+	$srmin = qx(date --date "$decoded_json->{data}->[0]->{sunrise} +$offset hours" +%M);
 	chomp ($srmin);
 	print F "$srmin|";
 	my $sshour = qx(date --date "$decoded_json->{data}->[0]->{sunset} +$offset hours" +%H);
