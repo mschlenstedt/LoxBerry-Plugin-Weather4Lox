@@ -196,7 +196,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	my $moonphase = $decoded_json->{daily}->{data}->[0]->{moonPhase};
 	if ($moonphase le "0.5") {
 		$moonphase = $moonphase * 2 * 100;
-	) else {
+	} else {
 		$moonphase = (1 - $moonphase) * 2 * 100;
 	}
 	print F "$moonphase|";
@@ -314,10 +314,10 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F sprintf("%.1f",$results->{ozone}), "|";
 		# print F $results->{moonPhase}*100, "|";
 		# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
-		my $moonphase = $results->{moonPhase}
+		my $moonphase = $results->{moonPhase};
 		if ($moonphase le "0.5") {
 			$moonphase = $moonphase * 2 * 100;
-		) else {
+		} else {
 			$moonphase = (1 - $moonphase) * 2 * 100;
 		}
 		print F "$moonphase|";
