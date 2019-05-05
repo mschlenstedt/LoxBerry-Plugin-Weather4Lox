@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.0";
+my $version = "4.5.0.1";
 
 #my $cfg             = new Config::Simple("$home/config/system/general.cfg");
 #my $lang            = $cfg->param("BASE.LANG");
@@ -191,7 +191,15 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	else {$weather = "0";}
 	print F "$weather|";
 	print F "$decoded_json->{currently}->{summary}|";
-	print F $decoded_json->{daily}->{data}->[0]->{moonPhase}*100, "|";
+	#print F $decoded_json->{daily}->{data}->[0]->{moonPhase}*100, "|";
+	# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
+	my $moonphase = $decoded_json->{daily}->{data}->[0]->{moonPhase};
+	if ($moonphase le "0.5") {
+		$moonphase = $moonphase * 2 * 100;
+	) else {
+		$moonphase = (1 - $moonphase) * 2 * 100;
+	}
+	print F "$moonphase|";
 	print F "-9999|";
 	print F "-9999|";
 	print F "-9999|";
@@ -304,7 +312,15 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$weather|";
 		print F "$results->{summary}|";
 		print F sprintf("%.1f",$results->{ozone}), "|";
-		print F $results->{moonPhase}*100, "|";
+		# print F $results->{moonPhase}*100, "|";
+		# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
+		my $moonphase = $results->{moonPhase}
+		if ($moonphase le "0.5") {
+			$moonphase = $moonphase * 2 * 100;
+		) else {
+			$moonphase = (1 - $moonphase) * 2 * 100;
+		}
+		print F "$moonphase|";
 		print F sprintf("%.1f",$results->{dewPoint}), "|";
 		print F "$results->{pressure}|";
 		print F "$results->{uvIndex}|";
