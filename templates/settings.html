@@ -760,6 +760,20 @@
 									}
 									</script>
 </TMPL_IF>
+<TMPL_IF FORM99>
+									<TMPL_VAR LOGLIST_HTML>
+									<div data-role='collapsible' id='logapache_coll' data-content-theme='true' data-collapsed='false' data-collapsed-icon='carat-d' data-expanded-icon='carat-u' data-iconpos='right'>
+										<h2 class='ui-bar ui-bar-a ui-corner-all' id='logapache_head'>Emulator Access Log</h2>
+										<table style='width:100%; padding:8px; border:1px solid #ddd; border-collapse: collapse;'>
+											<tr>
+												<td>apache6066-access.log</td>
+												<td></td>
+												<td><a data-role='button' href='/admin/system/tools/logfile.cgi?logfile=<TMPL_VAR LOGAPACHE_PATH>&header=html&format=template&only=once' target='_blank' data-inline='true' data-mini='true' data-icon='action'><TMPL_VAR OPEN></a></td>
+												<td></td>
+											</tr>
+										</table>
+									</div>
+</TMPL_IF>
 <TMPL_IF ERROR>
 <center>
 	<table border=0>
