@@ -38,7 +38,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.1";
+my $version = "4.6.0.0";
 
 my $currentnametmp = "$lbplogdir/current.dat.tmp";
 my $currentname    = "$lbplogdir/current.dat";
@@ -136,7 +136,7 @@ my @values = split /\|/, $datafile_str;
 
 foreach my $resp (keys %lox_response) {
     # print STDERR "Object $resp has value " . $lox_response{$resp};
-	if($lox_response{$resp} and $lox_weather_vi{$resp} ) {
+	if($lox_response{$resp} and $lox_response{$resp} ne "-9999" and $lox_weather_vi{$resp} ) {
 		my $col = $lox_weather_vi{$resp};
 		$values[$col] = $lox_response{$resp};
 		$values[$col] =~ s/^([-\d\.]+).*/$1/g;
@@ -171,7 +171,7 @@ if ($currentsize > 100) {
 }
 
 # Give OK status to client.
-LOGOK "Current Data and Forecasts saved successfully.";
+LOGOK "Current Data saved successfully.";
 
 # Exit
 exit;
