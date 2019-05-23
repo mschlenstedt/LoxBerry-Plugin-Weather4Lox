@@ -850,8 +850,6 @@ if ($R::form eq "1" || !$R::form) {
   $navbar{99}{active} = 1;
   $template->param( "FORM99", 1 );
   $template->param( "LOGLIST_HTML", LoxBerry::Web::loglist_html() );
-  $template->param( "LOGAPACHE_PATH", "$lbplogdir/apache6066-access.log" );
-  $template->param( "OPEN", $L{'SETTINGS.BUTTON_OPEN'} );
   
 }
 
