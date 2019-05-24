@@ -393,7 +393,7 @@ if ($R::form eq "1" || !$R::form) {
   my %labels;
 
   # Weather Service
-  @values = ('darksky', 'weatherbit', 'wu' );
+  @values = ('darksky', 'weatherbit' );
   %labels = (
         'darksky' => 'Dark Sky',
         'weatherbit' => 'Weatherbit',
