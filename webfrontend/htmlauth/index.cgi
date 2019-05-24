@@ -84,57 +84,6 @@ if ($R::saveformdata1) {
 	$R::darkskycoordlat =~ tr/,/./;
 	$R::darkskycoordlong =~ tr/,/./;
 
-	# Check for Station : WUNDERGROUND
-	if ($R::weatherservice eq "wu") {
-		our $url = $cfg->param("WUNDERGROUND.URL");
-		our $querystation;
-		our $wuquerystation;
-		$wuquerystation = $querystation;
-		if ($R::wustationtyp eq "statid") {
-			$querystation = $R::wustationid;
-		} 
-		elsif ($R::wustationtyp eq "coord") {
-			$querystation = $R::wucoordlat . "," . $R::wucoordlong;
-		}
-		else {
-			$querystation = "autoip";
-		}
-		# 1. attempt to query Wunderground
-		&wuquery;
-		$found = 0;
-		if ( $decoded_json->{current_observation}->{station_id} ) {
-			$found = 1;
-			$wuquerystation = $querystation;
-		}
-		if ( !$found && $decoded_json->{response}->{error}->{type} eq "keynotfound" ) {
-			$error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>WU Error Message:</b> $decoded_json->{response}->{error}->{description}";
-		}
-		# 2. attempt to query Wunderground
-		# Before giving up test if it is a PWS
-		if (!$found) {
-			$querystation = "pws:$querystation";
-			&wuquery;
-			if ( $decoded_json->{current_observation}->{station_id} ) {
-				$found = 1;
-				$wuquerystation = $querystation;
-			}
-		}
-		# 3. attempt to query Wunderground
-		# Before giving up test if it is a ZMW
-		if (!$found) {
-			$querystation = "zmw:$querystation";
-			&wuquery;
-			if ( $decoded_json->{current_observation}->{station_id} ) {
-				$found = 1;
-				$wuquerystation = $querystation;
-			}
-		}
-		# That was my last attempt - if we haven't found the station, we are giving up.
-		if (!$found) {
-			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
-		}
-	}
-	
 	# Check for Station : DARKSKY
 	if ($R::weatherservice eq "darksky") {
 		our $url = $cfg->param("DARKSKY.URL");
@@ -164,6 +113,21 @@ if ($R::saveformdata1) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
 		}
 	}
+	
+	# Check for Station : WUNDERGROUND
+	if ($R::wugrabber) {
+		our $url = $cfg->param("WUNDERGROUND.URL");
+		$querystation = "?format=json&station=" . $R::wustationid;
+		&wuquery;
+		$found = 0;
+		if ( !$error && $decoded_json->{conds}->{$R::wustationid}->{epoch} ) {
+			$found = 1;
+		}
+		if ( !$error && !$found ) {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
+		}
+	}
+	
 	
 	# OK - now installing...
 
@@ -887,7 +851,8 @@ sub wuquery
 {
 
         # Get data from Wunderground Server (API request) for testing API Key and Station
-        my $query = "$url\/$R::wuapikey\/conditions\/pws:1\/lang:EN\/q\/$querystation\.json";
+	#my $query = "$url\/$R::wuapikey\/conditions\/pws:1\/lang:EN\/q\/$querystation\.json";
+        my $query = "$url$querystation";
 
         my $ua = new LWP::UserAgent;
         my $res = $ua->get($query);
