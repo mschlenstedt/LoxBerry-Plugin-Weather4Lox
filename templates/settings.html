@@ -41,20 +41,6 @@
 													</tr>
 													<tr>
 														<td width="25%">
-															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_LOXGRABBER></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR LOXGRABBER>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_LOXGRABBER></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
 															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
 														</td>
 														<td width="50%">
@@ -76,6 +62,50 @@
 														</td>
 														<td width="20%">
 															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_LOXGRABBER></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR LOXGRABBER>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_LOXGRABBER></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_WUGRABBER></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR WUGRABBER>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_WUGRABBER></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+														</td>
+														<td width="50%">
+																<input id="wustationid" name="wustationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" 
+																data-validation-allowing=":,." data-validation-optional="true" 
+                data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+														<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font>
 														</td>
 													</tr>
 													<tr>
@@ -292,6 +322,9 @@
 														&nbsp;
 														</td>
 													</tr>
+
+
+													<!--
 													<tr>
 														<td colspan=3 width="75%" valign="middle">
 															<h2><TMPL_VAR SETTINGS.LABEL_WU_SETTINGS></h2>
@@ -382,7 +415,6 @@
 															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=wu',
 															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
 															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
-															<!-- Needed for compatibility reasons for OSM address search -->
 															<input id="wucity" name="wucity" type="hidden" value="">
 															<input id="wucountry" name="wucountry" type="hidden" value="">
 															</a>
@@ -402,6 +434,7 @@
 															&nbsp;
 														</td>
 													</tr>
+													-->
 												</table>
 											</div>
 									<p>
@@ -421,6 +454,7 @@
 									// Add some attributes PERL::CGI doesn't provide
 									$('select[name=getdata]').attr('data-role','flipswitch');
 									$('select[name=loxgrabber]').attr('data-role','flipswitch');
+									$('select[name=wugrabber]').attr('data-role','flipswitch');
 									$('select[name=weatherservice]').attr('data-mini','true');
 									$('select[name=wulang]').attr('data-mini','true');
 									$('select[name=darkskylang]').attr('data-mini','true');

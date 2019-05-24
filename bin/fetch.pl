@@ -33,7 +33,7 @@ use Getopt::Long;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.1";
+my $version = "4.6.0.0";
 
 my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $service          = $pcfg->param("SERVER.WEATHERSERVICE");
@@ -78,6 +78,16 @@ if (-e "$lbpbindir/grabber_$service.pl") {
   LOGCRIT "Cannot find grabber script for service $service.";
   exit (1);
 
+}
+
+# Grab some data from Wunderground
+if ( $pcfg->param("SERVER.WUGRABBER") ) {
+	LOGINF "Starting Grabber grabber_wu.pl";
+	if ($verbose) { 
+		system ("$lbpbindir/grabber_wu.pl -v");
+	} else {
+		system ("$lbpbindir/grabber_wu.pl");
+	}
 }
 
 # Grab some data from Loxone Miniserver

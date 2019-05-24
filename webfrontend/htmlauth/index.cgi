@@ -190,6 +190,7 @@ if ($R::saveformdata1) {
 	$cfg->param("WEATHERBIT.LANG", "$R::weatherbitlang");
 	$cfg->param("WEATHERBIT.COUNTRY", "$R::weatherbitcountry");
 
+	$cfg->param("SERVER.WUGRABBER", "$R::wugrabber");
 	$cfg->param("SERVER.LOXGRABBER", "$R::loxgrabber");
 	$cfg->param("SERVER.GETDATA", "$R::getdata");
 	$cfg->param("SERVER.CRON", "$R::cron");
@@ -396,7 +397,7 @@ if ($R::form eq "1" || !$R::form) {
   %labels = (
         'darksky' => 'Dark Sky',
         'weatherbit' => 'Weatherbit',
-        'wu' => 'Wunderground',
+	#'wu' => 'Wunderground',
     );
   my $wservice = $cgi->popup_menu(
         -name    => 'weatherservice',
@@ -436,6 +437,21 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.LOXGRABBER'),
     );
   $template->param( LOXGRABBER => $loxgrabber );
+
+  # WUGrabber
+  @values = ('0', '1' );
+  %labels = (
+        '0' => $L{'SETTINGS.LABEL_OFF'},
+        '1' => $L{'SETTINGS.LABEL_ON'},
+    );
+  my $wugrabber = $cgi->popup_menu(
+        -name    => 'wugrabber',
+        -id      => 'wugrabber',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.WUGRABBER'),
+    );
+  $template->param( WUGRABBER => $wugrabber );
 
   # GetData
   @values = ('0', '1' );
