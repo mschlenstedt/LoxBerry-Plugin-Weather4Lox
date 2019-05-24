@@ -49,7 +49,8 @@ my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
 $cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
 $cfg->param("DARKSKY.URL", "https://api.darksky.net");
-$cfg->param("WUNDERGROUND.URL", "http://api.wunderground.com/api");
+$cfg->param("WUNDERGROUND.URL", "http://stationdata.wunderground.com/cgi-bin/stationdata");
+
 $cfg->save();
 
 #########################################################################
@@ -107,8 +108,6 @@ if ($R::saveformdata1) {
 		}
 		if ( !$found && $decoded_json->{response}->{error}->{type} eq "keynotfound" ) {
 			$error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>WU Error Message:</b> $decoded_json->{response}->{error}->{description}";
-			&error;
-			exit;
 		}
 		# 2. attempt to query Wunderground
 		# Before giving up test if it is a PWS
@@ -143,10 +142,10 @@ if ($R::saveformdata1) {
 		# 1. attempt to query Darksky
 		&darkskyquery;
 		$found = 0;
-		if ( $decoded_json->{latitude} ) {
+		if ( !$error && $decoded_json->{latitude} ) {
 			$found = 1;
 		}
-		if ( !$found ) {
+		if ( !$error && !$found ) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
 		}
 	}
@@ -158,10 +157,10 @@ if ($R::saveformdata1) {
 		# 1. attempt to query Weatherbit
 		&weatherbitquery;
 		$found = 0;
-		if ( $decoded_json->{count} ) {
+		if ( !$error && $decoded_json->{count} ) {
 			$found = 1;
 		}
-		if ( !$found ) {
+		if ( !$error && !$found ) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
 		}
 	}
@@ -171,7 +170,8 @@ if ($R::saveformdata1) {
 	# Write configuration file(s)
 	$cfg->param("WUNDERGROUND.APIKEY", "$R::wuapikey");
 	$cfg->param("WUNDERGROUND.STATIONTYP", "$R::wustationtyp");
-	$cfg->param("WUNDERGROUND.STATIONID", "$wuquerystation");
+#	$cfg->param("WUNDERGROUND.STATIONID", "$wuquerystation");
+	$cfg->param("WUNDERGROUND.STATIONID", "$R::wustationid");
 	$cfg->param("WUNDERGROUND.COORDLAT", "$R::wucoordlat");
 	$cfg->param("WUNDERGROUND.COORDLONG", "$R::wucoordlong");
 	$cfg->param("WUNDERGROUND.LANG", "$R::wulang");
@@ -283,7 +283,7 @@ if ($R::saveformdata1) {
 	  unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
 	  unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
 	}
-
+	
 	# Error template
 	if ($error) {
 		# Template output
@@ -898,13 +898,13 @@ sub wuquery
         my $urlstatuscode = substr($urlstatus,0,3);
 
 	if ($urlstatuscode ne "200") {
-                $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-                &error;
+	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
 	}
 
         # Decode JSON response from server
-        our $decoded_json = decode_json( $json );
-
+	if (!$error) {
+        	our $decoded_json = decode_json( $json );
+	}
 	return();
 
 }
@@ -927,18 +927,17 @@ sub darkskyquery
         my $urlstatuscode = substr($urlstatus,0,3);
 
 	if ($urlstatuscode ne "200" && $urlstatuscode ne "403" ) {
-                $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-                &error;
+	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
 	}
 
 	if ($urlstatuscode eq "403" ) {
-                $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-                &error;
+	        $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
 	}
 
         # Decode JSON response from server
-        our $decoded_json = decode_json( $json );
-
+	if (!$error) {
+	        our $decoded_json = decode_json( $json );
+	}
 	return();
 
 }
@@ -961,23 +960,21 @@ sub weatherbitquery
         my $urlstatuscode = substr($urlstatus,0,3);
 
 	if ($urlstatuscode ne "200" && $urlstatuscode ne "403" ) {
-                $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-                &error;
+	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
 	}
 
 	if ($urlstatuscode eq "403" ) {
-                $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-                &error;
+	        $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
 	}
 
 	if ( $decoded_json->{error} ) {
-                $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode" . "<br><b>ERROR:</b> $decoded_json->{error}";
-                &error;
+	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode" . "<br><b>ERROR:</b> $decoded_json->{error}";
 	}
 
         # Decode JSON response from server
-        our $decoded_json = decode_json( $json );
-
+	if (!$error) {
+        	our $decoded_json = decode_json( $json );
+	}
 	return();
 
 }

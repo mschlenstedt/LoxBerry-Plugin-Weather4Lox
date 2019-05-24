@@ -37,10 +37,10 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.6.0.0";
+my $version = "4.6.0.1";
 
 my $pcfg		= new Config::Simple("$lbpconfigdir/weather4lox.cfg");
-my $wuurl		= "http://stationdata.wunderground.com/cgi-bin/stationdata?format=json&station=";
+my $wuurl		= $pcfg->param("WUNDERGROUND.URL");
 my $stationid		= $pcfg->param("WUNDERGROUND.STATIONID");
 my $currentnametmp 	= "$lbplogdir/current.dat.tmp";
 my $currentname    	= "$lbplogdir/current.dat";
@@ -71,7 +71,7 @@ LOGSTART "Weather4Lox GRABBER_WUNDERGROUND process started";
 LOGDEB "This is $0 Version $version";
 
 # Get data from Wunderground Server (API request) for current conditions
-my $wgqueryurlcr = "$wuurl$stationid";
+my $wgqueryurlcr = "$wuurl?format=json&station=$stationid";
 
 LOGINF "Fetching Data for Station $stationid";
 LOGDEB "URL: $wgqueryurlcr";
