@@ -49,7 +49,7 @@ my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
 $cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
 $cfg->param("DARKSKY.URL", "https://api.darksky.net");
-$cfg->param("WUNDERGROUND.URL", "http://stationdata.wunderground.com/cgi-bin/stationdata");
+$cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/current");
 
 $cfg->save();
 

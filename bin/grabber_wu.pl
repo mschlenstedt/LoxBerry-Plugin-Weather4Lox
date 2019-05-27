@@ -31,13 +31,14 @@ use JSON qw( decode_json );
 use File::Copy;
 use Getopt::Long;
 use Time::Piece;
+#use Data::Dumper;
 
 ##########################################################################
 # Read Settings
 ##########################################################################
 
 # Version of this script
-my $version = "4.6.0.1";
+my $version = "4.6.0.3";
 
 my $pcfg		= new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $wuurl		= $pcfg->param("WUNDERGROUND.URL");
@@ -70,19 +71,48 @@ if ($verbose) {
 LOGSTART "Weather4Lox GRABBER_WUNDERGROUND process started";
 LOGDEB "This is $0 Version $version";
 
+# Get the public API key from the WU website
+#curl -Ss https://www.wunderground.com/dashboard/pws/ISACHSEN347 | grep apiKey | sed -r 's/.*apiKey=([0-9a-z]*)\&.*/\1/g'
+#$content = qx(curl -Ss https://www.wunderground.com/dashboard/pws/ISACHSEN347 | grep apiKey);
+my $url = "https://www.wunderground.com/dashboard/pws/$stationid";
+
+LOGINF "Getting public API key from Wunderground Website";
+LOGDEB "URL: $url";
+
+my $ua = new LWP::UserAgent;
+my $resp = $ua->get($url);
+
+# Check status of request
+my $urlstatus = $resp->status_line;
+my $urlstatuscode = substr($urlstatus,0,3);
+
+LOGDEB "Status: $urlstatus";
+
+my $apikey;
+if ($urlstatuscode ne "200") {
+	LOGCRIT "Failed to fetch data\. Status Code: $urlstatuscode";
+	exit 2;
+} else {
+	LOGOK "Data fetched successfully.";
+	$apikey = $resp->decoded_content;
+	$apikey =~ s/\n//g;
+	$apikey =~ s/.*apiKey=([0-9a-z]*)\&.*/$1/g;
+	LOGDEB "Public API Key is: $apikey";
+}
+
 # Get data from Wunderground Server (API request) for current conditions
-my $wgqueryurlcr = "$wuurl?format=json&station=$stationid";
+my $wgqueryurlcr = "$wuurl?apiKey=$apikey&stationId=$stationid&format=json&units=m";
 
 LOGINF "Fetching Data for Station $stationid";
 LOGDEB "URL: $wgqueryurlcr";
 
-my $ua = new LWP::UserAgent;
-my $res = $ua->get($wgqueryurlcr);
-my $json = $res->decoded_content();
+$ua = new LWP::UserAgent;
+$resp = $ua->get($wgqueryurlcr);
+my $json = $resp->decoded_content();
 
 # Check status of request
-my $urlstatus = $res->status_line;
-my $urlstatuscode = substr($urlstatus,0,3);
+$urlstatus = $resp->status_line;
+$urlstatuscode = substr($urlstatus,0,3);
 
 LOGDEB "Status: $urlstatus";
 
@@ -95,9 +125,10 @@ if ($urlstatuscode ne "200") {
 
 # Decode JSON response from server
 my $decoded_json = decode_json( $json );
+#print Dumper $decoded_json;
 
 # Write location data into database
-my $t = localtime($decoded_json->{conds}->{$stationid}->{epoch});
+my $t = localtime($decoded_json->{observations}->[0]->{epoch});
 LOGINF "Saving new Data for Timestamp $t to database.";
 
 my %wu_weather;
@@ -128,19 +159,19 @@ my %wu_response;
 LOGDEB "Data to request: " . join(', ', @wu_weather_arr);
 
 # Convert anglo JSON data from WU to metric
-$wu_response{cur_tt} = sprintf("%.1f",($decoded_json->{conds}->{$stationid}->{tempf} - 32) * 5/9) if ($decoded_json->{conds}->{$stationid}->{tempf} ne "-9999");
-$wu_response{cur_tt_fl}	= sprintf("%.1f",($decoded_json->{conds}->{$stationid}->{windchillf} - 32) * 5/9) if ($decoded_json->{conds}->{$stationid}->{windchillf} ne "-9999");;
-$wu_response{cur_hu} = $decoded_json->{conds}->{$stationid}->{humidity} if ($decoded_json->{conds}->{$stationid}->{humidity} ne "-9999");;
-$wu_response{cur_w_dir}	= $decoded_json->{conds}->{$stationid}->{winddir} if ($decoded_json->{conds}->{$stationid}->{winddir} ne "-9999");;
-$wu_response{cur_w_sp} = sprintf("%.1f",$decoded_json->{conds}->{$stationid}->{windspeedmph} * 1.60934) if ($decoded_json->{conds}->{$stationid}->{windspeedmph} ne "-9999");;
-$wu_response{cur_w_gu} = sprintf("%.1f",$decoded_json->{conds}->{$stationid}->{windgustmph} * 1.60934) if ($decoded_json->{conds}->{$stationid}->{windgustmph} ne "-9999");;
-$wu_response{cur_w_ch} = sprintf("%.1f",($decoded_json->{conds}->{$stationid}->{windchillf} - 32) * 5/9) if ($decoded_json->{conds}->{$stationid}->{windchillf} ne "-9999");;
-$wu_response{cur_pr} = sprintf("%.2f",$decoded_json->{conds}->{$stationid}->{baromin} * 33.8639) if ($decoded_json->{conds}->{$stationid}->{baromin} ne "-9999");;
-$wu_response{cur_dp} = sprintf("%.1f",($decoded_json->{conds}->{$stationid}->{maxdewpoint} - 32) * 5/9) if ($decoded_json->{conds}->{$stationid}->{maxdewpoint} ne "-9999");;
-$wu_response{cur_sr} = $decoded_json->{conds}->{$stationid}->{solarradiation} if ($decoded_json->{conds}->{$stationid}->{solarradiation} ne "-9999");;
-$wu_response{cur_uvi} = $decoded_json->{conds}->{$stationid}->{UV} if ($decoded_json->{conds}->{$stationid}->{UV} ne "-9999");;
-$wu_response{cur_prec_today} = sprintf("%.2f",$decoded_json->{conds}->{$stationid}->{dailyrainin} * 25.4) if ($decoded_json->{conds}->{$stationid}->{dailyrainin} ne "-9999");;
-$wu_response{cur_prec_1hr} = sprintf("%.2f",$decoded_json->{conds}->{$stationid}->{rainin} * 25.4) if ($decoded_json->{conds}->{$stationid}->{rainin} ne "-9999");;
+$wu_response{cur_tt} = sprintf("%.1f",$decoded_json->{observations}->[0]->{metric}->{temp}) if ($decoded_json->{observations}->[0]->{metric}->{temp} ne "-9999");
+$wu_response{cur_tt_fl}	= sprintf("%.1f",$decoded_json->{observations}->[0]->{metric}->{windChill}) if ($decoded_json->{observations}->[0]->{metric}->{windChill} ne "-9999");
+$wu_response{cur_hu} = $decoded_json->{observations}->[0]->{humidity} if ($decoded_json->{observations}->[0]->{humidity} ne "-9999");
+$wu_response{cur_w_dir}	= $decoded_json->{observations}->[0]->{winddir} if ($decoded_json->{observations}->[0]->{winddir} ne "-9999");
+$wu_response{cur_w_sp} = $decoded_json->{observations}->[0]->{metric}->{windSpeed} if ($decoded_json->{observations}->[0]->{metric}->{windSpeed} ne "-9999");
+$wu_response{cur_w_gu} = $decoded_json->{observations}->[0]->{metric}->{windGust} if ($decoded_json->{observations}->[0]->{metric}->{windGust} ne "-9999");
+$wu_response{cur_w_ch} = sprintf("%.1f",$decoded_json->{observations}->[0]->{metric}->{windChill}) if ($decoded_json->{observations}->[0]->{metric}->{windChill} ne "-9999");
+$wu_response{cur_pr} = $decoded_json->{observations}->[0]->{metric}->{pressure} if ($decoded_json->{observations}->[0]->{metric}->{pressure} ne "-9999");
+$wu_response{cur_dp} = $decoded_json->{observations}->[0]->{metric}->{dewpt} if ($decoded_json->{observations}->[0]->{metric}->{dewpt} ne "-9999");
+$wu_response{cur_sr} = sprintf("%.0f",$decoded_json->{observations}->[0]->{solarRadiation}) if ($decoded_json->{observations}->[0]->{solarRadiation} ne "-9999");
+$wu_response{cur_uvi} = $decoded_json->{observations}->[0]->{uv} if ($decoded_json->{observations}->[0]->{uv} ne "-9999");
+$wu_response{cur_prec_today} = $decoded_json->{observations}->[0]->{metric}->{precipTotal} if ($decoded_json->{observations}->[0]->{metric}->{precipTotal} ne "-9999");
+$wu_response{cur_prec_1hr} = $decoded_json->{observations}->[0]->{metric}->{precipRate} if ($decoded_json->{observations}->[0]->{metric}->{precipRate} ne "-9999");
 
 LOGDEB "Copying current.dat to current.dat.tmp";
 copy($currentname, $currentnametmp);
