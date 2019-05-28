@@ -117,10 +117,10 @@ if ($R::saveformdata1) {
 	# Check for Station : WUNDERGROUND
 	if ($R::wugrabber) {
 		our $url = $cfg->param("WUNDERGROUND.URL");
-		$querystation = "?format=json&station=" . $R::wustationid;
+		$querystation = $R::wustationid;
 		&wuquery;
 		$found = 0;
-		if ( !$error && $decoded_json->{conds}->{$R::wustationid}->{epoch} ) {
+		if ( !$error && $decoded_json->{observations}->[0]->{epoch} ) {
 			$found = 1;
 		}
 		if ( !$error && !$found ) {
@@ -850,25 +850,48 @@ exit;
 sub wuquery
 {
 
-        # Get data from Wunderground Server (API request) for testing API Key and Station
-	#my $query = "$url\/$R::wuapikey\/conditions\/pws:1\/lang:EN\/q\/$querystation\.json";
-        my $query = "$url$querystation";
+	# Get the public API key from the WU website
+	my $query = "https://www.wunderground.com/dashboard/pws/$querystation";
+	print STDERR "QUERY1: $query\n";
 
-        my $ua = new LWP::UserAgent;
-        my $res = $ua->get($query);
-        my $json = $res->decoded_content();
+	my $ua = new LWP::UserAgent;
+	my $res = $ua->get($query);
 
-        # Check status of request
-        my $urlstatus = $res->status_line;
-        my $urlstatuscode = substr($urlstatus,0,3);
+	# Check status of request
+	my $urlstatus = $res->status_line;
+	my $urlstatuscode = substr($urlstatus,0,3);
 
+	my $apikey;
 	if ($urlstatuscode ne "200") {
 	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+	} else {
+		$apikey = $res->decoded_content;
+		$apikey =~ s/\n//g;
+		$apikey =~ s/.*apiKey=([0-9a-z]*)\&.*/$1/g;
 	}
+	
+	print STDERR "API: $apikey\n";
 
-        # Decode JSON response from server
+        # Get data from Wunderground Server (API request) for testing API Key and Station
 	if (!$error) {
-        	our $decoded_json = decode_json( $json );
+	        $query = "$url?apiKey=$apikey&stationId=$querystation&format=json&units=m";
+		print STDERR "QUERY2: $query\n";
+		$ua = new LWP::UserAgent;
+		$res = $ua->get($query);
+		my $json = $res->decoded_content();
+	
+		# Check status of request
+		my $urlstatus = $res->status_line;
+		my $urlstatuscode = substr($urlstatus,0,3);
+
+		if ($urlstatuscode ne "200") {
+		        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+		}
+
+		# Decode JSON response from server
+		if (!$error) {
+			our $decoded_json = decode_json( $json );
+		}
 	}
 	return();
 
