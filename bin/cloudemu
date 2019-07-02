@@ -7,35 +7,37 @@ PATH="/sbin:/bin:/usr/sbin:/usr/bin:$LBHOMEDIR/bin:$LBHOMEDIR/sbin"
 ENVIRONMENT=$(cat /etc/environment)
 export $ENVIRONMENT
 
-case "$1" in
-  enable)
-	# Check for WLAN adapter
-	CHECKWLAN=`ifconfig | grep -c -i wlan0`
-	if [ $CHECKWLAN -eq 1 ]; then
-		echo "Found configured WLAN adapter."
-		OWNIP=`ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
-		PING=`ping -c1 $OWNIP`
-		if [ $? -ne 0 ]; then
-			echo "Something is wrong with wlan0. Fallback to eth0."
-			OWNIP=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
-		fi
-	else
-		OWNIP=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
-	fi
-	# Check if we fidured out an IP
-	if [ -z $OWNIP ]; then
-		echo "Cannot figure out a valid IP address. Giving up."
-		exit 1
-	fi
-	# Check if own IP is reachable
+
+# Check for WLAN adapter
+CHECKWLAN=`ifconfig | grep -c -i wlan0`
+if [ $CHECKWLAN -eq 1 ]; then
+	echo "Found configured WLAN adapter."
+	OWNIP=`ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
 	PING=`ping -c1 $OWNIP`
 	if [ $? -ne 0 ]; then
-		echo "Cannot reach my own IP address $OWNIP. Giving up."
-		exit 1
-	fi		
-	# Enable DNSMasq Config
-	# Check for DNSMasq Plugin
-	CHECKDNSMASQ=`cat $LBSDATA/plugindatabase.dat | grep -c -i DNSmasq`
+		echo "Something is wrong with wlan0. Fallback to eth0."
+		OWNIP=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
+	fi
+else
+	OWNIP=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
+fi
+# Check if we fidured out an IP
+if [ -z $OWNIP ]; then
+	echo "Cannot figure out a valid IP address. Giving up."
+	exit 1
+fi
+# Check if own IP is reachable
+PING=`ping -c1 $OWNIP`
+if [ $? -ne 0 ]; then
+	echo "Cannot reach my own IP address $OWNIP. Giving up."
+	exit 1
+fi		
+# Enable DNSMasq Config
+# Check for DNSMasq Plugin
+CHECKDNSMASQ=`cat $LBSDATA/plugindatabase.dat | grep -c -i DNSmasq`
+
+case "$1" in
+  enable)
 	if [ $CHECKDNSMASQ -eq 1 ]; then
 		echo "Found installed DNSMasq Plugin. Will do no changes to DNSMasq configuration."
 	else
