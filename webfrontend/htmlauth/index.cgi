@@ -40,9 +40,9 @@ $cgi->import_names('R');
 ##########################################################################
 # Read Settings
 ##########################################################################
-
+#
 # Version of this script
-my $version = LoxBerry::System::pluginversion();
+$version = "4.7.0.0";
 
 # Settings
 my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
