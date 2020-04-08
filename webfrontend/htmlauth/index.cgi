@@ -168,13 +168,11 @@ if ($R::saveformdata1) {
 	$cfg->param("DARKSKY.COUNTRY", "$R::darkskycountry");
 
 	$cfg->param("WEATHERBIT.APIKEY", "$R::weatherbitapikey");
-	$cfg->param("WEATHERBIT.APIKEY", "$R::weatherbitapikey");
 	$cfg->param("WEATHERBIT.COORDLAT", "$R::weatherbitcoordlat");
 	$cfg->param("WEATHERBIT.COORDLONG", "$R::weatherbitcoordlong");
 	$cfg->param("WEATHERBIT.LANG", "$R::weatherbitlang");
 	$cfg->param("WEATHERBIT.COUNTRY", "$R::weatherbitcountry");
 
-	$cfg->param("OPENWEATHER.APIKEY", "$R::openweatherapikey");
 	$cfg->param("OPENWEATHER.APIKEY", "$R::openweatherapikey");
 	$cfg->param("OPENWEATHER.COORDLAT", "$R::openweathercoordlat");
 	$cfg->param("OPENWEATHER.COORDLONG", "$R::openweathercoordlong");
@@ -385,10 +383,11 @@ if ($R::form eq "1" || !$R::form) {
   my %labels;
 
   # Weather Service
-  @values = ('darksky', 'weatherbit' );
+  @values = ( 'openweather', 'weatherbit', 'darksky',  );
   %labels = (
-        'darksky' => 'Dark Sky',
+        'openweather' => 'OpenWeatherMap',
         'weatherbit' => 'Weatherbit',
+        'darksky' => 'Dark Sky',
 	#'wu' => 'Wunderground',
     );
   my $wservice = $cgi->popup_menu(
@@ -1064,7 +1063,7 @@ sub openweatherquery
 {
 
         # Get data from Weatherbit Server (API request) for testing API Key
-        my $query = "$url\/conecall??appid=$R::weatherbitapikey&$querystation";
+        my $query = "$url\/onecall?appid=$R::openweatherapikey&$querystation";
         my $ua = new LWP::UserAgent;
         my $res = $ua->get($query);
         my $json = $res->decoded_content();
