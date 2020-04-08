@@ -47,6 +47,7 @@ my $version = LoxBerry::System::pluginversion();
 # Settings
 my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
+$cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data/2.5");
 $cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
 $cfg->param("DARKSKY.URL", "https://api.darksky.net");
 $cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/current");
@@ -83,6 +84,10 @@ if ($R::saveformdata1) {
 	$R::wucoordlong =~ tr/,/./;
 	$R::darkskycoordlat =~ tr/,/./;
 	$R::darkskycoordlong =~ tr/,/./;
+	$R::weatherbitcoordlat =~ tr/,/./;
+	$R::weatherbitcoordlong =~ tr/,/./;
+	$R::openweathercoordlat =~ tr/,/./;
+	$R::openweathercoordlong =~ tr/,/./;
 
 	# Check for Station : DARKSKY
 	if ($R::weatherservice eq "darksky") {
@@ -107,6 +112,21 @@ if ($R::saveformdata1) {
 		&weatherbitquery;
 		$found = 0;
 		if ( !$error && $decoded_json->{count} ) {
+			$found = 1;
+		}
+		if ( !$error && !$found ) {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
+		}
+	}
+	
+	# Check for Station : OPENWEATHER
+	if ($R::weatherservice eq "openweather") {
+		our $url = $cfg->param("OPENWEATHER.URL");
+		our $querystation = "lat=" . $R::openweathercoordlat . "&lon=" . $R::openweathercoordlong;
+		# 1. attempt to query OpenWeather
+		&openweatherquery;
+		$found = 0;
+		if ( !$error && $decoded_json->{lat} ) {
 			$found = 1;
 		}
 		if ( !$error && !$found ) {
@@ -153,6 +173,14 @@ if ($R::saveformdata1) {
 	$cfg->param("WEATHERBIT.COORDLONG", "$R::weatherbitcoordlong");
 	$cfg->param("WEATHERBIT.LANG", "$R::weatherbitlang");
 	$cfg->param("WEATHERBIT.COUNTRY", "$R::weatherbitcountry");
+
+	$cfg->param("OPENWEATHER.APIKEY", "$R::openweatherapikey");
+	$cfg->param("OPENWEATHER.APIKEY", "$R::openweatherapikey");
+	$cfg->param("OPENWEATHER.COORDLAT", "$R::openweathercoordlat");
+	$cfg->param("OPENWEATHER.COORDLONG", "$R::openweathercoordlong");
+	$cfg->param("OPENWEATHER.LANG", "$R::openweatherlang");
+	$cfg->param("OPENWEATHER.STATION", "$R::openweathercity");
+	$cfg->param("OPENWEATHER.COUNTRY", "$R::openweathercountry");
 
 	$cfg->param("SERVER.WUGRABBER", "$R::wugrabber");
 	$cfg->param("SERVER.LOXGRABBER", "$R::loxgrabber");
@@ -560,6 +588,67 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('WEATHERBIT.LANG'),
     );
   $template->param( WEATHERBITLANG => $weatherbitlang );
+
+  # OPenweather Language
+  @values = ('af', 'ar', 'az', 'bg', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'eu', 'fa', 'fi', 'fr', 'gl', 'he', 'hi', 'hr', 'hu', 'id', 'it', 'ja', 'kr', 'la', 'lt', 'mk', 'no', 'nl', 'pl', 'pt', 'pt_br', 'ro', 'ru', 'se', 'sk', 'sl', 'sr', 'th', 'tr', 'uk', 'vi', 'zh_cn', 'zh_tw', 'zu');
+
+  %labels = (
+	'af' => 'Africaans',
+	'ar' => 'Arabic',
+	'az' => 'Azerbaijani',
+	'bg' => 'Bulgarian',
+	'ca' => 'Catalan',
+	'ca' => 'Catalan',
+	'cz' => 'Czech',
+	'da' => 'Danish',
+	'de' => 'German',
+	'el' => 'Greek',
+	'en' => 'English',
+	'es' => 'Spanish',
+	'eu' => 'Basque',
+	'fa' => 'Persian (Farsi)',
+	'fi' => 'Finnish',
+	'fr' => 'French',
+	'hr' => 'Croatian',
+	'ga' => 'Galician',
+	'he' => 'Hebrew',
+	'hi' => 'Hindi',
+	'hr' => 'Croatian',
+	'hu' => 'Hungarian',
+	'id' => 'Indonesian',
+	'it' => 'Italian',
+	'ja' => 'Japanese',
+	'kr' => 'Korean',
+	'la' => 'Latvian',
+	'lt' => 'Lithuanian',
+	'mk' => 'Macedonian',
+	'no' => 'Norwegian',
+	'nl' => 'Dutch',
+	'pl' => 'Polish',
+	'pt' => 'Portuguese',
+	'pt_br' => 'Portuguese Brasil',
+	'ro' => 'Romanian',
+	'ru' => 'Russian',
+	'se' => 'Swedish',
+	'sk' => 'Slovak',
+	'sl' => 'Slovenian',
+	'sr' => 'Serbian',
+	'th' => 'Thai',
+	'tr' => 'Turkish',
+	'uk' => 'Ukrainian',
+	'vi' => 'Vietnamese',
+	'zh_cn' => 'simplified Chinese',
+	'zh_tw' => 'traditional Chinese',
+	'zu' => 'Zulu',
+    );
+  my $openweatherlang = $cgi->popup_menu(
+        -name    => 'openweatherlang',
+        -id      => 'openweatherlang',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('OPENWEATHER.LANG'),
+    );
+  $template->param( OPENWEATHERLANG => $openweatherlang );
   
   
   # Statiotyp
@@ -957,6 +1046,39 @@ sub weatherbitquery
 
 	if ( $decoded_json->{error} ) {
 	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode" . "<br><b>ERROR:</b> $decoded_json->{error}";
+	}
+
+        # Decode JSON response from server
+	if (!$error) {
+        	our $decoded_json = decode_json( $json );
+	}
+	return();
+
+}
+
+#####################################################
+# Query Openweather
+#####################################################
+
+sub openweatherquery
+{
+
+        # Get data from Weatherbit Server (API request) for testing API Key
+        my $query = "$url\/conecall??appid=$R::weatherbitapikey&$querystation";
+        my $ua = new LWP::UserAgent;
+        my $res = $ua->get($query);
+        my $json = $res->decoded_content();
+
+        # Check status of request
+        my $urlstatus = $res->status_line;
+        my $urlstatuscode = substr($urlstatus,0,3);
+
+	if ($urlstatuscode ne "200" && $urlstatuscode ne "401" ) {
+	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+	}
+
+	if ($urlstatuscode eq "401" ) {
+	        $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
 	}
 
         # Decode JSON response from server

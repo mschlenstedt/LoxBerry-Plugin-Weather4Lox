@@ -222,11 +222,6 @@
 														</td>
 													</tr>
 													<tr>
-														<td colspan=4>
-														&nbsp;
-														</td>
-													</tr>
-													<tr>
 														<td colspan=3 width="75%" valign="middle">
 															<h2><TMPL_VAR SETTINGS.LABEL_WEATHERBIT_SETTINGS></h2>
 														</td>
@@ -322,7 +317,81 @@
 														&nbsp;
 														</td>
 													</tr>
-
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+															<h2><TMPL_VAR SETTINGS.LABEL_OPENWEATHER_SETTINGS></h2>
+														</td>
+														<td align="right">
+															<a href="https://openweathermap.org/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/openweather_200.png"></a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelopenweatherapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+														</td>
+														<td width="50%">
+																<input id="openweatherapikey" name="openweatherapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR OPENWEATHER.APIKEY>" 
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%" valign="top">
+															<br><label id="labelopenweathercoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labelopenweathercoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+															</td>
+															<td>
+															<input id="openweathercoordlat" name="openweathercoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLAT>" 
+																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+															</td>
+															<td>
+															<label id="labelopenweathercoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+															</td>
+															<td>
+															<input id="openweathercoordlong" name="openweathercoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLONG>"
+																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<a id="openweathercoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+															data-role="button" id="btnopenweatheraddresssearch" data-inline="true" data-mini="true"
+															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=openweather',
+															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+															</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelopenweatherlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR OPENWEATHERLANG>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
 
 													<!--
 													<tr>
@@ -456,9 +525,10 @@
 									$('select[name=loxgrabber]').attr('data-role','flipswitch');
 									$('select[name=wugrabber]').attr('data-role','flipswitch');
 									$('select[name=weatherservice]').attr('data-mini','true');
-									$('select[name=wulang]').attr('data-mini','true');
+									//$('select[name=wulang]').attr('data-mini','true');
 									$('select[name=darkskylang]').attr('data-mini','true');
 									$('select[name=weatherbitlang]').attr('data-mini','true');
+									$('select[name=openweatherlang]').attr('data-mini','true');
 									//$('select[name=wulang]').attr('data-native-menu','false');
 									$('select[name=metric]').attr('data-mini','true');
 									//$('select[name=metric]').attr('data-native-menu','false');
