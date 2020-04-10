@@ -67,17 +67,28 @@ my $log = LoxBerry::Log->new (
 
 # Commandline options
 my $verbose = '';
-
+my $fillmissinghfc
 GetOptions ('verbose' => \$verbose,
-            'quiet'   => sub { $verbose = 0 });
+            'quiet'   => sub { $verbose = 0 },
+            'fillmissinghfc' => \$fillmissinghfc);
 
 if ($verbose) {
 	$log->stdout(1);
 	$log->loglevel(7);
 }
 
-LOGSTART "Weather4Lox GRABBER_OPENWEATHER process started";
+if ($fillmissinghfc) {
+	LOGSTART "Weather4Lox GRABBER_OPENWEATHER process started - FILL MISSING HOURLY FC ONLY";
+} else {
+	LOGSTART "Weather4Lox GRABBER_OPENWEATHER process started";
+}
 LOGDEB "This is $0 Version $version";
+
+
+#
+# The following Current, Daily and Hourly forecast will only be executed, if $fillmissinghfc isn't set
+# 
+if (!$fillmissinghfc) {
 
 # Get data from Weatherbit Server (API request) for current conditions
 my $queryurlcr = "$url/onecall?appid=$apikey&$stationid&lang=$lang&units=metric";
@@ -740,6 +751,13 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
   flock(F,8);
 close(F);
 
+#
+# END: The following Current, Daily and Hourly forecast will only be executed, if $fillmissinghfc isn't set
+# 
+} else {
+	$i = 48;
+}
+
 # OpenWeatherMap only offers 48h in the free account. Interpolate with 3-hours data to have more entries for the weather emulator
 if ($i < 168) {
 
@@ -1033,6 +1051,11 @@ open(F,"<$lbplogdir/hourlyforecast.dat.tmp");
 	}
 close (F);
 
+#
+# The following Current, Daily and Hourly forecast will only be executed, if $fillmissinghfc isn't set
+# 
+if (!$fillmissinghfc) {
+
 # Clean Up Databases
 LOGINF "Cleaning $lbplogdir/current.dat.tmp";
 open(F,"+<$lbplogdir/current.dat.tmp");
@@ -1124,6 +1147,11 @@ my $hourlyname = "$lbplogdir/hourlyforecast.dat.tmp";
 my $hourlysize = -s ($hourlyname);
 if ($hourlysize > 100) {
         move($hourlyname, "$lbplogdir/hourlyforecast.dat");
+}
+
+#
+# END: The following Current, Daily and Hourly forecast will only be executed, if $fillmissinghfc isn't set
+# 
 }
 
 # Give OK status to client.
