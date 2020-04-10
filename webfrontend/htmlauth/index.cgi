@@ -172,6 +172,7 @@ if ($R::saveformdata1) {
 	$cfg->param("WEATHERBIT.COORDLONG", "$R::weatherbitcoordlong");
 	$cfg->param("WEATHERBIT.LANG", "$R::weatherbitlang");
 	$cfg->param("WEATHERBIT.COUNTRY", "$R::weatherbitcountry");
+	$cfg->param("WEATHERBIT.FILLMISSINGDATA", "$R::weatherbitfillmissingdata");
 
 	$cfg->param("OPENWEATHER.APIKEY", "$R::openweatherapikey");
 	$cfg->param("OPENWEATHER.COORDLAT", "$R::openweathercoordlat");
@@ -587,6 +588,21 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('WEATHERBIT.LANG'),
     );
   $template->param( WEATHERBITLANG => $weatherbitlang );
+
+  # WeatherBit: Fill missing data
+  @values = ('0', '1' );
+  %labels = (
+        '0' => $L{'SETTINGS.LABEL_OFF'},
+        '1' => $L{'SETTINGS.LABEL_ON'},
+    );
+  my $weatherbitfillmissingdata = $cgi->popup_menu(
+        -name    => 'weatherbitfillmissingdata',
+        -id      => 'weatherbitfillmissingdata',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('WEATHERBIT.FILLMISSINGDATA'),
+    );
+  $template->param( WEATHERBITFILLMISSINGDATA => $weatherbitfillmissingdata );
 
   # OPenweather Language
   @values = ('af', 'ar', 'az', 'bg', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'eu', 'fa', 'fi', 'fr', 'gl', 'he', 'hi', 'hr', 'hu', 'id', 'it', 'ja', 'kr', 'la', 'lt', 'mk', 'no', 'nl', 'pl', 'pt', 'pt_br', 'ro', 'ru', 'se', 'sk', 'sl', 'sr', 'th', 'tr', 'uk', 'vi', 'zh_cn', 'zh_tw', 'zu');

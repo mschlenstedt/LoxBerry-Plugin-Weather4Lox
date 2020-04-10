@@ -298,6 +298,21 @@
 													</tr>
 													<tr>
 														<td width="25%">
+															<label
+																			id="labelweatherbitfillmissingdata"><TMPL_VAR SETTINGS.LABEL_FILLMISSINGDATA></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR WEATHERBITFILLMISSINGDATA>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_FILLMISSINGDATA></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
 															<label id="labelweatherbitcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
 														</td>
 														<td width="50%">
@@ -556,6 +571,7 @@
 									//$('select[name=wulang]').attr('data-mini','true');
 									$('select[name=darkskylang]').attr('data-mini','true');
 									$('select[name=weatherbitlang]').attr('data-mini','true');
+									$('select[name=weatherbitfillmissingdata]').attr('data-role','flipswitch');
 									$('select[name=openweatherlang]').attr('data-mini','true');
 									//$('select[name=wulang]').attr('data-native-menu','false');
 									$('select[name=metric]').attr('data-mini','true');
