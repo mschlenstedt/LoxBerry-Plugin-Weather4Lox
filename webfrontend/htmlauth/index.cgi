@@ -182,10 +182,14 @@ if ($R::saveformdata1) {
 
 	$cfg->param("SERVER.WUGRABBER", "$R::wugrabber");
 	$cfg->param("SERVER.LOXGRABBER", "$R::loxgrabber");
+	$cfg->param("SERVER.USEALTERNATEDFC", "$R::usealternatedfc");
+	$cfg->param("SERVER.USEALTERNATEHFC", "$R::usealternatehfc");
 	$cfg->param("SERVER.GETDATA", "$R::getdata");
 	$cfg->param("SERVER.CRON", "$R::cron");
 	$cfg->param("SERVER.METRIC", "$R::metric");
 	$cfg->param("SERVER.WEATHERSERVICE", "$R::weatherservice");
+	$cfg->param("SERVER.WEATHERSERVICEDFC", "$R::weatherservicedfc");
+	$cfg->param("SERVER.WEATHERSERVICEHFC", "$R::weatherservicehfc");
 
 	$cfg->save();
 		
@@ -388,7 +392,6 @@ if ($R::form eq "1" || !$R::form) {
         'openweather' => 'OpenWeatherMap',
         'weatherbit' => 'Weatherbit',
         'darksky' => 'Dark Sky',
-	#'wu' => 'Wunderground',
     );
   my $wservice = $cgi->popup_menu(
         -name    => 'weatherservice',
@@ -398,6 +401,68 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.WEATHERSERVICE'),
     );
   $template->param( WEATHERSERVICE => $wservice );
+
+  # DFC Weather Service
+  @values = ( 'openweather', 'weatherbit', 'darksky',  );
+  %labels = (
+        'openweather' => 'OpenWeatherMap',
+        'weatherbit' => 'Weatherbit',
+        'darksky' => 'Dark Sky',
+    );
+  my $wservicedfc = $cgi->popup_menu(
+        -name    => 'weatherservicedfc',
+        -id      => 'weatherservicedfc',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.WEATHERSERVICEDFC'),
+    );
+  $template->param( WEATHERSERVICEDFC => $wservicedfc );
+
+  # Use alternate DFC Weather Service
+  @values = ('0', '1' );
+  %labels = (
+        '0' => $L{'SETTINGS.LABEL_OFF'},
+        '1' => $L{'SETTINGS.LABEL_ON'},
+    );
+  my $usealternatedfc = $cgi->popup_menu(
+        -name    => 'usealternatedfc',
+        -id      => 'usealternatedfc',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.USEALTERNATEDFC'),
+    );
+  $template->param( USEALTERNATEDFC => $usealternatedfc );
+
+  # HFC Weather Service
+  @values = ( 'openweather', 'weatherbit', 'darksky',  );
+  %labels = (
+        'openweather' => 'OpenWeatherMap',
+        'weatherbit' => 'Weatherbit',
+        'darksky' => 'Dark Sky',
+    );
+  my $wservicehfc = $cgi->popup_menu(
+        -name    => 'weatherservicehfc',
+        -id      => 'weatherservicehfc',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.WEATHERSERVICEHFC'),
+    );
+  $template->param( WEATHERSERVICEHFC => $wservicehfc );
+
+  # Use alternate HFC Weather Service
+  @values = ('0', '1' );
+  %labels = (
+        '0' => $L{'SETTINGS.LABEL_OFF'},
+        '1' => $L{'SETTINGS.LABEL_ON'},
+    );
+  my $usealternatehfc = $cgi->popup_menu(
+        -name    => 'usealternatehfc',
+        -id      => 'usealternatehfc',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.USEALTERNATEHFC'),
+    );
+  $template->param( USEALTERNATEHFC => $usealternatehfc );
 
   # Units
   @values = ('1', '0' );

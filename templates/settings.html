@@ -27,6 +27,44 @@
 													</tr>
 													<tr>
 														<td width="25%">
+															<label id="labelusealternatedfc"><TMPL_VAR SETTINGS.LABEL_USEALTERNATEDFC></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+																			<td><TMPL_VAR USEALTERNATEDFC></td>
+																			<td width="100%"><TMPL_VAR WEATHERSERVICEDFC></td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_USEALTERNATEDFC></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelusealternatehfc"><TMPL_VAR SETTINGS.LABEL_USEALTERNATEHFC></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+																			<td><TMPL_VAR USEALTERNATEHFC></td>
+																			<td width="100%"><TMPL_VAR WEATHERSERVICEHFC></td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_USEALTERNATEHFC></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
 															<label id="labelmetric"><TMPL_VAR SETTINGS.LABEL_UNITS></label>
 														</td>
 														<td width="50%">
@@ -83,7 +121,15 @@
 															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_WUGRABBER></label>
 														</td>
 														<td width="50%">
-															<TMPL_VAR WUGRABBER>
+															<table border=0 width="100%">
+															<tr>
+																			<td><TMPL_VAR WUGRABBER></td>
+																			<td width="20%" align="right"><label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label></td>
+																			<td width="80%"><input id="wustationid" name="wustationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" data-validation-allowing=":,." data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
+																			<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font></td>
+															</tr>
+															</table>
+														</td>
 														</td>
 														<td width="5%" valign="middle">
 															&nbsp;
@@ -93,19 +139,10 @@
 														</td>
 													</tr>
 													<tr>
-														<td width="25%">
-															<label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
-														</td>
-														<td width="50%">
-																<input id="wustationid" name="wustationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" 
-																data-validation-allowing=":,." data-validation-optional="true" 
-                data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
-														</td>
 														<td width="5%" valign="middle">
 															&nbsp;
 														</td>
 														<td width="20%">
-														<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font>
 														</td>
 													</tr>
 													<tr>
@@ -559,15 +596,17 @@
 										</center>
 									</form>
 									</p>
-									<script>
-									// Activate on Load
-									disable();
 
+									<script>
 									// Add some attributes PERL::CGI doesn't provide
 									$('select[name=getdata]').attr('data-role','flipswitch');
 									$('select[name=loxgrabber]').attr('data-role','flipswitch');
 									$('select[name=wugrabber]').attr('data-role','flipswitch');
+									$('select[name=usealternatedfc]').attr('data-role','flipswitch');
+									$('select[name=usealternatehfc]').attr('data-role','flipswitch');
 									$('select[name=weatherservice]').attr('data-mini','true');
+									$('select[name=weatherservicedfc]').attr('data-mini','true');
+									$('select[name=weatherservicehfc]').attr('data-mini','true');
 									//$('select[name=wulang]').attr('data-mini','true');
 									$('select[name=darkskylang]').attr('data-mini','true');
 									$('select[name=weatherbitlang]').attr('data-mini','true');
@@ -579,44 +618,79 @@
 									$('select[name=cron]').attr('data-mini','true');
 									//$('select[name=cron]').attr('data-native-menu','false');
 
-									// Disable some form elements depending on selected options
-									function disable() {
-										var click = $('input[name=wustationtyp]:checked').val();
-										if ( click === "statid" ) {
-											$('#linkwundermap').removeClass('ui-disabled');
+									// Get Data
+									$( document ).on( 'change', '#getdata', function ( e ) {
+										if ( $( "select[name=getdata]" ).val()  === "1" ) {
+											//alert("An!");
+											$('#cron').removeClass('ui-disabled');
+											$('#cron').selectmenu('refresh');
+										} else {
+											//alert("Aus!");
+											$('#cron').addClass('ui-disabled');
+											$('#cron').selectmenu('refresh');
+										}
+									});
+
+									// WUGrabber
+									$( document ).on( 'change', '#wugrabber', function ( e ) {
+										if ( $( "select[name=wugrabber]" ).val()  === "1" ) {
+											//alert("An!");
 											$('#labelwustationid').removeClass('ui-disabled');
 											$('#wustationid').removeClass('ui-disabled');
-											$('#labelwucoord').addClass('ui-disabled');
-											$('#labelwucoordlat').addClass('ui-disabled');
-											$('#labelwucoordlong').addClass('ui-disabled');
-											$('#wucoordlat').addClass('ui-disabled');
-											$('#wucoordlong').addClass('ui-disabled');
-											$('#wucoordaddresssearch').addClass('ui-disabled');
-											$('#wustationid').removeClass('ui-disabled');
-										}
-										if ( click === "coord" ) {
-											$('#linkwundermap').addClass('ui-disabled');
-											$('#labelwustationid').addClass('ui-disabled');
-											$('#labelwucoord').removeClass('ui-disabled');
-											$('#labelwucoordlat').removeClass('ui-disabled');
-											$('#labelwucoordlong').removeClass('ui-disabled');
-											$('#wucoordlat').removeClass('ui-disabled');
-											$('#wucoordlong').removeClass('ui-disabled');
-											$('#wucoordaddresssearch').removeClass('ui-disabled');
-											$('#wustationid').addClass('ui-disabled');
-										}
-										if ( click === "autoip" ) {
-											$('#linkwundermap').addClass('ui-disabled');
+										} else {
+											//alert("Aus!");
 											$('#labelwustationid').addClass('ui-disabled');
 											$('#wustationid').addClass('ui-disabled');
-											$('#labelwucoord').addClass('ui-disabled');
-											$('#labelwucoordlat').addClass('ui-disabled');
-											$('#labelwucoordlong').addClass('ui-disabled');
-											$('#wucoordlat').addClass('ui-disabled');
-											$('#wucoordlong').addClass('ui-disabled');
-											$('#wucoordaddresssearch').addClass('ui-disabled');
+										}
+									});
+
+									// Alternate DFC
+									$( document ).on( 'change', '#usealternatedfc', function ( e ) {
+										if ( $( "select[name=usealternatedfc]" ).val()  === "1" ) {
+											//alert("An!");
+											$('#weatherservicedfc').removeClass('ui-disabled');
+											$('#weatherservicedfc').selectmenu('refresh');
+										} else {
+											//alert("Aus!");
+											$('#weatherservicedfc').addClass('ui-disabled');
+											$('#weatherservicedfc').selectmenu('refresh');
+										}
+									});
+
+									// Alternate HFC
+									$( document ).on( 'change', '#usealternatehfc', function ( e ) {
+										if ( $( "select[name=usealternatehfc]" ).val()  === "1" ) {
+											//alert("An!");
+											$('#weatherservicehfc').removeClass('ui-disabled');
+											$('#weatherservicehfc').selectmenu('refresh');
+										} else {
+											//alert("Aus!");
+											$('#weatherservicehfc').addClass('ui-disabled');
+											$('#weatherservicehfc').selectmenu('refresh');
+										}
+									});
+
+									// Disable some form elements depending on selected options
+									function disable() {
+										if ( $( "select[name=usealternatedfc]" ).val()  === "0" ) {
+											$('#weatherservicedfc').addClass('ui-disabled');
+										}
+										if ( $( "select[name=usealternatehfc]" ).val()  === "0" ) {
+											$('#weatherservicehfc').addClass('ui-disabled');
+										}
+										if ( $( "select[name=getdata]" ).val()  === "0" ) {
+											$('#cron').addClass('ui-disabled');
+										}
+										if ( $( "select[name=wugrabber]" ).val()  === "0" ) {
+											$('#labelwustationid').addClass('ui-disabled');
+											$('#wustationid').addClass('ui-disabled');
 										}
 									}
+
+									// Activate on Load
+									disable();
+
+
 									</script>
 </TMPL_IF>
 <TMPL_IF FORM2>
