@@ -37,13 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.1";
-
-#my $cfg             = new Config::Simple("$home/config/system/general.cfg");
-#my $lang            = $cfg->param("BASE.LANG");
-#my $installfolder   = $cfg->param("BASE.INSTALLFOLDER");
-#my $miniservers     = $cfg->param("BASE.MINISERVERS");
-#my $clouddns        = $cfg->param("BASE.CLOUDDNS");
+my $version = "4.7.0.0";
 
 my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $url          = $pcfg->param("DARKSKY.URL");
@@ -67,9 +61,14 @@ my $log = LoxBerry::Log->new (
 
 # Commandline options
 my $verbose = '';
-
+my $current = '';
+my $daily = '';
+my $hourly = '';
 GetOptions ('verbose' => \$verbose,
-            'quiet'   => sub { $verbose = 0 });
+            'quiet'   => sub { $verbose = 0 },
+            'current' => \$current,
+            'daily' => \$daily,
+            'hourly' => \$hourly);
 
 # Due to a bug in the Logging routine, set the loglevel fix to 3
 #$log->loglevel(3);
@@ -106,6 +105,12 @@ if ($urlstatuscode ne "200") {
 
 # Decode JSON response from server
 my $decoded_json = decode_json( $json );
+
+#
+# Fetch current data
+#
+
+if ( $current ) { # Start current
 
 # Write location data into database
 my $t = localtime($decoded_json->{currently}->{time});
@@ -227,6 +232,14 @@ open(F,"<$lbplogdir/current.dat.tmp");
 	}
 close (F);
 
+} # end current
+
+#
+# Fetch daily data
+#
+
+if ( $daily ) { # Start daily
+
 # Saving new daily forecast data...
 $error = 0;
 open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
@@ -347,6 +360,14 @@ open(F,"<$lbplogdir/dailyforecast.dat.tmp");
 	}
 close (F);
 
+} # end daily
+
+#
+# Fetch hourly data
+#
+
+if ( $hourly ) { # Start hourly
+
 # Saving new hourly forecast data...
 $error = 0;
 open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
@@ -459,7 +480,12 @@ open(F,"<$lbplogdir/hourlyforecast.dat.tmp");
 	}
 close (F);
 
+} # end hourly
+
 # Clean Up Databases
+
+if ($current) {
+
 LOGINF "Cleaning $lbplogdir/current.dat.tmp";
 open(F,"+<$lbplogdir/current.dat.tmp");
 	@filecontent = <F>;
@@ -482,6 +508,16 @@ open(F,"+<$lbplogdir/current.dat.tmp");
 		print F "$_\n";
 	}
 close(F);
+
+my $currentname = "$lbplogdir/current.dat.tmp";
+my $currentsize = -s ($currentname);
+if ($currentsize > 100) {
+        move($currentname, "$lbplogdir/current.dat");
+}
+
+}
+
+if ($daily) {
 
 LOGINF "Cleaning $lbplogdir/dailyforecast.dat.tmp";
 open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
@@ -506,6 +542,16 @@ open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
 	}
 close(F);
 
+my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
+my $dailysize = -s ($dailyname);
+if ($dailysize > 100) {
+        move($dailyname, "$lbplogdir/dailyforecast.dat");
+}
+
+}
+
+if ($hourly) {
+
 LOGINF "Cleaning $lbplogdir/hourlyforecast.dat.tmp";
 open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
 	@filecontent = <F>;
@@ -529,21 +575,12 @@ open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
 	}
 close(F);
 
-# Test downloaded files
-my $currentname = "$lbplogdir/current.dat.tmp";
-my $currentsize = -s ($currentname);
-if ($currentsize > 100) {
-        move($currentname, "$lbplogdir/current.dat");
-}
-my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
-my $dailysize = -s ($dailyname);
-if ($dailysize > 100) {
-        move($dailyname, "$lbplogdir/dailyforecast.dat");
-}
 my $hourlyname = "$lbplogdir/hourlyforecast.dat.tmp";
 my $hourlysize = -s ($hourlyname);
 if ($hourlysize > 100) {
         move($hourlyname, "$lbplogdir/hourlyforecast.dat");
+}
+
 }
 
 # Give OK status to client.

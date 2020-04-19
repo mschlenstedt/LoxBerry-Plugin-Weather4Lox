@@ -70,7 +70,10 @@ my $log = LoxBerry::Log->new (
 my $verbose = '';
 
 GetOptions ('verbose' => \$verbose,
-            'quiet'   => sub { $verbose = 0 });
+            'quiet'   => sub { $verbose = 0 },
+            'current' => \$current,
+            'daily' => \$daily,
+            'hourly' => \$hourly);
 
 # Due to a bug in the Logging routine, set the loglevel fix to 3
 #$log->loglevel(3);
@@ -81,6 +84,8 @@ if ($verbose) {
 
 LOGSTART "Weather4Lox GRABBER_WEATHERBIT process started";
 LOGDEB "This is $0 Version $version";
+
+if ($current) { # Start Current
 
 # Get data from Weatherbit Server (API request) for current conditions
 my $queryurlcr = "$url/current?key=$apikey&$stationid&lang=$lang&units=M&marine=f";
@@ -293,6 +298,10 @@ open(F,"<$lbplogdir/current.dat.tmp");
 	}
 close (F);
 
+} # End Current
+
+if ($daily) { # Start Daily
+
 # Saving new daily forecast data...
 
 # Get data from Weatherbit Server (API request) for current conditions
@@ -493,6 +502,10 @@ open(F,"<$lbplogdir/dailyforecast.dat.tmp");
 	}
 close (F);
 
+} # end Daily
+
+if ($hourly) { # Start Hourly
+
 # Saving new hourly forecast data...
 
 # Get data from Weatherbit Server (API request) for current conditions
@@ -678,14 +691,6 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
   flock(F,8);
 close(F);
 
-# Weatherbit only offers 48h in the free account. Interpolate with 3-hours data to have more entries for the weather emulator
-
-if ($i < 168 && $fillmissinghfc) {
-
-	# Use Data from OpenWeathermap to fill missing data from here
-	system ("perl ./grabber_openweathermap.pl --fillmissinghfc");
-}
-
 LOGOK "Saving hourly forecast data to $lbplogdir/hourlyforecast.dat.tmp successfully.";
 
 LOGDEB "Database content:";
@@ -697,7 +702,12 @@ open(F,"<$lbplogdir/hourlyforecast.dat.tmp");
 	}
 close (F);
 
+} # End Hourly
+
 # Clean Up Databases
+
+if ($current) {
+
 LOGINF "Cleaning $lbplogdir/current.dat.tmp";
 open(F,"+<$lbplogdir/current.dat.tmp");
   flock(F,2);
@@ -724,6 +734,16 @@ open(F,"+<$lbplogdir/current.dat.tmp");
   flock(F,8);
 close(F);
 
+my $currentname = "$lbplogdir/current.dat.tmp";
+my $currentsize = -s ($currentname);
+if ($currentsize > 100) {
+        move($currentname, "$lbplogdir/current.dat");
+}
+
+}
+
+if ($daily) {
+
 LOGINF "Cleaning $lbplogdir/dailyforecast.dat.tmp";
 open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
   flock(F,2);
@@ -748,6 +768,16 @@ open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
 	}
   flock(F,8);
 close(F);
+
+my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
+my $dailysize = -s ($dailyname);
+if ($dailysize > 100) {
+        move($dailyname, "$lbplogdir/dailyforecast.dat");
+}
+
+}
+
+if ($hourly) {
 
 LOGINF "Cleaning $lbplogdir/hourlyforecast.dat.tmp";
 open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
@@ -774,21 +804,12 @@ open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
   flock(F,8);
 close(F);
 
-# Test downloaded files
-my $currentname = "$lbplogdir/current.dat.tmp";
-my $currentsize = -s ($currentname);
-if ($currentsize > 100) {
-        move($currentname, "$lbplogdir/current.dat");
-}
-my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
-my $dailysize = -s ($dailyname);
-if ($dailysize > 100) {
-        move($dailyname, "$lbplogdir/dailyforecast.dat");
-}
 my $hourlyname = "$lbplogdir/hourlyforecast.dat.tmp";
 my $hourlysize = -s ($hourlyname);
 if ($hourlysize > 100) {
         move($hourlyname, "$lbplogdir/hourlyforecast.dat");
+}
+
 }
 
 # Give OK status to client.

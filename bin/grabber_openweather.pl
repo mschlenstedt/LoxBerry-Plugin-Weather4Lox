@@ -39,12 +39,6 @@ use Time::Piece;
 # Version of this script
 my $version = "4.7.0.0";
 
-#my $cfg             = new Config::Simple("$home/config/system/general.cfg");
-#my $lang            = $cfg->param("BASE.LANG");
-#my $installfolder   = $cfg->param("BASE.INSTALLFOLDER");
-#my $miniservers     = $cfg->param("BASE.MINISERVERS");
-#my $clouddns        = $cfg->param("BASE.CLOUDDNS");
-
 my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $url          = $pcfg->param("OPENWEATHER.URL");
 my $apikey       = $pcfg->param("OPENWEATHER.APIKEY");
@@ -67,28 +61,23 @@ my $log = LoxBerry::Log->new (
 
 # Commandline options
 my $verbose = '';
-my $fillmissinghfc
+my $current = '';
+my $daily = '';
+my $hourly = '';
 GetOptions ('verbose' => \$verbose,
             'quiet'   => sub { $verbose = 0 },
-            'fillmissinghfc' => \$fillmissinghfc);
+            'current' => \$current,
+            'daily' => \$daily,
+            'hourly' => \$hourly);
 
 if ($verbose) {
 	$log->stdout(1);
 	$log->loglevel(7);
 }
 
-if ($fillmissinghfc) {
-	LOGSTART "Weather4Lox GRABBER_OPENWEATHER process started - FILL MISSING HOURLY FC ONLY";
-} else {
-	LOGSTART "Weather4Lox GRABBER_OPENWEATHER process started";
-}
+LOGSTART "Weather4Lox GRABBER_OPENWEATHER process started";
 LOGDEB "This is $0 Version $version";
 
-
-#
-# The following Current, Daily and Hourly forecast will only be executed, if $fillmissinghfc isn't set
-# 
-if (!$fillmissinghfc) {
 
 # Get data from Weatherbit Server (API request) for current conditions
 my $queryurlcr = "$url/onecall?appid=$apikey&$stationid&lang=$lang&units=metric";
@@ -116,6 +105,12 @@ if ($urlstatuscode ne "200") {
 
 # Decode JSON response from server
 my $decoded_json = decode_json( "$json" );
+
+#
+# Fetch current data
+#
+
+if ( $current ) { # Start current
 
 # Write location data into database
 my $t = localtime($decoded_json->{current}->{dt});
@@ -334,6 +329,14 @@ open(F,"<$lbplogdir/current.dat.tmp");
 	}
 close (F);
 
+} # End current
+
+#
+# Fetch daily data
+#
+
+if ( $daily ) { # Start daily
+
 # Saving new daily forecast data...
 
 open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
@@ -550,6 +553,14 @@ open(F,"<$lbplogdir/dailyforecast.dat.tmp");
 	}
 close (F);
 
+} # End daily
+
+#
+# Fetch hourly data
+#
+
+if ( $hourly ) { # Start hourly
+
 # Saving new hourly forecast data...
 
 $error = 0;
@@ -750,13 +761,6 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 	}
   flock(F,8);
 close(F);
-
-#
-# END: The following Current, Daily and Hourly forecast will only be executed, if $fillmissinghfc isn't set
-# 
-} else {
-	$i = 48;
-}
 
 # OpenWeatherMap only offers 48h in the free account. Interpolate with 3-hours data to have more entries for the weather emulator
 if ($i < 168) {
@@ -1051,12 +1055,12 @@ open(F,"<$lbplogdir/hourlyforecast.dat.tmp");
 	}
 close (F);
 
-#
-# The following Current, Daily and Hourly forecast will only be executed, if $fillmissinghfc isn't set
-# 
-if (!$fillmissinghfc) {
+} # end hourly
 
 # Clean Up Databases
+
+if ( $current ) {
+
 LOGINF "Cleaning $lbplogdir/current.dat.tmp";
 open(F,"+<$lbplogdir/current.dat.tmp");
   flock(F,2);
@@ -1081,6 +1085,15 @@ open(F,"+<$lbplogdir/current.dat.tmp");
 	}
   flock(F,8);
 close(F);
+my $currentname = "$lbplogdir/current.dat.tmp";
+my $currentsize = -s ($currentname);
+if ($currentsize > 100) {
+        move($currentname, "$lbplogdir/current.dat");
+}
+
+}
+
+if ( $daily ) {
 
 LOGINF "Cleaning $lbplogdir/dailyforecast.dat.tmp";
 open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
@@ -1106,6 +1119,15 @@ open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
 	}
   flock(F,8);
 close(F);
+my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
+my $dailysize = -s ($dailyname);
+if ($dailysize > 100) {
+        move($dailyname, "$lbplogdir/dailyforecast.dat");
+}
+
+}
+
+if ( $hourly ) {
 
 LOGINF "Cleaning $lbplogdir/hourlyforecast.dat.tmp";
 open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
@@ -1131,27 +1153,12 @@ open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
 	}
   flock(F,8);
 close(F);
-
-# Test downloaded files
-my $currentname = "$lbplogdir/current.dat.tmp";
-my $currentsize = -s ($currentname);
-if ($currentsize > 100) {
-        move($currentname, "$lbplogdir/current.dat");
-}
-my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
-my $dailysize = -s ($dailyname);
-if ($dailysize > 100) {
-        move($dailyname, "$lbplogdir/dailyforecast.dat");
-}
 my $hourlyname = "$lbplogdir/hourlyforecast.dat.tmp";
 my $hourlysize = -s ($hourlyname);
 if ($hourlysize > 100) {
         move($hourlyname, "$lbplogdir/hourlyforecast.dat");
 }
 
-#
-# END: The following Current, Daily and Hourly forecast will only be executed, if $fillmissinghfc isn't set
-# 
 }
 
 # Give OK status to client.
