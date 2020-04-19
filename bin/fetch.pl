@@ -47,13 +47,13 @@ if ( $pcfg->param("SERVER.USEALTERNATEHFC") ) {
 }
 
 # Which grabber should grab which weather data?
-my $service_opt = "--current --daily --hourly";
-if ( $pcfg->param("SERVER.USEALTERNATEDFC") && $pcfg->param("SERVER.USEALTERNATEHFC") ) {
-	$service_opt = "--current";
-} elsif ( $pcfg->param("SERVER.USEALTERNATEDFC") && !$pcfg->param("SERVER.USEALTERNATEHFC") ) {
-	$service_opt = "--current --hourly";
-} elsif ( $pcfg->param("SERVER.USEALTERNATEHFC") && !$pcfg->param("SERVER.USEALTERNATEDFC") ) {
-	$service_opt = "--current --daily";
+my $service_opt = "--current";
+
+if (  ($servicedfc && $servicedfc eq $service) || !$servicedfc ) {
+	$service_opt .= " --daily";
+}
+if (  ($servicehfc && $servicehfc eq $service) || !$servicehfc ) {
+	$service_opt .= " --hourly";
 }
 
 # Create a logging object
@@ -84,43 +84,66 @@ LOGSTART "Weather4Lox FETCH process started";
 LOGDEB "This is $0 Version $version";
 
 if (-e "$lbpbindir/grabber_$service.pl") {
-
   LOGINF "Starting Grabber grabber_$service.pl $service_opt $verbose_opt";
   $log->close;
   system ("$lbpbindir/grabber_$service.pl $service_opt $verbose_opt");
-
 } else {
-
   LOGCRIT "Cannot find grabber script for service $service.";
   exit (1);
-
 }
+$log->open;
 
 # Grab alternative DFC / HFC
 if ( $servicedfc && $servicedfc eq $servicehfc ) {
-	system ("$lbpbindir/grabber_$servicedfc.pl --daily --hourly $verbose_opt");
+	if (-e "$lbpbindir/grabber_$servicedfc.pl") {
+  		LOGINF "Starting Grabber grabber_$servicedfc.pl --daily --hourly $verbose_opt";
+  		$log->close;
+		system ("$lbpbindir/grabber_$servicedfc.pl --daily --hourly $verbose_opt");
+	} else {
+		LOGCRIT "Cannot find grabber script for service $servicedfc.";
+  		exit (1);
+	}
 } elsif ( $servicedfc && $servicedfc ne $servicehfc ) {
-	system ("$lbpbindir/grabber_$servicedfc.pl --daily $verbose_opt");
+	if (-e "$lbpbindir/grabber_$servicedfc.pl") {
+  		LOGINF "Starting Grabber grabber_$servicedfc.pl --daily $verbose_opt";
+  		$log->close;
+		system ("$lbpbindir/grabber_$servicedfc.pl --daily $verbose_opt");
+	} else {
+		LOGCRIT "Cannot find grabber script for service $servicedfc.";
+  		exit (1);
+	}
 }
-if ( $servicehfc && $servicehfc ne $servicedfc ) {
-	system ("$lbpbindir/grabber_$servicehfc.pl --hourly $verbose_opt");
-}
+$log->open;
 
+if ( $servicehfc && $servicehfc ne $servicedfc ) {
+	if (-e "$lbpbindir/grabber_$servicehfc.pl") {
+		LOGINF "Starting Grabber grabber_$servicehfc.pl --hourly $verbose_opt";
+		$log->close;
+		system ("$lbpbindir/grabber_$servicehfc.pl --hourly $verbose_opt");
+	} else {
+		LOGCRIT "Cannot find grabber script for service $servicehfc.";
+		exit (1);
+	}
+}
+$log->open;
 
 # Grab some data from Wunderground
 if ( $pcfg->param("SERVER.WUGRABBER") ) {
 	LOGINF "Starting Grabber grabber_wu.pl";
+	$log->close;
 	system ("$lbpbindir/grabber_wu.pl $verbose_opt");
+	$log->open;
 }
 
 # Grab some data from Loxone Miniserver
 if ( $pcfg->param("SERVER.LOXGRABBER") ) {
 	LOGINF "Starting Grabber grabber_loxone.pl";
+	$log->close;
 	system ("$lbpbindir/grabber_loxone.pl $verbose_opt");
+	$log->open;
 }
 
 # Data to Loxone
-$log->open;
 LOGINF "Starting script datatoloxone.pl";
 $log->close;
 system ("$lbpbindir/datatoloxone.pl $verbose_opt");

@@ -106,6 +106,14 @@ if ($urlstatuscode ne "200") {
 # Decode JSON response from server
 my $decoded_json = decode_json( "$json" );
 
+my $t;
+my $weather;
+my $icon;
+my $wdir;
+my $wdirdes;
+my @filecontent;
+my $i;
+ 
 #
 # Fetch current data
 #
@@ -113,7 +121,7 @@ my $decoded_json = decode_json( "$json" );
 if ( $current ) { # Start current
 
 # Write location data into database
-my $t = localtime($decoded_json->{current}->{dt});
+$t = localtime($decoded_json->{current}->{dt});
 LOGINF "Saving new Data for Timestamp $t to database.";
 
 # Saving new current data...
@@ -147,8 +155,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("%.1f",$decoded_json->{current}->{temp}), "|";
 	print F sprintf("%.1f",$decoded_json->{current}->{feels_like}), "|";
 	print F "$decoded_json->{current}->{humidity}|";
-	my $wdir = $decoded_json->{current}->{wind_deg};
-	my $wdirdes;
+	$wdir = $decoded_json->{current}->{wind_deg};
 	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
 	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
@@ -176,8 +183,8 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 		print F "0|";
 	}	 
 	# Convert Weather string into Weather Code and convert icon name
-	my $weather = $decoded_json->{current}->{weather}->[0]->{id};
-	my $icon = "";
+	$weather = $decoded_json->{current}->{weather}->[0]->{id};
+	$icon = "";
 	if ($weather eq "200") { $icon = "tstorms" };
 	if ($weather eq "201") { $icon = "tstorms" };
 	if ($weather eq "202") { $icon = "tstorms" };
@@ -319,7 +326,6 @@ close(F);
 
 LOGOK "Saving current data to $lbplogdir/current.dat.tmp successfully.";
 
-my @filecontent;
 LOGDEB "Database content:";
 open(F,"<$lbplogdir/current.dat.tmp");
 	@filecontent = <F>;

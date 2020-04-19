@@ -39,12 +39,6 @@ use Time::Piece;
 # Version of this script
 my $version = "4.7.0.0";
 
-#my $cfg             = new Config::Simple("$home/config/system/general.cfg");
-#my $lang            = $cfg->param("BASE.LANG");
-#my $installfolder   = $cfg->param("BASE.INSTALLFOLDER");
-#my $miniservers     = $cfg->param("BASE.MINISERVERS");
-#my $clouddns        = $cfg->param("BASE.CLOUDDNS");
-
 my $pcfg           = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $url            = $pcfg->param("WEATHERBIT.URL");
 my $apikey         = $pcfg->param("WEATHERBIT.APIKEY");
@@ -68,6 +62,9 @@ my $log = LoxBerry::Log->new (
 
 # Commandline options
 my $verbose = '';
+my $current = '';
+my $daily = '';
+my $hourly = '';
 
 GetOptions ('verbose' => \$verbose,
             'quiet'   => sub { $verbose = 0 },
@@ -85,12 +82,22 @@ if ($verbose) {
 LOGSTART "Weather4Lox GRABBER_WEATHERBIT process started";
 LOGDEB "This is $0 Version $version";
 
+my $t;
+my $weather;
+my $icon;
+my $wdir;
+my $wdirdes;
+my @filecontent;
+my $i;
+my $error;
+my $moonpercent;
+ 
 if ($current) { # Start Current
 
 # Get data from Weatherbit Server (API request) for current conditions
 my $queryurlcr = "$url/current?key=$apikey&$stationid&lang=$lang&units=M&marine=f";
 
-my $error = 0;
+$error = 0;
 LOGINF "Fetching Current Data for Location $stationid";
 LOGDEB "URL: $queryurlcr";
 
@@ -148,8 +155,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("%.1f",$decoded_json->{data}->[0]->{temp}), "|";
 	print F sprintf("%.1f",$decoded_json->{data}->[0]->{app_temp}), "|";
 	print F "$decoded_json->{data}->[0]->{rh}|";
-	my $wdir = $decoded_json->{data}->[0]->{wind_dir};
-	my $wdirdes;
+	$wdir = $decoded_json->{data}->[0]->{wind_dir};
 	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
 	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
@@ -173,8 +179,8 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	print F sprintf("%.3f",$decoded_json->{data}->[0]->{precip}), "|";
 	# Convert Weather string into Weather Code and convert icon name
-	my $weather = $decoded_json->{data}->[0]->{weather}->{code};
-	my $icon = "";
+	$weather = $decoded_json->{data}->[0]->{weather}->{code};
+	$icon = "";
 	if ($weather eq "200") { $icon = "tstorms" };
 	if ($weather eq "201") { $icon = "tstorms" };
 	if ($weather eq "202") { $icon = "tstorms" };
@@ -305,18 +311,18 @@ if ($daily) { # Start Daily
 # Saving new daily forecast data...
 
 # Get data from Weatherbit Server (API request) for current conditions
-$queryurlcr = "$url/forecast/daily?key=$apikey&$stationid&lang=$lang&units=M&marine=f";
+my $queryurlcr = "$url/forecast/daily?key=$apikey&$stationid&lang=$lang&units=M&marine=f";
 
 LOGINF "Fetching Daily Forecast Data for Location $stationid";
 LOGDEB "URL: $queryurlcr";
 
-$ua = new LWP::UserAgent;
-$res = $ua->get($queryurlcr);
-$json = $res->decoded_content();
+my $ua = new LWP::UserAgent;
+my $res = $ua->get($queryurlcr);
+my $json = $res->decoded_content();
 
 # Check status of request
-$urlstatus = $res->status_line;
-$urlstatuscode = substr($urlstatus,0,3);
+my $urlstatus = $res->status_line;
+my $urlstatuscode = substr($urlstatus,0,3);
 
 LOGDEB "Status: $urlstatus";
 
@@ -328,7 +334,7 @@ if ($urlstatuscode ne "200") {
 }
 
 # Decode JSON response from server
-$decoded_json = decode_json( "$json" );
+my $decoded_json = decode_json( "$json" );
 
 $error = 0;
 my $moonpercent;
@@ -509,18 +515,18 @@ if ($hourly) { # Start Hourly
 # Saving new hourly forecast data...
 
 # Get data from Weatherbit Server (API request) for current conditions
-$queryurlcr = "$url/forecast/hourly?key=$apikey&$stationid&lang=$lang&units=M&marine=f&hours=120";
+my $queryurlcr = "$url/forecast/hourly?key=$apikey&$stationid&lang=$lang&units=M&marine=f&hours=120";
 
 LOGINF "Fetching Hourly Forecat Data for Location $stationid";
 LOGDEB "URL: $queryurlcr";
 
-$ua = new LWP::UserAgent;
-$res = $ua->get($queryurlcr);
-$json = $res->decoded_content();
+my $ua = new LWP::UserAgent;
+my $res = $ua->get($queryurlcr);
+my $json = $res->decoded_content();
 
 # Check status of request
-$urlstatus = $res->status_line;
-$urlstatuscode = substr($urlstatus,0,3);
+my $urlstatus = $res->status_line;
+my $urlstatuscode = substr($urlstatus,0,3);
 
 LOGDEB "Status: $urlstatus";
 
@@ -532,9 +538,10 @@ if ($urlstatuscode ne "200") {
 }
 
 # Decode JSON response from server
-$decoded_json = decode_json( "$json" );
+my $decoded_json = decode_json( "$json" );
 
 $error = 0;
+my $moonpercent;
 open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
   flock(F,2);
 	if ($error) {
@@ -727,7 +734,9 @@ open(F,"+<$lbplogdir/current.dat.tmp");
 		s/\|NA\|/"|-9999.00|"/eg;
 		s/\|n\/a\|/"|-9999.00|"/eg;
 		s/\|N\/A\|/"|-9999.00|"/eg;
-		s/MOONPERCENT/$moonpercent/eg;
+		if ($moonpercent) {
+			s/MOONPERCENT/$moonpercent/eg;
+		}
 		LOGDEB "Cleaned:  $_";
 		print F "$_\n";
 	}
