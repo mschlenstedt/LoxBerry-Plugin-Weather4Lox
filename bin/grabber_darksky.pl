@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.7.0.0";
+my $version = "4.7.0.1";
 
 my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $url          = $pcfg->param("DARKSKY.URL");
@@ -212,7 +212,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	} else {
 		$moonphase = (1 - $moonphase) * 2 * 100;
 	}
-	print F "$moonphase|";
+	print F sprintf("%.0f",$moonphase, "|";
 	print F "-9999|";
 	print F "-9999|";
 	print F "-9999|";
