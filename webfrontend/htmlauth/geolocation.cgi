@@ -67,7 +67,7 @@ our $addon;
 ##########################################################################
 
 # Version of this script
-$version = "4.4.0.0";
+$version = "4.7.0.0";
 
 # Language
 our $lang = lblanguage();
@@ -136,8 +136,8 @@ if ($search) {
       for $results( @{$decoded_json} ){
 	$city = $results->{address}->{city};
 	$country = $results->{address}->{country};
-	$lat = $results->{lat};
-	$long = $results->{lon};
+	$lat = sprintf "%.6f", $results->{lat};
+	$long = sprintf "%.6f", $results->{lon};
 	# Add City and Country for DarkSky
 	  $addon = ";window.opener.document.getElementById('" . $service . "city').value = '$city'";
 	  $addon = $addon . ";window.opener.document.getElementById('" . $service . "country').value = '$country'";

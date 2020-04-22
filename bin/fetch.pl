@@ -33,10 +33,28 @@ use Getopt::Long;
 ##########################################################################
 
 # Version of this script
-my $version = "4.6.0.0";
+my $version = "4.7.0.0";
 
-my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
-my $service          = $pcfg->param("SERVER.WEATHERSERVICE");
+my $pcfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
+my $service = $pcfg->param("SERVER.WEATHERSERVICE");
+my $servicedfc;
+my $servicehfc;
+if ( $pcfg->param("SERVER.USEALTERNATEDFC") ) {
+	$servicedfc = $pcfg->param("SERVER.WEATHERSERVICEDFC");
+}
+if ( $pcfg->param("SERVER.USEALTERNATEHFC") ) {
+	$servicehfc = $pcfg->param("SERVER.WEATHERSERVICEHFC");
+}
+
+# Which grabber should grab which weather data?
+my $service_opt = "--current";
+
+if (  ($servicedfc && $servicedfc eq $service) || !$servicedfc ) {
+	$service_opt .= " --daily";
+}
+if (  ($servicehfc && $servicehfc eq $service) || !$servicehfc ) {
+	$service_opt .= " --hourly";
+}
 
 # Create a logging object
 my $log = LoxBerry::Log->new (
@@ -55,61 +73,80 @@ GetOptions ('verbose' => \$verbose,
 
 # Due to a bug in the Logging routine, set the loglevel fix to 3
 #$log->loglevel(3);
+my $verbose_opt;
 if ($verbose) {
 	$log->stdout(1);
 	$log->loglevel(7);
+	$verbose_opt = "-v";
 }
 
 LOGSTART "Weather4Lox FETCH process started";
 LOGDEB "This is $0 Version $version";
 
 if (-e "$lbpbindir/grabber_$service.pl") {
-
-  LOGINF "Starting Grabber grabber_$service.pl";
+  LOGINF "Starting Grabber grabber_$service.pl $service_opt $verbose_opt";
   $log->close;
-  if ($verbose) { 
-    system ("$lbpbindir/grabber_$service.pl -v");
-  } else {
-    system ("$lbpbindir/grabber_$service.pl");
-  }
-
+  system ("$lbpbindir/grabber_$service.pl $service_opt $verbose_opt");
 } else {
-
   LOGCRIT "Cannot find grabber script for service $service.";
   exit (1);
-
 }
+$log->open;
+
+# Grab alternative DFC / HFC
+if ( $servicedfc && $servicedfc eq $servicehfc ) {
+	if (-e "$lbpbindir/grabber_$servicedfc.pl") {
+  		LOGINF "Starting Grabber grabber_$servicedfc.pl --daily --hourly $verbose_opt";
+  		$log->close;
+		system ("$lbpbindir/grabber_$servicedfc.pl --daily --hourly $verbose_opt");
+	} else {
+		LOGCRIT "Cannot find grabber script for service $servicedfc.";
+  		exit (1);
+	}
+} elsif ( $servicedfc && $servicedfc ne $servicehfc ) {
+	if (-e "$lbpbindir/grabber_$servicedfc.pl") {
+  		LOGINF "Starting Grabber grabber_$servicedfc.pl --daily $verbose_opt";
+  		$log->close;
+		system ("$lbpbindir/grabber_$servicedfc.pl --daily $verbose_opt");
+	} else {
+		LOGCRIT "Cannot find grabber script for service $servicedfc.";
+  		exit (1);
+	}
+}
+$log->open;
+
+if ( $servicehfc && $servicehfc ne $servicedfc ) {
+	if (-e "$lbpbindir/grabber_$servicehfc.pl") {
+		LOGINF "Starting Grabber grabber_$servicehfc.pl --hourly $verbose_opt";
+		$log->close;
+		system ("$lbpbindir/grabber_$servicehfc.pl --hourly $verbose_opt");
+	} else {
+		LOGCRIT "Cannot find grabber script for service $servicehfc.";
+		exit (1);
+	}
+}
+$log->open;
 
 # Grab some data from Wunderground
 if ( $pcfg->param("SERVER.WUGRABBER") ) {
 	LOGINF "Starting Grabber grabber_wu.pl";
-	if ($verbose) { 
-		system ("$lbpbindir/grabber_wu.pl -v");
-	} else {
-		system ("$lbpbindir/grabber_wu.pl");
-	}
+	$log->close;
+	system ("$lbpbindir/grabber_wu.pl $verbose_opt");
+	$log->open;
 }
 
 # Grab some data from Loxone Miniserver
 if ( $pcfg->param("SERVER.LOXGRABBER") ) {
 	LOGINF "Starting Grabber grabber_loxone.pl";
-	if ($verbose) { 
-		system ("$lbpbindir/grabber_loxone.pl -v");
-	} else {
-		system ("$lbpbindir/grabber_loxone.pl");
-	}
+	$log->close;
+	system ("$lbpbindir/grabber_loxone.pl $verbose_opt");
+	$log->open;
 }
 
 # Data to Loxone
-$log->open;
 LOGINF "Starting script datatoloxone.pl";
 $log->close;
-
-if ($verbose) { 
-	system ("$lbpbindir/datatoloxone.pl -v");
-} else {
-	system ("$lbpbindir/datatoloxone.pl");
-}
+system ("$lbpbindir/datatoloxone.pl $verbose_opt");
 
 # Exit
 $log->open;

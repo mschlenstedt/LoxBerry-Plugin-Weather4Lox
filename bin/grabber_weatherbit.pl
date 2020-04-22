@@ -37,40 +37,18 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.2";
+my $version = "4.7.0.0";
 
-#my $cfg             = new Config::Simple("$home/config/system/general.cfg");
-#my $lang            = $cfg->param("BASE.LANG");
-#my $installfolder   = $cfg->param("BASE.INSTALLFOLDER");
-#my $miniservers     = $cfg->param("BASE.MINISERVERS");
-#my $clouddns        = $cfg->param("BASE.CLOUDDNS");
-
-my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
-my $url          = $pcfg->param("WEATHERBIT.URL");
-my $apikey       = $pcfg->param("WEATHERBIT.APIKEY");
-my $lang         = $pcfg->param("WEATHERBIT.LANG");
-my $stationid    = "lat=" . $pcfg->param("WEATHERBIT.COORDLAT") . "&lon=" . $pcfg->param("WEATHERBIT.COORDLONG");
-my $city         = $pcfg->param("WEATHERBIT.STATION");
-my $country      = $pcfg->param("WEATHERBIT.COUNTRY");
+my $pcfg           = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
+my $url            = $pcfg->param("WEATHERBIT.URL");
+my $apikey         = $pcfg->param("WEATHERBIT.APIKEY");
+my $lang           = $pcfg->param("WEATHERBIT.LANG");
+my $stationid      = "lat=" . $pcfg->param("WEATHERBIT.COORDLAT") . "&lon=" . $pcfg->param("WEATHERBIT.COORDLONG");
+my $city           = $pcfg->param("WEATHERBIT.STATION");
+my $country        = $pcfg->param("WEATHERBIT.COUNTRY");
+my $fillmissinghfc = $pcfg->param("WEATHERBIT.FILLMISSINGDATA");
 
 # Read language phrases
-
-######
-###### Workaround
-######
-#use LoxBerry::Web;
-#use CGI;
-#my $cgi = CGI->new;
-# Template
-#my $template = HTML::Template->new(
-#    filename => "$lbptemplatedir/settings.html",
-#    global_vars => 1,
-#    loop_context_vars => 1,
-#    die_on_bad_params => 0,
-#);
-######
-######
-######
 my %L = LoxBerry::System::readlanguage("language.ini");
 
 # Create a logging object
@@ -84,9 +62,15 @@ my $log = LoxBerry::Log->new (
 
 # Commandline options
 my $verbose = '';
+my $current = '';
+my $daily = '';
+my $hourly = '';
 
 GetOptions ('verbose' => \$verbose,
-            'quiet'   => sub { $verbose = 0 });
+            'quiet'   => sub { $verbose = 0 },
+            'current' => \$current,
+            'daily' => \$daily,
+            'hourly' => \$hourly);
 
 # Due to a bug in the Logging routine, set the loglevel fix to 3
 #$log->loglevel(3);
@@ -98,10 +82,22 @@ if ($verbose) {
 LOGSTART "Weather4Lox GRABBER_WEATHERBIT process started";
 LOGDEB "This is $0 Version $version";
 
+my $t;
+my $weather;
+my $icon;
+my $wdir;
+my $wdirdes;
+my @filecontent;
+my $i;
+my $error;
+my $moonpercent;
+ 
+if ($current) { # Start Current
+
 # Get data from Weatherbit Server (API request) for current conditions
 my $queryurlcr = "$url/current?key=$apikey&$stationid&lang=$lang&units=M&marine=f";
 
-my $error = 0;
+$error = 0;
 LOGINF "Fetching Current Data for Location $stationid";
 LOGDEB "URL: $queryurlcr";
 
@@ -159,8 +155,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("%.1f",$decoded_json->{data}->[0]->{temp}), "|";
 	print F sprintf("%.1f",$decoded_json->{data}->[0]->{app_temp}), "|";
 	print F "$decoded_json->{data}->[0]->{rh}|";
-	my $wdir = $decoded_json->{data}->[0]->{wind_dir};
-	my $wdirdes;
+	$wdir = $decoded_json->{data}->[0]->{wind_dir};
 	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
 	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
@@ -184,8 +179,8 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	print F sprintf("%.3f",$decoded_json->{data}->[0]->{precip}), "|";
 	# Convert Weather string into Weather Code and convert icon name
-	my $weather = $decoded_json->{data}->[0]->{weather}->{code};
-	my $icon = "";
+	$weather = $decoded_json->{data}->[0]->{weather}->{code};
+	$icon = "";
 	if ($weather eq "200") { $icon = "tstorms" };
 	if ($weather eq "201") { $icon = "tstorms" };
 	if ($weather eq "202") { $icon = "tstorms" };
@@ -309,21 +304,25 @@ open(F,"<$lbplogdir/current.dat.tmp");
 	}
 close (F);
 
+} # End Current
+
+if ($daily) { # Start Daily
+
 # Saving new daily forecast data...
 
 # Get data from Weatherbit Server (API request) for current conditions
-$queryurlcr = "$url/forecast/daily?key=$apikey&$stationid&lang=$lang&units=M&marine=f";
+my $queryurlcr = "$url/forecast/daily?key=$apikey&$stationid&lang=$lang&units=M&marine=f";
 
 LOGINF "Fetching Daily Forecast Data for Location $stationid";
 LOGDEB "URL: $queryurlcr";
 
-$ua = new LWP::UserAgent;
-$res = $ua->get($queryurlcr);
-$json = $res->decoded_content();
+my $ua = new LWP::UserAgent;
+my $res = $ua->get($queryurlcr);
+my $json = $res->decoded_content();
 
 # Check status of request
-$urlstatus = $res->status_line;
-$urlstatuscode = substr($urlstatus,0,3);
+my $urlstatus = $res->status_line;
+my $urlstatuscode = substr($urlstatus,0,3);
 
 LOGDEB "Status: $urlstatus";
 
@@ -335,7 +334,7 @@ if ($urlstatuscode ne "200") {
 }
 
 # Decode JSON response from server
-$decoded_json = decode_json( "$json" );
+my $decoded_json = decode_json( "$json" );
 
 $error = 0;
 my $moonpercent;
@@ -509,21 +508,25 @@ open(F,"<$lbplogdir/dailyforecast.dat.tmp");
 	}
 close (F);
 
+} # end Daily
+
+if ($hourly) { # Start Hourly
+
 # Saving new hourly forecast data...
 
 # Get data from Weatherbit Server (API request) for current conditions
-$queryurlcr = "$url/forecast/hourly?key=$apikey&$stationid&lang=$lang&units=M&marine=f&hours=120";
+my $queryurlcr = "$url/forecast/hourly?key=$apikey&$stationid&lang=$lang&units=M&marine=f&hours=120";
 
 LOGINF "Fetching Hourly Forecat Data for Location $stationid";
 LOGDEB "URL: $queryurlcr";
 
-$ua = new LWP::UserAgent;
-$res = $ua->get($queryurlcr);
-$json = $res->decoded_content();
+my $ua = new LWP::UserAgent;
+my $res = $ua->get($queryurlcr);
+my $json = $res->decoded_content();
 
 # Check status of request
-$urlstatus = $res->status_line;
-$urlstatuscode = substr($urlstatus,0,3);
+my $urlstatus = $res->status_line;
+my $urlstatuscode = substr($urlstatus,0,3);
 
 LOGDEB "Status: $urlstatus";
 
@@ -535,9 +538,10 @@ if ($urlstatuscode ne "200") {
 }
 
 # Decode JSON response from server
-$decoded_json = decode_json( "$json" );
+my $decoded_json = decode_json( "$json" );
 
 $error = 0;
+my $moonpercent;
 open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
   flock(F,2);
 	if ($error) {
@@ -694,257 +698,6 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
   flock(F,8);
 close(F);
 
-# Weatherbit only offers 48h in the free account. Interpolate with 3-hours data to have more entries for the weather emulator
-
-#
-# 2019/05/07: Unfortunateley the 3-hour-API is now deprecated and will no longer exists :-(
-#
-#if ($i < 168) {
-#
-#	# Get data from Weatherbit Server (API request) for current conditions
-#	$queryurlcr = "$url/forecast/3hourly?key=$apikey&$stationid&lang=$lang&units=M&marine=f";
-#
-#	LOGINF "Fetching additional 3-Hourly Forecat Data for Location $stationid to interpolite hourly data";
-#	LOGDEB "URL: $queryurlcr";
-#
-#	$ua = new LWP::UserAgent;
-#	$res = $ua->get($queryurlcr);
-#	$json = $res->decoded_content();
-#
-#	# Check status of request
-#	$urlstatus = $res->status_line;
-#	$urlstatuscode = substr($urlstatus,0,3);
-#
-#	LOGDEB "Status: $urlstatus";
-#
-#	if ($urlstatuscode ne "200") {
-#	  LOGCRIT "Failed to fetch data for $stationid\. Status Code: $urlstatuscode";
-#	  exit 2;
-#	} else {
-#	  LOGOK "Data fetched successfully for $stationid";
-#	}
-#
-#	# Decode JSON response from server
-#	$decoded_json = decode_json( "$json" );
-#
-#	$error = 0;
-#	open(F,"+<$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;;
-#	  if ($error) {
-#		LOGCRIT "Cannot open $lbplogdir/hourlyforecast.dat.tmp";
-#		exit 2;
-#	  }
-#	  flock(F,2);
-#	  binmode F, ':encoding(UTF-8)';
-#
-#		my @olddata = <F>;
-#		#  seek(F,0,0);
-#		#  truncate(F,0);
-#		# Last entry in hourly database
-#		my $lastline;
-#		my $newline;
-#		foreach (@olddata){
-#			$lastline = $_;
-#			# my @fields = split(/\|/);
-#			# print F "$_\n";
-#		}
-#
-#		for my $results( @{$decoded_json->{data}} ){
-#			my @oldfields = split(/\|/,$lastline);
-#			my $i = $oldfields[0] + 1;
-#			if ($oldfields[1] >= $results->{ts}) {
-#				next;
-#			} 
-#
-#			# Step to last entry (normally 3 hours)
-#			my $delta = ($results->{ts} - $oldfields[1]) / 3600;
-#
-#			# Create new interpolated entry
-#			for (my $step=1; $step <= $delta; $step++) {
-#				$newline = $i + $step - 1;
-#				$newline .= "|";
-#				$newline .= $oldfields[1] + ($step * 3600);
-#				$newline .= "|";
-#				$t = localtime($oldfields[1] + ($step * 3600));
-#				$newline .= sprintf("%02d", $t->mday);
-#				$newline .= "|";
-#				$newline .= sprintf("%02d", $t->mon);
-#				$newline .= "|";
-#				my @month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH'}) );
-#				$t->mon_list(@month);
-#				$newline .= $t->monname;
-#				$newline .= "|";
-#				@month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH_SH'}) );
-#				$t->mon_list(@month);
-#				$newline .=  $t->monname;
-#				$newline .= "|";
-#				$newline .= $t->year;
-#				$newline .= "|";
-#				$newline .= sprintf("%02d", $t->hour);
-#				$newline .= "|";
-#				$newline .= sprintf("%02d", $t->min);
-#				$newline .= "|";
-#				my @days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS'}) );
-#				$t->day_list(@days);
-#				$newline .= $t->wdayname;
-#				$newline .= "|";
-#				@days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS_SH'}) );
-#				$t->day_list(@days);
-#				$newline .= $t->wdayname;
-#				$newline .= "|";
-#				$newline .= sprintf( "%.1f", $oldfields[11] + ( $step * ( ($results->{temp} - $oldfields[11]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.1f", $oldfields[12] + ( $step * ( ($results->{app_temp} - $oldfields[12]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= "-9999|";
-#				$newline .= sprintf( "%.0f", $oldfields[14] + ( $step * ( ($results->{rh} - $oldfields[14]) / $delta ) ) );
-#				$newline .= "|";
-#				$wdir = sprintf( "%.0f", $oldfields[16] + ( $step * ( ($results->{wind_dir} - $oldfields[16]) / $delta ) ) );
-#				if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
-#				if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
-#				if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
-#				if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
-#				if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
-#				if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
-#				if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
-#				if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
-#				if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
-#				$newline .= "$wdirdes|";
-#				$newline .= sprintf( "%.0f", $wdir );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.1f", $oldfields[17] + ( $step * ( ( (3.6 * $results->{wind_spd}) - $oldfields[17]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.1f", $oldfields[18] + ( $step * ( ( (3.6 * $results->{wind_gust_spd}) - $oldfields[18]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.0f", $oldfields[19] + ( $step * ( ($results->{pres} - $oldfields[19]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.1f", $oldfields[20] + ( $step * ( ($results->{dewpt} - $oldfields[20]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.0f", $oldfields[21] + ( $step * ( ($results->{clouds} - $oldfields[21]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= "-9999|";
-#				$newline .= sprintf( "%.1f", $oldfields[23] + ( $step * ( ($results->{uv} - $oldfields[23]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.3f", $oldfields[24] + ( $step * ( ($results->{precip} - $oldfields[24]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.3f", $oldfields[25] + ( $step * ( ($results->{snow} - $oldfields[25]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.0f", $oldfields[26] + ( $step * ( ($results->{pop} - $oldfields[26]) / $delta ) ) );
-#				$newline .= "|";
-#				if ($step eq "1") {
-#					$newline .= $oldfields[27];
-#					$newline .= "|";
-#					$newline .= $oldfields[28];
-#					$newline .= "|";
-#					$newline .= $oldfields[29];
-#					$newline .= "|";
-#				} else {
-#					# Convert Weather string into Weather Code and convert icon name
-#					$weather = $results->{weather}->{code};
-#					my $code = "";
-#					if ($weather eq "200") { $code = "15" };
-#					if ($weather eq "201") { $code = "15" };
-#					if ($weather eq "202") { $code = "15" };
-#					if ($weather eq "230") { $code = "15" };
-#					if ($weather eq "231") { $code = "15" };
-#					if ($weather eq "232") { $code = "15" };
-#					if ($weather eq "233") { $code = "15" };
-#					if ($weather eq "300") { $code = "12" };
-#					if ($weather eq "301") { $code = "12" };
-#					if ($weather eq "302") { $code = "12" };
-#					if ($weather eq "500") { $code = "13" };
-#					if ($weather eq "501") { $code = "13" };
-#					if ($weather eq "502") { $code = "13" };
-#					if ($weather eq "511") { $code = "19" };
-#					if ($weather eq "520") { $code = "10" };
-#					if ($weather eq "521") { $code = "11" };
-#					if ($weather eq "522") { $code = "11" };
-#					if ($weather eq "600") { $code = "20" };
-#					if ($weather eq "601") { $code = "21" };
-#					if ($weather eq "602") { $code = "21" };
-#					if ($weather eq "610") { $code = "19" };
-#					if ($weather eq "611") { $code = "19" };
-#					if ($weather eq "612") { $code = "19" };
-#					if ($weather eq "621") { $code = "19" };
-#					if ($weather eq "622") { $code = "19" };
-#					if ($weather eq "623") { $code = "19" };
-#					if ($weather eq "700") { $code = "6" };
-#					if ($weather eq "711") { $code = "6" };
-#					if ($weather eq "721") { $code = "5" };
-#					if ($weather eq "731") { $code = "6" };
-#					if ($weather eq "741") { $code = "6" };
-#					if ($weather eq "751") { $code = "6" };
-#					if ($weather eq "800") { $code = "1" };
-#					if ($weather eq "801") { $code = "2" };
-#					if ($weather eq "802") { $code = "3" };
-#					if ($weather eq "803") { $code = "4" };
-#					if ($weather eq "804") { $code = "4" };
-#					if ($weather eq "900") { $code = "13" };
-#					if (!$code) { $code = "13" };
-#					$newline .= $code;
-#					$newline .= "|";
-#					$icon = "";
-#					if ($weather eq "200") { $icon = "tstorms" };
-#					if ($weather eq "201") { $icon = "tstorms" };
-#					if ($weather eq "202") { $icon = "tstorms" };
-#					if ($weather eq "230") { $icon = "tstorms" };
-#					if ($weather eq "231") { $icon = "tstorms" };
-#					if ($weather eq "232") { $icon = "tstorms" };
-#					if ($weather eq "233") { $icon = "tstorms" };
-#					if ($weather eq "300") { $icon = "chancerain" };
-#					if ($weather eq "301") { $icon = "chancerain" };
-#					if ($weather eq "302") { $icon = "chancerain" };
-#					if ($weather eq "500") { $icon = "rain" };
-#					if ($weather eq "501") { $icon = "rain" };
-#					if ($weather eq "502") { $icon = "rain" };
-#					if ($weather eq "511") { $icon = "sleet" };
-#					if ($weather eq "520") { $icon = "rain" };
-#					if ($weather eq "521") { $icon = "rain" };
-#					if ($weather eq "522") { $icon = "rain" };
-#					if ($weather eq "600") { $icon = "snow" };
-#					if ($weather eq "601") { $icon = "snow" };
-#					if ($weather eq "602") { $icon = "snow" };
-#					if ($weather eq "610") { $icon = "sleet" };
-#					if ($weather eq "611") { $icon = "sleet" };
-#					if ($weather eq "612") { $icon = "sleet" };
-#					if ($weather eq "621") { $icon = "sleet" };
-#					if ($weather eq "622") { $icon = "sleet" };
-#					if ($weather eq "623") { $icon = "flurries" };
-#					if ($weather eq "700") { $icon = "fog" };
-#					if ($weather eq "711") { $icon = "fog" };
-#					if ($weather eq "721") { $icon = "hazy" };
-#					if ($weather eq "731") { $icon = "fog" };
-#					if ($weather eq "741") { $icon = "fog" };
-#					if ($weather eq "751") { $icon = "fog" };
-#					if ($weather eq "800") { $icon = "clear" };
-#					if ($weather eq "801") { $icon = "mostlysunny" };
-#					if ($weather eq "802") { $icon = "mostlycloudy" };
-#					if ($weather eq "803") { $icon = "cloudy" };
-#					if ($weather eq "804") { $icon = "overcast" };
-#					if ($weather eq "900") { $icon = "rain" };
-#					if (!$icon) { $icon = "rain" };
-#					$newline .= $icon;
-#					$newline .= "|";
-#					$newline .= $results->{weather}->{description};
-#					$newline .= "|";
-#				}
-#				$newline .= sprintf( "%.0f", $oldfields[30] + ( $step * ( ($results->{ozone} - $oldfields[30]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.0f", $oldfields[31] + ( $step * ( ($results->{ghi} - $oldfields[31]) / $delta ) ) );
-#				$newline .= "|";
-#				$newline .= sprintf( "%.1f", $oldfields[32] + ( $step * ( ($results->{vis} - $oldfields[32]) / $delta ) ) );
-#				$newline .= "|";
-#				#$newline .= "Schritt: $step Vor: $oldfields[11] Ziel: $results->{temp} Schrittweite: ";
-#				#$newline .= ( ($results->{temp} - $oldfields[11]) / $delta );
-#				#$newline .= "|";
-#				# Save new data
-#				print F "$newline\n";
-#				$lastline = $newline;
-#			}
-#		}
-#	  flock(F,8);
-#	close (F);
-#}
-
 LOGOK "Saving hourly forecast data to $lbplogdir/hourlyforecast.dat.tmp successfully.";
 
 LOGDEB "Database content:";
@@ -956,7 +709,12 @@ open(F,"<$lbplogdir/hourlyforecast.dat.tmp");
 	}
 close (F);
 
+} # End Hourly
+
 # Clean Up Databases
+
+if ($current) {
+
 LOGINF "Cleaning $lbplogdir/current.dat.tmp";
 open(F,"+<$lbplogdir/current.dat.tmp");
   flock(F,2);
@@ -976,12 +734,24 @@ open(F,"+<$lbplogdir/current.dat.tmp");
 		s/\|NA\|/"|-9999.00|"/eg;
 		s/\|n\/a\|/"|-9999.00|"/eg;
 		s/\|N\/A\|/"|-9999.00|"/eg;
-		s/MOONPERCENT/$moonpercent/eg;
+		if ($moonpercent) {
+			s/MOONPERCENT/$moonpercent/eg;
+		}
 		LOGDEB "Cleaned:  $_";
 		print F "$_\n";
 	}
   flock(F,8);
 close(F);
+
+my $currentname = "$lbplogdir/current.dat.tmp";
+my $currentsize = -s ($currentname);
+if ($currentsize > 100) {
+        move($currentname, "$lbplogdir/current.dat");
+}
+
+}
+
+if ($daily) {
 
 LOGINF "Cleaning $lbplogdir/dailyforecast.dat.tmp";
 open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
@@ -1008,6 +778,16 @@ open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
   flock(F,8);
 close(F);
 
+my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
+my $dailysize = -s ($dailyname);
+if ($dailysize > 100) {
+        move($dailyname, "$lbplogdir/dailyforecast.dat");
+}
+
+}
+
+if ($hourly) {
+
 LOGINF "Cleaning $lbplogdir/hourlyforecast.dat.tmp";
 open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
   flock(F,2);
@@ -1033,21 +813,12 @@ open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
   flock(F,8);
 close(F);
 
-# Test downloaded files
-my $currentname = "$lbplogdir/current.dat.tmp";
-my $currentsize = -s ($currentname);
-if ($currentsize > 100) {
-        move($currentname, "$lbplogdir/current.dat");
-}
-my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
-my $dailysize = -s ($dailyname);
-if ($dailysize > 100) {
-        move($dailyname, "$lbplogdir/dailyforecast.dat");
-}
 my $hourlyname = "$lbplogdir/hourlyforecast.dat.tmp";
 my $hourlysize = -s ($hourlyname);
 if ($hourlysize > 100) {
         move($hourlyname, "$lbplogdir/hourlyforecast.dat");
+}
+
 }
 
 # Give OK status to client.

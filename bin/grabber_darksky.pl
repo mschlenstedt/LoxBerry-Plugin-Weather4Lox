@@ -37,13 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.1";
-
-#my $cfg             = new Config::Simple("$home/config/system/general.cfg");
-#my $lang            = $cfg->param("BASE.LANG");
-#my $installfolder   = $cfg->param("BASE.INSTALLFOLDER");
-#my $miniservers     = $cfg->param("BASE.MINISERVERS");
-#my $clouddns        = $cfg->param("BASE.CLOUDDNS");
+my $version = "4.7.0.0";
 
 my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $url          = $pcfg->param("DARKSKY.URL");
@@ -67,9 +61,14 @@ my $log = LoxBerry::Log->new (
 
 # Commandline options
 my $verbose = '';
-
+my $current = '';
+my $daily = '';
+my $hourly = '';
 GetOptions ('verbose' => \$verbose,
-            'quiet'   => sub { $verbose = 0 });
+            'quiet'   => sub { $verbose = 0 },
+            'current' => \$current,
+            'daily' => \$daily,
+            'hourly' => \$hourly);
 
 # Due to a bug in the Logging routine, set the loglevel fix to 3
 #$log->loglevel(3);
@@ -107,12 +106,27 @@ if ($urlstatuscode ne "200") {
 # Decode JSON response from server
 my $decoded_json = decode_json( $json );
 
+my $t;
+my $weather;
+my $icon;
+my $wdir;
+my $wdirdes;
+my @filecontent;
+my $i;
+my $error;
+
+#
+# Fetch current data
+#
+
+if ( $current ) { # Start current
+
 # Write location data into database
-my $t = localtime($decoded_json->{currently}->{time});
+$t = localtime($decoded_json->{currently}->{time});
 LOGINF "Saving new Data for Timestamp $t to database.";
 
 # Saving new current data...
-my $error = 0;
+$error = 0;
 open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	if ($error) {
 		LOGCRIT "Cannot open $lbpconfigdir/current.dat.tmp";
@@ -137,8 +151,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("%.1f",$decoded_json->{currently}->{temperature}), "|";
 	print F sprintf("%.1f",$decoded_json->{currently}->{apparentTemperature}), "|";
 	print F $decoded_json->{currently}->{humidity} * 100, "|";
-	my $wdir = $decoded_json->{currently}->{windBearing};
-	my $wdirdes;
+	$wdir = $decoded_json->{currently}->{windBearing};
 	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
 	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
@@ -162,7 +175,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	print F sprintf("%.3f",$decoded_json->{currently}->{precipIntensity}), "|";
 	# Convert Weather string into Weather Code and convert icon name
-	my $weather = $decoded_json->{currently}->{icon};
+	$weather = $decoded_json->{currently}->{icon};
 	$weather =~ s/\-night|\-day//; # No -night and -day
 	$weather =~ s/\-//; # No -
 	$weather =~ tr/A-Z/a-z/; # All Lowercase
@@ -226,6 +239,14 @@ open(F,"<$lbplogdir/current.dat.tmp");
 		LOGDEB "$_";
 	}
 close (F);
+
+} # end current
+
+#
+# Fetch daily data
+#
+
+if ( $daily ) { # Start daily
 
 # Saving new daily forecast data...
 $error = 0;
@@ -347,6 +368,14 @@ open(F,"<$lbplogdir/dailyforecast.dat.tmp");
 	}
 close (F);
 
+} # end daily
+
+#
+# Fetch hourly data
+#
+
+if ( $hourly ) { # Start hourly
+
 # Saving new hourly forecast data...
 $error = 0;
 open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
@@ -459,7 +488,12 @@ open(F,"<$lbplogdir/hourlyforecast.dat.tmp");
 	}
 close (F);
 
+} # end hourly
+
 # Clean Up Databases
+
+if ($current) {
+
 LOGINF "Cleaning $lbplogdir/current.dat.tmp";
 open(F,"+<$lbplogdir/current.dat.tmp");
 	@filecontent = <F>;
@@ -482,6 +516,16 @@ open(F,"+<$lbplogdir/current.dat.tmp");
 		print F "$_\n";
 	}
 close(F);
+
+my $currentname = "$lbplogdir/current.dat.tmp";
+my $currentsize = -s ($currentname);
+if ($currentsize > 100) {
+        move($currentname, "$lbplogdir/current.dat");
+}
+
+}
+
+if ($daily) {
 
 LOGINF "Cleaning $lbplogdir/dailyforecast.dat.tmp";
 open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
@@ -506,6 +550,16 @@ open(F,"+<$lbplogdir/dailyforecast.dat.tmp");
 	}
 close(F);
 
+my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
+my $dailysize = -s ($dailyname);
+if ($dailysize > 100) {
+        move($dailyname, "$lbplogdir/dailyforecast.dat");
+}
+
+}
+
+if ($hourly) {
+
 LOGINF "Cleaning $lbplogdir/hourlyforecast.dat.tmp";
 open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
 	@filecontent = <F>;
@@ -529,21 +583,12 @@ open(F,"+<$lbplogdir/hourlyforecast.dat.tmp");
 	}
 close(F);
 
-# Test downloaded files
-my $currentname = "$lbplogdir/current.dat.tmp";
-my $currentsize = -s ($currentname);
-if ($currentsize > 100) {
-        move($currentname, "$lbplogdir/current.dat");
-}
-my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
-my $dailysize = -s ($dailyname);
-if ($dailysize > 100) {
-        move($dailyname, "$lbplogdir/dailyforecast.dat");
-}
 my $hourlyname = "$lbplogdir/hourlyforecast.dat.tmp";
 my $hourlysize = -s ($hourlyname);
 if ($hourlysize > 100) {
         move($hourlyname, "$lbplogdir/hourlyforecast.dat");
+}
+
 }
 
 # Give OK status to client.
