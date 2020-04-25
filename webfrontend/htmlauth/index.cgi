@@ -42,7 +42,7 @@ $cgi->import_names('R');
 ##########################################################################
 #
 # Version of this script
-$version = "4.7.0.0";
+$version = "4.7.0.1";
 
 # Settings
 my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
@@ -918,8 +918,8 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( "WEBSITE", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/webpage.html");
   
   # Check for installed DNSMASQ-Plugin
-  my $checkdnsmasq = `cat $lbhomedir/data/system/plugindatabase.dat | grep -c -i DNSmasq`;
-  if ($checkdnsmasq > 0) {
+  my $checkdnsmasq = LoxBerry::System::plugindata('DNSmasq');
+  if ( $checkdnsmasq->{PLUGINDB_TITLE} ) {
     $template->param( EMUWARNING => $L{'SETTINGS.ERR_DNSMASQ_PLUGIN'} );
   }
 
@@ -937,6 +937,7 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.EMU'),
     );
   $template->param( EMU => $emu );
+  $template->param( MYIP => LoxBerry::System::get_localip() );
 
   # Theme
   @values = ('dark', 'light', 'custom' );

@@ -335,21 +335,6 @@
 													</tr>
 													<tr>
 														<td width="25%">
-															<label
-																			id="labelweatherbitfillmissingdata"><TMPL_VAR SETTINGS.LABEL_FILLMISSINGDATA></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR WEATHERBITFILLMISSINGDATA>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_FILLMISSINGDATA></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
 															<label id="labelweatherbitcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
 														</td>
 														<td width="50%">
@@ -866,6 +851,9 @@
 															</fieldset>
 															</td>
 															<td>
+															<a id="btntestcloudemu" href="http://<TMPL_VAR MYIP>:6066/forecast/" target="_blank" class="ui-btn ui-btn-inline ui-mini"><TMPL_VAR SETTINGS.BUTTON_TESTCLOUDEMU></a>
+															</td>
+															<td>
 															<font color="red" size="-1"><b><TMPL_VAR EMUWARNING></b></font>
 															</td>
 															</tr>
@@ -980,6 +968,28 @@
 										var url = './show.cgi?theme=' + $('#theme').val() + '&iconset=' + $('#iconset').val() + '&lang=' + $('#themelang').val();
 										window.open(url, 'NewWindow');
 									}
+
+									// Cloud Emu Testlink
+									$( document ).on( 'change', '#emu', function ( e ) {
+										if ( $( "select[name=emu]" ).val()  === "1" ) {
+											//alert("An!");
+											$('#btntestcloudemu').removeClass('ui-disabled');
+										} else {
+											//alert("Aus!");
+											$('#btntestcloudemu').addClass('ui-disabled');
+										}
+									});
+
+									// Disable some form elements depending on selected options
+									function disable() {
+										if ( $( "select[name=emu]" ).val()  === "0" ) {
+											$('#btntestcloudemu').addClass('ui-disabled');
+										}
+									}
+
+									// Activate on Load
+									disable();
+
 									</script>
 </TMPL_IF>
 <TMPL_IF FORM99>
