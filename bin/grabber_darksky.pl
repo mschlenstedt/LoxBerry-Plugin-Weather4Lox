@@ -212,7 +212,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	} else {
 		$moonphase = (1 - $moonphase) * 2 * 100;
 	}
-	print F sprintf("%.0f",$moonphase, "|";
+	print F sprintf("%.0f","$moonphase"),"|";
 	print F "-9999|";
 	print F "-9999|";
 	print F "-9999|";
