@@ -8,20 +8,21 @@ ENVIRONMENT=$(cat /etc/environment)
 export $ENVIRONMENT
 
 # Check for WLAN adapter
-CHECKWLAN=`ifconfig | grep -c -i wlan0`
-if [ $CHECKWLAN -eq 1 ]; then
-	echo "Found configured WLAN adapter."
-	OWNIP=`ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
-	PING=`ping -c1 $OWNIP`
-	if [ $? -ne 0 ]; then
-		echo "Something is wrong with wlan0. Fallback to eth0."
-		OWNIP=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
-	fi
-else
-	OWNIP=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
-fi
+#CHECKWLAN=`ifconfig | grep -c -i wlan0`
+#if [ $CHECKWLAN -eq 1 ]; then
+#	echo "Found configured WLAN adapter."
+#	OWNIP=`ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
+#	PING=`ping -c1 $OWNIP`
+#	if [ $? -ne 0 ]; then
+#		echo "Something is wrong with wlan0. Fallback to eth0."
+#		OWNIP=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
+#	fi
+#else
+#	OWNIP=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
+#fi
 
 # Check if we figured out an IP
+OWNIP=`./ownip.pl`
 if [ -z $OWNIP ]; then
 	echo "Cannot figure out a valid IP address. Giving up."
 	exit 1
