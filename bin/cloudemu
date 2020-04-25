@@ -22,7 +22,7 @@ export $ENVIRONMENT
 #fi
 
 # Check if we figured out an IP
-OWNIP=`perl $LBHOMEDIR/bin/plugins/$pluginname/ownnip.pl`
+OWNIP=`perl $LBHOMEDIR/bin/plugins/$pluginname/ownip.pl`
 if [ -z $OWNIP ]; then
 	echo "Cannot figure out a valid IP address. Giving up."
 	exit 1
