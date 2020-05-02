@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.7.0.0";
+my $version = LoxBerry::System::pluginversion();
 
 my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $url          = $pcfg->param("OPENWEATHER.URL");
@@ -390,6 +390,9 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 			print F "0|";
 		}
 		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
+		print F sprintf("%.1f",$results->{wind_speed} * 3.6), "|";
 		$wdir = $results->{wind_deg};
 		if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 		if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
@@ -402,12 +405,9 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 		print F "$wdirdes|";
 		print F "$results->{wind_deg}|";
-		print F sprintf("%.1f",$results->{wind_speed} * 3.6), "|";
-		print F "$wdirdes|";
-		print F "$results->{wind_deg}|";
 		print F "$results->{humidity}|";
-		print F "$results->{humidity}|";
-		print F "$results->{humidity}|";
+		print F "-9999|";
+		print F "-9999|";
 		# Convert Weather string into Weather Code and convert icon name
 		$weather = $results->{weather}->[0]->{id};
 		$icon = "";
@@ -529,10 +529,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$code|";
 		print F "$results->{weather}->[0]->{description}|";
 		print F "-9999|";
-		# Save today's moon phase to include it in current.dat
-		#if ($i eq "2") {
-		#	$moonpercent = sprintf("%.0f",$results->{moon_phase}*100);
-		#}
+		print F "-9999|";
 		print F sprintf("%.1f",$results->{dew_point}), "|";
 		print F sprintf("%.0f",$results->{pressure}), "|";
 		print F sprintf("%.1f",$results->{uvi}),"|";

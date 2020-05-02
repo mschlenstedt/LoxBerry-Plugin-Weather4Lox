@@ -33,7 +33,7 @@ use Getopt::Long;
 ##########################################################################
 
 # Version of this script
-my $version = "4.7.0.0";
+my $version = LoxBerry::System::pluginversion();
 
 my $pcfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $service = $pcfg->param("SERVER.WEATHERSERVICE");

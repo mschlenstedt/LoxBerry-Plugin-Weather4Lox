@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.7.0.0";
+my $version = LoxBerry::System::pluginversion();
 
 my $pcfg           = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $url            = $pcfg->param("WEATHERBIT.URL");
@@ -390,8 +390,8 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$wdirdes|";
 		print F "$results->{wind_dir}|";
 		print F "$results->{rh}|";
-		print F "$results->{rh}|";
-		print F "$results->{rh}|";
+		print F "-9999|";
+		print F "-9999|";
 		# Convert Weather string into Weather Code and convert icon name
 		$weather = $results->{weather}->{code};
 		$icon = "";
@@ -477,6 +477,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		if (!$code) { $code = "13" };
 		print F "$code|";
 		print F "$results->{weather}->{description}|";
+		print F "-9999|";
 		print F sprintf("%.0f",$results->{moon_phase}*100), "|";
 		# Save today's moon phase to include it in current.dat
 		if ($i eq "2") {

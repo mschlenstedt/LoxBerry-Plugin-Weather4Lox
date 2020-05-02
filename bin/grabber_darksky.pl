@@ -37,7 +37,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.7.0.1";
+my $version = LoxBerry::System::pluginversion();
 
 my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $url          = $pcfg->param("DARKSKY.URL");
@@ -225,6 +225,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$decoded_json->{currently}->{ozone}|";
 	print F $decoded_json->{currently}->{cloudCover}*100, "|";
 	print F $decoded_json->{currently}->{precipProbability}*100, "|";
+	print F "-9999|";
 close(F);
 
 LOGOK "Saving current data to $lbplogdir/current.dat.tmp successfully.";

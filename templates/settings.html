@@ -675,6 +675,29 @@
 									// Activate on Load
 									disable();
 
+									function fetch()
+									{
+
+										$.ajax( { 
+												type: 'POST',
+												url: "./ajax-handler.cgi",
+												data: { 
+													ajax: 'fetch', 
+												}
+											} )
+										.done(function(resp) {
+											console.log( "fetch", "success", resp );
+											$("#fetchstate").attr("style", "color:green").html("<TMPL_VAR SETTINGS.HINT_FETCHOK>")");
+										})
+										.fail(function(resp) {
+											console.log( "fetch", "failed", resp );
+											$("#fetchstate").attr("style", "color:red").html("<TMPL_VAR SETTINGS.HINT_FETCHFAILED>");
+										})
+										.always(function(resp) {
+											console.log( "fetch", "finished", resp );
+										});
+
+									}
 
 									</script>
 </TMPL_IF>

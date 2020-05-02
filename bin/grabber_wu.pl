@@ -38,7 +38,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.6.0.3";
+my $version = LoxBerry::System::pluginversion();
 
 my $pcfg		= new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $wuurl		= $pcfg->param("WUNDERGROUND.URL");

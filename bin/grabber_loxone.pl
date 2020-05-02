@@ -38,7 +38,7 @@ use Time::Piece;
 ##########################################################################
 
 # Version of this script
-my $version = "4.6.0.0";
+my $version = LoxBerry::System::pluginversion();
 
 my $currentnametmp = "$lbplogdir/current.dat.tmp";
 my $currentname    = "$lbplogdir/current.dat";

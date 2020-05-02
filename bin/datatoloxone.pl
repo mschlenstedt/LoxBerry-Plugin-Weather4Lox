@@ -33,7 +33,7 @@ use Time::HiRes;
 ##########################################################################
 
 # Version of this script
-my $version = "4.5.0.1";
+my $version = LoxBerry::System::pluginversion();
 
 our $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my  $udpport          = $pcfg->param("SERVER.UDPPORT");

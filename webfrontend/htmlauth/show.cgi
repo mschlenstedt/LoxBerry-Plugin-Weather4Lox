@@ -32,7 +32,7 @@ use CGI qw/:standard/;
 ##########################################################################
 
 # Version of this script
-my $version = "4.4.0.1";
+my $version = "4.7.0.2";
 
 # Figure out in which subfolder we are installed
 our $psubfolder = abs_path($0);
