@@ -1,4 +1,7 @@
 <TMPL_IF FORM1>
+									<center>
+													<a id="fetch" data-role="button" data-inline="true" data-mini="true" href="javascript:fetchweather()">Test</a>
+									</center>
 									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=1">
 										<input type="hidden" name="saveformdata1" value="1">
 											<div class="form-group">
@@ -675,7 +678,7 @@
 									// Activate on Load
 									disable();
 
-									function fetch()
+									function fetchweather()
 									{
 
 										$.ajax( { 
@@ -687,7 +690,7 @@
 											} )
 										.done(function(resp) {
 											console.log( "fetch", "success", resp );
-											$("#fetchstate").attr("style", "color:green").html("<TMPL_VAR SETTINGS.HINT_FETCHOK>")");
+											$("#fetchstate").attr("style", "color:green").html("<TMPL_VAR SETTINGS.HINT_FETCHOK>");
 										})
 										.fail(function(resp) {
 											console.log( "fetch", "failed", resp );
