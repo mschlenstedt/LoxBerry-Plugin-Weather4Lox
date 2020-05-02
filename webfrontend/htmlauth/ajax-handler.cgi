@@ -70,6 +70,6 @@ exit;
 #
 sub fetch
 {
-	system ("$lbpbindir/fecth.pl -v >/dev/null 2>&1");
+	system ("$lbpbindir/fetch.pl -v >/dev/null 2>&1");
 	return ("0");
 }

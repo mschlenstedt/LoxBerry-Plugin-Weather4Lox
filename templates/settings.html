@@ -1,6 +1,6 @@
 <TMPL_IF FORM1>
 									<center>
-													<a id="fetch" data-role="button" data-inline="true" data-mini="true" href="javascript:fetchweather()">Test</a>
+											<br>
 									</center>
 									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=1">
 										<input type="hidden" name="saveformdata1" value="1">
@@ -12,6 +12,22 @@
 														</td>
 														<td align="right">
 															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelfetch"><TMPL_VAR SETTINGS.LABEL_FETCH></label>
+														</td>
+														<td width="50%">
+															<a id="fetch" data-role="button" style="background-color: rgba(67, 236, 48, 0.4);" data-mini="true" href="javascript:fetchweather()"><TMPL_VAR SETTINGS.BUTTON_FETCH></a>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1">
+																<span id="fetchstate">&nbsp;</span>
+															</font>
 														</td>
 													</tr>
 													<tr>
@@ -681,6 +697,7 @@
 									function fetchweather()
 									{
 
+										$("#fetchstate").attr("style", "color:blue").html("<TMPL_VAR SETTINGS.HINT_FETCHWAIT>");
 										$.ajax( { 
 												type: 'POST',
 												url: "./ajax-handler.cgi",
