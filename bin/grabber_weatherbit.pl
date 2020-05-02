@@ -173,7 +173,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("%.0f",$decoded_json->{data}->[0]->{pres}), "|";
 	print F "$decoded_json->{data}->[0]->{dewpt}|";
 	print F "$decoded_json->{data}->[0]->{vis}|";
-	print F "$decoded_json->{data}->[0]->{ghi}|";
+	print F "$decoded_json->{data}->[0]->{solar_rad}|";
 	print F "-9999|";
 	print F sprintf("%.1f",$decoded_json->{data}->[0]->{uv}),"|";
 	print F "-9999|";
