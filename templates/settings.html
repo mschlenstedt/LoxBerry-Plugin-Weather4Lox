@@ -123,20 +123,6 @@
 													</tr>
 													<tr>
 														<td width="25%">
-															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_LOXGRABBER></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR LOXGRABBER>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_LOXGRABBER></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
 															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_WUGRABBER></label>
 														</td>
 														<td width="50%">
@@ -155,6 +141,44 @@
 														</td>
 														<td width="20%">
 															<font size="-1"><TMPL_VAR SETTINGS.HINT_WUGRABBER></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_FOSHKGRABBER></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+																			<td><TMPL_VAR FOSHKGRABBER></td>
+																			<td width="20%" align="right"><label id="labelfoshkserver"><TMPL_VAR SETTINGS.LABEL_FOSHKSERVER></label></td>
+																			<td width="30%"><input id="foshkserver" name="foshkserver" type="text" data-validation="hostname_or_ipaddr" class="textfield" value="<TMPL_VAR FOSHK.SERVER>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKSERVER>">
+																			</td>
+																			<td width="20%" align="right"><label id="labelfoshkport"><TMPL_VAR SETTINGS.LABEL_FOSHKPORT></label></td>
+																			<td width="30%"><input id="foshkport" name="foshkport" type="text" data-validation="port" class="textfield" value="<TMPL_VAR FOSHK.PORT>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKPORT>">
+																			</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_FOSHKGRABBER></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_LOXGRABBER></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR LOXGRABBER>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_LOXGRABBER></font>
 														</td>
 													</tr>
 													<tr>

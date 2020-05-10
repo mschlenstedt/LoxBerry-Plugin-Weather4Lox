@@ -51,6 +51,7 @@ $cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data/2.5");
 $cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
 $cfg->param("DARKSKY.URL", "https://api.darksky.net");
 $cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/current");
+$cfg->param("FOSHK.URL", "observations/current/json/units=m");
 
 $cfg->save();
 
@@ -180,8 +181,12 @@ if ($R::saveformdata1) {
 	$cfg->param("OPENWEATHER.STATION", "$R::openweathercity");
 	$cfg->param("OPENWEATHER.COUNTRY", "$R::openweathercountry");
 
+	$cfg->param("FOSHK.SERVER", "$R::foshkserver");
+	$cfg->param("FOSHK.PORT", "$R::foshkport");
+
 	$cfg->param("SERVER.WUGRABBER", "$R::wugrabber");
 	$cfg->param("SERVER.LOXGRABBER", "$R::loxgrabber");
+	$cfg->param("SERVER.FOSHKGRABBER", "$R::foshkgrabber");
 	$cfg->param("SERVER.USEALTERNATEDFC", "$R::usealternatedfc");
 	$cfg->param("SERVER.USEALTERNATEHFC", "$R::usealternatehfc");
 	$cfg->param("SERVER.GETDATA", "$R::getdata");
@@ -508,6 +513,21 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.WUGRABBER'),
     );
   $template->param( WUGRABBER => $wugrabber );
+
+  # FOSHKGrabber
+  @values = ('0', '1' );
+  %labels = (
+        '0' => $L{'SETTINGS.LABEL_OFF'},
+        '1' => $L{'SETTINGS.LABEL_ON'},
+    );
+  my $wugrabber = $cgi->popup_menu(
+        -name    => 'foshkgrabber',
+        -id      => 'foshkgrabber',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.FOSHKGRABBER'),
+    );
+  $template->param( FOSHKGRABBER => $foshkgrabber );
 
   # GetData
   @values = ('0', '1' );
