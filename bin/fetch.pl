@@ -135,6 +135,14 @@ if ( $pcfg->param("SERVER.WUGRABBER") ) {
 	$log->open;
 }
 
+# Grab some data from FOSHKplugin
+if ( $pcfg->param("SERVER.FOSHKGRABBER") ) {
+	LOGINF "Starting Grabber grabber_foshk.pl";
+	$log->close;
+	system ("$lbpbindir/grabber_foshk.pl $verbose_opt");
+	$log->open;
+}
+
 # Grab some data from Loxone Miniserver
 if ( $pcfg->param("SERVER.LOXGRABBER") ) {
 	LOGINF "Starting Grabber grabber_loxone.pl";

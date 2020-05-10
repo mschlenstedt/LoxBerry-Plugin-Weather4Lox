@@ -78,13 +78,13 @@ my $wgqueryurlcr = "http://$server\:$port/$url";
 LOGINF "Fetching Data from FOSHK Plugin at $server\:$port";
 LOGDEB "URL: $wgqueryurlcr";
 
-$ua = new LWP::UserAgent;
-$resp = $ua->get($wgqueryurlcr);
+my $ua = new LWP::UserAgent;
+my $resp = $ua->get($wgqueryurlcr);
 my $json = $resp->decoded_content();
 
 # Check status of request
-$urlstatus = $resp->status_line;
-$urlstatuscode = substr($urlstatus,0,3);
+my $urlstatus = $resp->status_line;
+my $urlstatuscode = substr($urlstatus,0,3);
 
 LOGDEB "Status: $urlstatus";
 

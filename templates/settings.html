@@ -130,7 +130,7 @@
 															<tr>
 																			<td><TMPL_VAR WUGRABBER></td>
 																			<td width="20%" align="right"><label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label></td>
-																			<td width="80%"><input id="wustationid" name="wustationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" data-validation-allowing=":,." data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
+																			<td width="80%"><input id="wustationid" name="wustationid" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
 																			<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font></td>
 															</tr>
 															</table>
@@ -151,11 +151,11 @@
 															<table border=0 width="100%">
 															<tr>
 																			<td><TMPL_VAR FOSHKGRABBER></td>
-																			<td width="20%" align="right"><label id="labelfoshkserver"><TMPL_VAR SETTINGS.LABEL_FOSHKSERVER></label></td>
-																			<td width="30%"><input id="foshkserver" name="foshkserver" type="text" data-validation="hostname_or_ipaddr" class="textfield" value="<TMPL_VAR FOSHK.SERVER>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKSERVER>">
+																			<td width="10%" align="right"><label id="labelfoshkserver"><TMPL_VAR SETTINGS.LABEL_FOSHKSERVER></label></td>
+																			<td width="40%"><input id="foshkserver" name="foshkserver" type="text" data-validation-rule="special:hostname_or_ipaddr" class="textfield" value="<TMPL_VAR FOSHK.SERVER>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKSERVER>">
 																			</td>
-																			<td width="20%" align="right"><label id="labelfoshkport"><TMPL_VAR SETTINGS.LABEL_FOSHKPORT></label></td>
-																			<td width="30%"><input id="foshkport" name="foshkport" type="text" data-validation="port" class="textfield" value="<TMPL_VAR FOSHK.PORT>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKPORT>">
+																			<td width="10%" align="right"><label id="labelfoshkport"><TMPL_VAR SETTINGS.LABEL_FOSHKPORT></label></td>
+																			<td width="40%"><input id="foshkport" name="foshkport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR FOSHK.PORT>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKPORT>">
 																			</td>
 															</tr>
 															</table>
@@ -206,7 +206,7 @@
 															<label id="labeldarkskyapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="darkskyapikey" name="darkskyapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR DARKSKY.APIKEY>" 
+																<input id="darkskyapikey" name="darkskyapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR DARKSKY.APIKEY>" 
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
 														</td>
 														<td width="5%" valign="middle">
@@ -227,16 +227,16 @@
 															<label id="labeldarkskycoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
 															</td>
 															<td>
-															<input id="darkskycoordlat" name="darkskycoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR DARKSKY.COORDLAT>" 
-																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
+															<input id="darkskycoordlat" name="darkskycoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR DARKSKY.COORDLAT>" 
+																data-validation-optional="true"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
 															</td>
 															<td>
 															<label id="labeldarkskycoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
 															</td>
 															<td>
-															<input id="darkskycoordlong" name="darkskycoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR DARKSKY.COORDLONG>" 
-																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
+															<input id="darkskycoordlong" name="darkskycoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR DARKSKY.COORDLONG>" 
+																data-validation-optional="true"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
 															</td>
 															</tr>
@@ -314,7 +314,7 @@
 															<label id="labelweatherbitapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="weatherbitapikey" name="weatherbitapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WEATHERBIT.APIKEY>" 
+																<input id="weatherbitapikey" name="weatherbitapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WEATHERBIT.APIKEY>" data-validation-optional="true" 
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
 														</td>
 														<td width="5%" valign="middle">
@@ -335,16 +335,16 @@
 															<label id="labelweatherbitcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
 															</td>
 															<td>
-															<input id="weatherbitcoordlat" name="weatherbitcoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLAT>" 
-																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
+															<input id="weatherbitcoordlat" name="weatherbitcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLAT>" 
+																data-validation-optional="true"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
 															</td>
 															<td>
 															<label id="labelweatherbitcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
 															</td>
 															<td>
-															<input id="weatherbitcoordlong" name="weatherbitcoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLONG>"
-																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
+															<input id="weatherbitcoordlong" name="weatherbitcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLONG>"
+																data-validation-optional="true"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
 															</td>
 															</tr>
@@ -410,8 +410,7 @@
 															<label id="labelopenweatherapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="openweatherapikey" name="openweatherapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR OPENWEATHER.APIKEY>" 
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
+																<input id="openweatherapikey" name="openweatherapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR OPENWEATHER.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
 														</td>
 														<td width="5%" valign="middle">
 															&nbsp;
@@ -431,16 +430,16 @@
 															<label id="labelopenweathercoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
 															</td>
 															<td>
-															<input id="openweathercoordlat" name="openweathercoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLAT>" 
-																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
+															<input id="openweathercoordlat" name="openweathercoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLAT>" 
+																data-validation-optional="true"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
 															</td>
 															<td>
 															<label id="labelopenweathercoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
 															</td>
 															<td>
-															<input id="openweathercoordlong" name="openweathercoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLONG>"
-																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
+															<input id="openweathercoordlong" name="openweathercoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLONG>"
+																data-validation-optional="true"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
 															</td>
 															</tr>
@@ -626,10 +625,32 @@
 									</p>
 
 									<script>
+
+									$( document ).ready(function() {
+										// Activate on Load
+										disable();
+
+										// Validates
+										validate_enable('#wustationid');
+										validate_enable('#foshkserver');
+										validate_enable('#foshkport');
+										validate_enable('#darkskyapikey');
+										validate_enable('#darkskycoordlat');
+										validate_enable('#darkskycoordlong');
+										validate_enable('#weatherbitapikey');
+										validate_enable('#weatherbitcoordlat');
+										validate_enable('#weatherbitcoordlong');
+										validate_enable('#openweatherapikey');
+										validate_enable('#openweathercoordlat');
+										validate_enable('#openweathercoordlong');
+										validate_enable('#udpport');
+									});
+
 									// Add some attributes PERL::CGI doesn't provide
 									$('select[name=getdata]').attr('data-role','flipswitch');
 									$('select[name=loxgrabber]').attr('data-role','flipswitch');
 									$('select[name=wugrabber]').attr('data-role','flipswitch');
+									$('select[name=foshkgrabber]').attr('data-role','flipswitch');
 									$('select[name=usealternatedfc]').attr('data-role','flipswitch');
 									$('select[name=usealternatehfc]').attr('data-role','flipswitch');
 									$('select[name=weatherservice]').attr('data-mini','true');
@@ -669,6 +690,23 @@
 											//alert("Aus!");
 											$('#labelwustationid').addClass('ui-disabled');
 											$('#wustationid').addClass('ui-disabled');
+										}
+									});
+
+									// FOSHKGrabber
+									$( document ).on( 'change', '#foshkgrabber', function ( e ) {
+										if ( $( "select[name=foshkgrabber]" ).val()  === "1" ) {
+											//alert("An!");
+											$('#labelfoshkserver').removeClass('ui-disabled');
+											$('#foshkserver').removeClass('ui-disabled');
+											$('#labelfoshkport').removeClass('ui-disabled');
+											$('#foshkport').removeClass('ui-disabled');
+										} else {
+											//alert("Aus!");
+											$('#labelfoshkserver').addClass('ui-disabled');
+											$('#foshkserver').addClass('ui-disabled');
+											$('#labelfoshkport').addClass('ui-disabled');
+											$('#foshkport').addClass('ui-disabled');
 										}
 									});
 
@@ -713,10 +751,13 @@
 											$('#labelwustationid').addClass('ui-disabled');
 											$('#wustationid').addClass('ui-disabled');
 										}
+										if ( $( "select[name=foshkgrabber]" ).val()  === "0" ) {
+											$('#labelfoshkserver').addClass('ui-disabled');
+											$('#foshkserver').addClass('ui-disabled');
+											$('#labelfoshkport').addClass('ui-disabled');
+											$('#foshkport').addClass('ui-disabled');
+										}
 									}
-
-									// Activate on Load
-									disable();
 
 									function fetchweather()
 									{
@@ -791,8 +832,7 @@
 															<label id="labeludpport"><TMPL_VAR SETTINGS.LABEL_UDPPORT></label>
 															</td>
 															<td>
-																<input id="udpport" name="udpport" type="text" data-validation="number" class="textfield" value="<TMPL_VAR SERVER.UDPPORT>" 
-																data-validation-allowing="range[1;65000]"
+																<input id="udpport" name="udpport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR SERVER.UDPPORT>" 
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_UDPPORT>">
 															</td>
 															</tr>
@@ -887,7 +927,13 @@
 										</center>
 									</form>
 									</p>
+
 									<script>
+
+									$( document ).ready(function() {
+										// Validates
+										validate_enable('#udpport');
+									});
 									// Add some attributes PERL::CGI doesn't provide
 									$('#sendudp').attr('data-role','flipswitch');
 									</script>

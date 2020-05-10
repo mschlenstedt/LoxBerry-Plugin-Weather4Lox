@@ -520,7 +520,7 @@ if ($R::form eq "1" || !$R::form) {
         '0' => $L{'SETTINGS.LABEL_OFF'},
         '1' => $L{'SETTINGS.LABEL_ON'},
     );
-  my $wugrabber = $cgi->popup_menu(
+  my $foshkgrabber = $cgi->popup_menu(
         -name    => 'foshkgrabber',
         -id      => 'foshkgrabber',
         -values  => \@values,
