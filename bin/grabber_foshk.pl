@@ -113,6 +113,7 @@ my %wu_response;
 	"cur_tt" => 11,
 	"cur_tt_fl" => 12,
 	"cur_hu" => 13,
+	"cur_w_dirdes" => 14,
 	"cur_w_dir" => 15,
 	"cur_w_sp" => 16,
 	"cur_w_gu" => 17,
@@ -135,6 +136,20 @@ $wu_response{cur_tt} = sprintf("%.1f",$decoded_json->{observations}->[0]->{metri
 $wu_response{cur_tt_fl}	= sprintf("%.1f",$decoded_json->{observations}->[0]->{metric}->{windChill}) if ($decoded_json->{observations}->[0]->{metric}->{windChill} ne "null");
 $wu_response{cur_hu} = $decoded_json->{observations}->[0]->{humidity} if ($decoded_json->{observations}->[0]->{humidity} ne "null");
 $wu_response{cur_w_dir}	= $decoded_json->{observations}->[0]->{winddir} if ($decoded_json->{observations}->[0]->{winddir} ne "null");
+my $wdir = $wu_response{cur_w_dir};
+my $wdirdes;
+if ($wu_response{cur_w_dir} ne "null") {
+	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
+	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
+	if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
+	if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
+	if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
+	if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
+	if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
+	if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+	$wu_response{cur_w_dirdes} = $wdirdes;
+}
 $wu_response{cur_w_sp} = $decoded_json->{observations}->[0]->{metric}->{windSpeed} if ($decoded_json->{observations}->[0]->{metric}->{windSpeed} ne "null");
 $wu_response{cur_w_gu} = $decoded_json->{observations}->[0]->{metric}->{windGust} if ($decoded_json->{observations}->[0]->{metric}->{windGust} ne "null");
 $wu_response{cur_w_ch} = sprintf("%.1f",$decoded_json->{observations}->[0]->{metric}->{windChill}) if ($decoded_json->{observations}->[0]->{metric}->{windChill} ne "null");
