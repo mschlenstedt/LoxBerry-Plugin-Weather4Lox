@@ -151,10 +151,9 @@
 															<table border=0 width="100%">
 															<tr>
 																			<td><TMPL_VAR FOSHKGRABBER></td>
-																			<td width="10%" align="right"><label id="labelfoshkserver"><TMPL_VAR SETTINGS.LABEL_FOSHKSERVER></label></td>
-																			<td width="40%"><input id="foshkserver" name="foshkserver" type="text" data-validation-rule="special:hostname_or_ipaddr" class="textfield" value="<TMPL_VAR FOSHK.SERVER>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKSERVER>">
-																			</td>
-																			<td width="10%" align="right"><label id="labelfoshkport"><TMPL_VAR SETTINGS.LABEL_FOSHKPORT></label></td>
+																			<td width="10%" align="right"><label id="labelfoshkserver" style="margin-top:15px"><TMPL_VAR SETTINGS.LABEL_FOSHKSERVER></label></td>
+																			<td width="40%"><input id="foshkserver" name="foshkserver" type="text" data-validation-rule="special:hostname_or_ipaddr" class="textfield" value="<TMPL_VAR FOSHK.SERVER>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKSERVER>"></td>
+																			<td width="10%" align="right"><label id="labelfoshkport" style="margin-top:15px"><TMPL_VAR SETTINGS.LABEL_FOSHKPORT></label></td>
 																			<td width="40%"><input id="foshkport" name="foshkport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR FOSHK.PORT>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKPORT>">
 																			</td>
 															</tr>
