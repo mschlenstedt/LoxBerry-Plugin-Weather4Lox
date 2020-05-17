@@ -88,6 +88,7 @@ my $response_success;
 	"w4l_cur_tt" => 11,
 	"w4l_cur_tt_fl" => 12,
 	"w4l_cur_hu" => 13,
+	"w4l_cur_w_dirdes" => 14,
 	"w4l_cur_w_dir" => 15,
 	"w4l_cur_w_sp" => 16,
 	"w4l_cur_w_gu" => 17,
@@ -133,6 +134,23 @@ chomp($datafile_str);
 LOGDEB "Old line: $datafile_str";
 
 my @values = split /\|/, $datafile_str;
+
+# Add WinDir Description
+w4l_cur_w_dir
+my $wdir = $lox_response{w4l_cur_w_dir};
+my $wdirdes;
+if ($wdir and $wdir ne "-9999") {
+	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
+	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
+	if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
+	if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
+	if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
+	if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
+	if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
+	if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+	$lox_response{cur_w_dirdes} = $wdirdes;
+}
 
 foreach my $resp (keys %lox_response) {
     # print STDERR "Object $resp has value " . $lox_response{$resp};
