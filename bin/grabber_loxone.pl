@@ -135,8 +135,7 @@ LOGDEB "Old line: $datafile_str";
 
 my @values = split /\|/, $datafile_str;
 
-# Add WinDir Description
-w4l_cur_w_dir
+# Add WinDir Description w4l_cur_w_dir
 my $wdir = $lox_response{w4l_cur_w_dir};
 my $wdirdes;
 if ($wdir and $wdir ne "-9999") {
