@@ -829,7 +829,7 @@ foreach (@hfcdata){
       $tmppopmin48 = @fields[26];
   }
   if ( @fields[0] <= 4 ) {
-    $tmpprec4 = $tmpprec4 + @fields[24];
+    $tmpprec4 = $tmpprec4 + @fields[24] if @fields[24] > 0;
     $tmpsnow4 = $tmpsnow4 + @fields[25];
     if ( $tmpttmin4 > @fields[11] ) { $tmpttmin4 = @fields[11]; }
     if ( $tmpttmax4 < @fields[11] ) { $tmpttmax4 = @fields[11]; }
