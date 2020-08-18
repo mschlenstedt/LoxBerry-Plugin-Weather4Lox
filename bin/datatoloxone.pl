@@ -830,55 +830,55 @@ foreach (@hfcdata){
   }
   if ( @fields[0] <= 4 ) {
     $tmpprec4 = $tmpprec4 + @fields[24] if @fields[24] > 0;
-    $tmpsnow4 = $tmpsnow4 + @fields[25];
+    $tmpsnow4 = $tmpsnow4 + @fields[25] if @fields[25] > 0;
     if ( $tmpttmin4 > @fields[11] ) { $tmpttmin4 = @fields[11]; }
     if ( $tmpttmax4 < @fields[11] ) { $tmpttmax4 = @fields[11]; }
     if ( $tmppopmin4 > @fields[26] ) { $tmppopmin4 = @fields[26]; }
     if ( $tmppopmax4 < @fields[26] ) { $tmppopmax4 = @fields[26]; }
   } 
   if ( @fields[0] <= 8 ) {
-    $tmpprec8 = $tmpprec8 + @fields[24];
-    $tmpsnow8 = $tmpsnow8 + @fields[25];
+    $tmpprec8 = $tmpprec8 + @fields[24] if @fields[24] > 0;
+    $tmpsnow8 = $tmpsnow8 + @fields[25] if @fields[25] > 0;
     if ( $tmpttmin8 > @fields[11] ) { $tmpttmin8 = @fields[11]; }
     if ( $tmpttmax8 < @fields[11] ) { $tmpttmax8 = @fields[11]; }
     if ( $tmppopmin8 > @fields[26] ) { $tmppopmin8 = @fields[26]; }
     if ( $tmppopmax8 < @fields[26] ) { $tmppopmax8 = @fields[26]; }
   } 
   if ( @fields[0] <= 16 ) {
-    $tmpprec16 = $tmpprec16 + @fields[24];
-    $tmpsnow16 = $tmpsnow16 + @fields[25];
+    $tmpprec16 = $tmpprec16 + @fields[24] if @fields[24] > 0;
+    $tmpsnow16 = $tmpsnow16 + @fields[25] if @fields[25] > 0;
     if ( $tmpttmin16 > @fields[11] ) { $tmpttmin16 = @fields[11]; }
     if ( $tmpttmax16 < @fields[11] ) { $tmpttmax16 = @fields[11]; }
     if ( $tmppopmin16 > @fields[26] ) { $tmppopmin16 = @fields[26]; }
     if ( $tmppopmax16 < @fields[26] ) { $tmppopmax16 = @fields[26]; }
   } 
   if ( @fields[0] <= 24 ) {
-    $tmpprec24 = $tmpprec24 + @fields[24];
-    $tmpsnow24 = $tmpsnow24 + @fields[25];
+    $tmpprec24 = $tmpprec24 + @fields[24] if @fields[24] > 0;
+    $tmpsnow24 = $tmpsnow24 + @fields[25] if @fields[25] > 0;
     if ( $tmpttmin24 > @fields[11] ) { $tmpttmin24 = @fields[11]; }
     if ( $tmpttmax24 < @fields[11] ) { $tmpttmax24 = @fields[11]; }
     if ( $tmppopmin24 > @fields[26] ) { $tmppopmin24 = @fields[26]; }
     if ( $tmppopmax24 < @fields[26] ) { $tmppopmax24 = @fields[26]; }
   } 
   if ( @fields[0] <= 32 ) {
-    $tmpprec32 = $tmpprec32 + @fields[24];
-    $tmpsnow32 = $tmpsnow32 + @fields[25];
+    $tmpprec32 = $tmpprec32 + @fields[24] if @fields[24] > 0;
+    $tmpsnow32 = $tmpsnow32 + @fields[25] if @fields[25] > 0;
     if ( $tmpttmin32 > @fields[11] ) { $tmpttmin32 = @fields[11]; }
     if ( $tmpttmax32 < @fields[11] ) { $tmpttmax32 = @fields[11]; }
     if ( $tmppopmin32 > @fields[26] ) { $tmppopmin32 = @fields[26]; }
     if ( $tmppopmax32 < @fields[26] ) { $tmppopmax32 = @fields[26]; }
   } 
   if ( @fields[0] <= 40 ) {
-    $tmpprec40 = $tmpprec40 + @fields[24];
-    $tmpsnow40 = $tmpsnow40 + @fields[25];
+    $tmpprec40 = $tmpprec40 + @fields[24] if @fields[24] > 0;
+    $tmpsnow40 = $tmpsnow40 + @fields[25] if @fields[25] > 0;
     if ( $tmpttmin40 > @fields[11] ) { $tmpttmin40 = @fields[11]; }
     if ( $tmpttmax40 < @fields[11] ) { $tmpttmax40 = @fields[11]; }
     if ( $tmppopmin40 > @fields[26] ) { $tmppopmin40 = @fields[26]; }
     if ( $tmppopmax40 < @fields[26] ) { $tmppopmax40 = @fields[26]; }
   } 
   if ( @fields[0] <= 48 ) {
-    $tmpprec48 = $tmpprec48 + @fields[24];
-    $tmpsnow48 = $tmpsnow48 + @fields[25];
+    $tmpprec48 = $tmpprec48 + @fields[24] if @fields[24] > 0;
+    $tmpsnow48 = $tmpsnow48 + @fields[25] if @fields[25] > 0;
     if ( $tmpttmin48 > @fields[11] ) { $tmpttmin48 = @fields[11]; }
     if ( $tmpttmax48 < @fields[11] ) { $tmpttmax48 = @fields[11]; }
     if ( $tmppopmin48 > @fields[26] ) { $tmppopmin48 = @fields[26]; }
