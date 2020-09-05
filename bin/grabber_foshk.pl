@@ -155,8 +155,10 @@ $wu_response{cur_w_gu} = $decoded_json->{observations}->[0]->{metric}->{windGust
 $wu_response{cur_w_ch} = sprintf("%.1f",$decoded_json->{observations}->[0]->{metric}->{windChill}) if ($decoded_json->{observations}->[0]->{metric}->{windChill} ne "null");
 $wu_response{cur_pr} = $decoded_json->{observations}->[0]->{metric}->{pressure} if ($decoded_json->{observations}->[0]->{metric}->{pressure} ne "null");
 $wu_response{cur_dp} = $decoded_json->{observations}->[0]->{metric}->{dewpt} if ($decoded_json->{observations}->[0]->{metric}->{dewpt} ne "null");
-$wu_response{cur_sr} = sprintf("%.0f",$decoded_json->{observations}->[0]->{solarRadiation}) if ($decoded_json->{observations}->[0]->{solarRadiation} ne "null");
-$wu_response{cur_uvi} = $decoded_json->{observations}->[0]->{uv} if ($decoded_json->{observations}->[0]->{uv} ne "null");
+$wu_response{cur_sr} = sprintf("%.0f",$decoded_json->{observations}->[0]->{solarRadiation}) if ($decoded_json->{observations}->[0]->{solarRadiation} ne "null"); # For FOSHKplugin < V0.06
+$wu_response{cur_sr} = sprintf("%.0f",$decoded_json->{observations}->[0]->{solarradiation}) if ($decoded_json->{observations}->[0]->{solarradiation} ne "null"); # For FOSHKplugin >= V0.06
+$wu_response{cur_uvi} = $decoded_json->{observations}->[0]->{uv} if ($decoded_json->{observations}->[0]->{uv} ne "null"); # For FOSHKplugin < V0.05
+$wu_response{cur_uvi} = $decoded_json->{observations}->[0]->{UV} if ($decoded_json->{observations}->[0]->{UV} ne "null"); # For FOSHKplugin >= V0.05
 $wu_response{cur_prec_today} = $decoded_json->{observations}->[0]->{metric}->{precipTotal} if ($decoded_json->{observations}->[0]->{metric}->{precipTotal} ne "null");
 $wu_response{cur_prec_1hr} = $decoded_json->{observations}->[0]->{metric}->{precipRate} if ($decoded_json->{observations}->[0]->{metric}->{precipRate} ne "null");
 
