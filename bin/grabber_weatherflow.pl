@@ -116,7 +116,7 @@ my $forecast_json = decode_json( $json );
 # end retreiving forecast data
 
 # Get current station observation from Weatherflow Server
-my $queryurlcr_curr = "https://swd.weatherflow.com/swd/rest/observations/station/33187?token=f4698cd0-be07-4eb7-bed6-3c77256e80c3";
+my $queryurlcr_curr = "https://swd.weatherflow.com/swd/rest/observations/station/$stationid?token=$apikey";
 
 LOGINF "Fetching Data for Station $stationid";
 LOGDEB "URL: $queryurlcr_curr";
