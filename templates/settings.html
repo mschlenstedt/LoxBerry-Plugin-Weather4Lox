@@ -498,7 +498,123 @@
 															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
 														</td>
 													</tr>
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+															<h2><TMPL_VAR SETTINGS.LABEL_WEATHERFLOW_SETTINGS></h2>
+														</td>
+														<td align="right">
+															<a href="https://weatherflow.com/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/weatherflow.svg"></a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherflowapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+														</td>
+														<td width="50%">
+																<input id="weatherflowapikey" name="weatherflowapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WEATHERFLOW.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%" valign="top">
+															<br><label id="labelweatherflowcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labelweatherflowcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+															</td>
+															<td>
+															<input id="weatherflowcoordlat" name="weatherflowcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERFLOW.COORDLAT>" 
+																data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+															</td>
+															<td>
+															<label id="labelweatherflowcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+															</td>
+															<td>
+															<input id="weatherflowcoordlong" name="weatherflowcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR WEATHERFLOW.COORDLONG>"
+																data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<a id="weatherflowcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+															data-role="button" id="btnweatherflowaddresssearch" data-inline="true" data-mini="true"
+															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=weatherflow',
+															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+															</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherflowlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR WEATHERFLOWLANG>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherflowcity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
+														</td>
+														<td width="50%">
+															<input id="weatherflowcity" name="weatherflowcity" type="text" class="textfield" value="<TMPL_VAR WEATHERFLOW.CITY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherflowcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
+														</td>
+														<td width="50%">
+															<input id="weatherflowcountry" name="weatherflowcountry" type="text" class="textfield" value="<TMPL_VAR WEATHERFLOW.COUNTRY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
 
+													<tr>
+														<td width="25%">
+															<label id="labelweatherflowstationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+														</td>
+														<td width="50%">
+																<input id="weatherflowstationid" name="weatherflowstationid" type="text" data-validation-rule="special:number" class="textfield" value="<TMPL_VAR WEATHERFLOW.STATIONID>"  data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>" data-validation-optional="true" >
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
 													<!--
 													<tr>
 														<td colspan=3 width="75%" valign="middle">
@@ -642,6 +758,11 @@
 										validate_enable('#openweatherapikey');
 										validate_enable('#openweathercoordlat');
 										validate_enable('#openweathercoordlong');
+										validate_enable('#weatherflowapikey');
+										validate_enable('#weatherflowcoordlat');
+										validate_enable('#weatherflowcoordlong');
+										validate_enable('#weatherflowapikey');
+										validate_enable('#weatherflowstationid');
 										validate_enable('#udpport');
 									});
 
@@ -660,6 +781,7 @@
 									$('select[name=weatherbitlang]').attr('data-mini','true');
 									$('select[name=weatherbitfillmissingdata]').attr('data-role','flipswitch');
 									$('select[name=openweatherlang]').attr('data-mini','true');
+									$('select[name=weatherflowlang]').attr('data-mini','true');
 									//$('select[name=wulang]').attr('data-native-menu','false');
 									$('select[name=metric]').attr('data-mini','true');
 									//$('select[name=metric]').attr('data-native-menu','false');

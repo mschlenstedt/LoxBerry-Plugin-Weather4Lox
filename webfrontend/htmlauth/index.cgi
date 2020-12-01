@@ -52,6 +52,7 @@ $cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
 $cfg->param("DARKSKY.URL", "https://api.darksky.net");
 $cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/current");
 $cfg->param("FOSHK.URL", "observations/current/json/units=m");
+$cfg->param("WEATHERFLOW.URL", "https://swd.weatherflow.com/swd/rest");
 
 $cfg->save();
 
@@ -89,6 +90,8 @@ if ($R::saveformdata1) {
 	$R::weatherbitcoordlong =~ tr/,/./;
 	$R::openweathercoordlat =~ tr/,/./;
 	$R::openweathercoordlong =~ tr/,/./;
+	$R::weatherflowcoordlat =~ tr/,/./;
+	$R::weatherflowcoordlong =~ tr/,/./;
 
 	# Check for Station : DARKSKY
 	if ($R::weatherservice eq "darksky") {
@@ -128,6 +131,21 @@ if ($R::saveformdata1) {
 		&openweatherquery;
 		$found = 0;
 		if ( !$error && $decoded_json->{lat} ) {
+			$found = 1;
+		}
+		if ( !$error && !$found ) {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
+		}
+	}
+
+	# Check for Station : WEATHERFLOW
+	if ($R::weatherservice eq "weatherflow") {
+		our $url = $cfg->param("WEATHERFLOW.URL");
+		#our $querystation = "lat=" . $R::weatherflowcoordlat . "&lon=" . $R::weatherflowcoordlong;
+		# 1. attempt to query OpenWeather
+		&weatherflowquery;
+		$found = 0;
+		if ( !$error && $decoded_json->{station_id} ) {
 			$found = 1;
 		}
 		if ( !$error && !$found ) {
@@ -181,6 +199,14 @@ if ($R::saveformdata1) {
 	$cfg->param("OPENWEATHER.STATION", "$R::openweathercity");
 	$cfg->param("OPENWEATHER.COUNTRY", "$R::openweathercountry");
 
+	$cfg->param("WEATHERFLOW.APIKEY", "$R::weatherflowapikey");
+	$cfg->param("WEATHERFLOW.COORDLAT", "$R::weatherflowcoordlat");
+	$cfg->param("WEATHERFLOW.COORDLONG", "$R::weatherflowcoordlong");
+	$cfg->param("WEATHERFLOW.LANG", "$R::weatherflowlang");
+	$cfg->param("WEATHERFLOW.CITY", "$R::weatherflowcity");
+	$cfg->param("WEATHERFLOW.COUNTRY", "$R::weatherflowcountry");
+	$cfg->param("WEATHERFLOW.STATIONID", "$R::weatherflowstationid");
+	
 	$cfg->param("FOSHK.SERVER", "$R::foshkserver");
 	$cfg->param("FOSHK.PORT", "$R::foshkport");
 
@@ -392,10 +418,11 @@ if ($R::form eq "1" || !$R::form) {
   my %labels;
 
   # Weather Service
-  @values = ( 'openweather', 'weatherbit', 'darksky',  );
+  @values = ( 'openweather', 'weatherbit', 'weatherflow', 'darksky',  );
   %labels = (
         'openweather' => 'OpenWeatherMap',
         'weatherbit' => 'Weatherbit',
+        'weatherflow' => 'Weatherflow',
         'darksky' => 'Dark Sky',
     );
   my $wservice = $cgi->popup_menu(
@@ -408,10 +435,11 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( WEATHERSERVICE => $wservice );
 
   # DFC Weather Service
-  @values = ( 'openweather', 'weatherbit', 'darksky',  );
+  @values = ( 'openweather', 'weatherbit', 'weatherflow', 'darksky',  );
   %labels = (
         'openweather' => 'OpenWeatherMap',
         'weatherbit' => 'Weatherbit',
+        'weatherflow' => 'Weatherflow',
         'darksky' => 'Dark Sky',
     );
   my $wservicedfc = $cgi->popup_menu(
@@ -439,10 +467,11 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( USEALTERNATEDFC => $usealternatedfc );
 
   # HFC Weather Service
-  @values = ( 'openweather', 'weatherbit', 'darksky',  );
+  @values = ( 'openweather', 'weatherbit', 'weatherflow', 'darksky',  );
   %labels = (
         'openweather' => 'OpenWeatherMap',
         'weatherbit' => 'Weatherbit',
+        'weatherflow' => 'Weatherflow',
         'darksky' => 'Dark Sky',
     );
   my $wservicehfc = $cgi->popup_menu(
@@ -748,6 +777,67 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('OPENWEATHER.LANG'),
     );
   $template->param( OPENWEATHERLANG => $openweatherlang );
+  
+  # Weatherflow Language
+  @values = ('af', 'ar', 'az', 'bg', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'eu', 'fa', 'fi', 'fr', 'gl', 'he', 'hi', 'hr', 'hu', 'id', 'it', 'ja', 'kr', 'la', 'lt', 'mk', 'no', 'nl', 'pl', 'pt', 'pt_br', 'ro', 'ru', 'se', 'sk', 'sl', 'sr', 'th', 'tr', 'uk', 'vi', 'zh_cn', 'zh_tw', 'zu');
+
+  %labels = (
+	'af' => 'Africaans',
+	'ar' => 'Arabic',
+	'az' => 'Azerbaijani',
+	'bg' => 'Bulgarian',
+	'ca' => 'Catalan',
+	'ca' => 'Catalan',
+	'cz' => 'Czech',
+	'da' => 'Danish',
+	'de' => 'German',
+	'el' => 'Greek',
+	'en' => 'English',
+	'es' => 'Spanish',
+	'eu' => 'Basque',
+	'fa' => 'Persian (Farsi)',
+	'fi' => 'Finnish',
+	'fr' => 'French',
+	'hr' => 'Croatian',
+	'ga' => 'Galician',
+	'he' => 'Hebrew',
+	'hi' => 'Hindi',
+	'hr' => 'Croatian',
+	'hu' => 'Hungarian',
+	'id' => 'Indonesian',
+	'it' => 'Italian',
+	'ja' => 'Japanese',
+	'kr' => 'Korean',
+	'la' => 'Latvian',
+	'lt' => 'Lithuanian',
+	'mk' => 'Macedonian',
+	'no' => 'Norwegian',
+	'nl' => 'Dutch',
+	'pl' => 'Polish',
+	'pt' => 'Portuguese',
+	'pt_br' => 'Portuguese Brasil',
+	'ro' => 'Romanian',
+	'ru' => 'Russian',
+	'se' => 'Swedish',
+	'sk' => 'Slovak',
+	'sl' => 'Slovenian',
+	'sr' => 'Serbian',
+	'th' => 'Thai',
+	'tr' => 'Turkish',
+	'uk' => 'Ukrainian',
+	'vi' => 'Vietnamese',
+	'zh_cn' => 'simplified Chinese',
+	'zh_tw' => 'traditional Chinese',
+	'zu' => 'Zulu',
+    );
+  my $weatherflowlang = $cgi->popup_menu(
+        -name    => 'weatherflowlang',
+        -id      => 'weatherflowlang',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('WEATHERFLOW.LANG'),
+    );
+  $template->param( WEATHERFLOWLANG => $weatherflowlang );
   
   
   # Statiotyp
@@ -1172,6 +1262,43 @@ sub openweatherquery
         # Check status of request
         my $urlstatus = $res->status_line;
         my $urlstatuscode = substr($urlstatus,0,3);
+
+	if ($urlstatuscode ne "200" && $urlstatuscode ne "401" ) {
+	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+	}
+
+	if ($urlstatuscode eq "401" ) {
+	        $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+	}
+
+        # Decode JSON response from server
+	if (!$error) {
+        	our $decoded_json = decode_json( $json );
+	}
+	return();
+
+}
+
+#####################################################
+# Query Weatherflow
+#####################################################
+
+sub weatherflowquery
+{
+
+    # Update API key to comply with Wetherflow format
+    my $apikey = $cfg->param("WEATHERFLOW.APIKEY");
+	$apikey =~ s/^(.{8})(.{4})(.{4})(.{4})(.{12})/$1\-$2\-$3\-$4\-$5/;
+	
+    # Get data from Weatherflow Server (API request) for testing API Key
+    my $query = "$url\/observations\/station\/$R::weatherflowstationid?token=$apikey";
+    my $ua = new LWP::UserAgent;
+    my $res = $ua->get($query);
+    my $json = $res->decoded_content();
+
+    # Check status of request
+    my $urlstatus = $res->status_line;
+    my $urlstatuscode = substr($urlstatus,0,3);
 
 	if ($urlstatuscode ne "200" && $urlstatuscode ne "401" ) {
 	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
