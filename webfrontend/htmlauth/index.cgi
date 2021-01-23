@@ -1286,9 +1286,9 @@ sub openweatherquery
 sub weatherflowquery
 {
 
-    # Update API key to comply with Wetherflow format
+    # Update API key to comply with Weatherflow format
     my $apikey = $cfg->param("WEATHERFLOW.APIKEY");
-	$apikey =~ s/^(.{8})(.{4})(.{4})(.{4})(.{12})/$1\-$2\-$3\-$4\-$5/;
+    $apikey =~ s/^(.{8})(.{4})(.{4})(.{4})(.{12})/$1\-$2\-$3\-$4\-$5/;
 	
     # Get data from Weatherflow Server (API request) for testing API Key
     my $query = "$url\/observations\/station\/$R::weatherflowstationid?token=$apikey";

@@ -2,8 +2,9 @@
 
 # grabber for fetching data from Weatherflow
 # fetches weather data (current and forecast) from Weatherflow
-
+#
 # Copyright 2016-2018 Michael Schlenstedt, michael@loxberry.de
+# Copyright 2020 Martin Barnasconi, nufke@barnasconi.net
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,7 +56,7 @@ my %L = LoxBerry::System::readlanguage("language.ini");
 # Create a logging object
 my $log = LoxBerry::Log->new (
 	package => 'weather4lox',
-	name => 'grabber_weaterflow',
+	name => 'grabber_weatherflow',
 	logdir => "$lbplogdir",
 	#filename => "$lbplogdir/weather4lox.log",
 	#append => 1,
@@ -86,11 +87,12 @@ LOGSTART "Weather4Lox GRABBER_WEATHERFLOW process started";
 LOGDEB "This is $0 Version $version";
 
 # Get forecast data from Weatherflow Server
+# API: https://weatherflow.github.io/Tempest/api/swagger/#/forecast
 # Note: the forecast data also contains current conditions, but these are not as accurate as the station observations
 # For that reason, we also query the station observations (see below)
-my $queryurlcr = "$url\/better_forecast?station_id=$stationid&api_key=$apikey&lat=$coordlat&lon=$coordlong";
+my $queryurlcr = "$url\/better_forecast?station_id=$stationid&api_key=$apikey";
 
-LOGINF "Fetching Data for Station $stationid";
+LOGINF "Fetching Forecast Data for Station $stationid";
 LOGDEB "URL: $queryurlcr";
 
 my $ua = new LWP::UserAgent;
@@ -116,9 +118,10 @@ my $forecast_json = decode_json( $json );
 # end retreiving forecast data
 
 # Get current station observation from Weatherflow Server
+# API : https://weatherflow.github.io/Tempest/api/swagger/#!/observations/getStationObservation
 my $queryurlcr_curr = "$url\/observations/station/$stationid?token=$apikey";
 
-LOGINF "Fetching Data for Station $stationid";
+LOGINF "Fetching Current Data for Station $stationid";
 LOGDEB "URL: $queryurlcr_curr";
 
 my $ua_curr = new LWP::UserAgent;
@@ -168,18 +171,18 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	}
 	binmode F, ':encoding(UTF-8)';
 	print F "$forecast_json->{current_conditions}->{time}|"; # Date Epoche 
-	print F $t, " ", sprintf("+%04d", $forecast_json->{timezone_offset_minutes}/60 * 100), "|"; 	# Date RFC822
+	print F $t, " ", sprintf("+%04d", $forecast_json->{timezone_offset_minutes}/60 * 100), "|"; # Date RFC822
 	my $tz_short = qx(TZ='$forecast_json->{timezone}' date +%Z);
 	chomp ($tz_short);
-	print F "$tz_short|"; # Timeezone Short
+	print F "$tz_short|"; # Timezone Short
 	print F "$forecast_json->{timezone}|"; # Timezone Long
 	print F sprintf("+%04d", $forecast_json->{timezone_offset_minutes}/60 * 100), "|"; # Timezone Offset
 	$city = Encode::decode("UTF-8", $city);
 	print F "$city|"; # Observation location
 	$country = Encode::decode("UTF-8", $country);
 	print F "$country|"; # Location Country
-	print F "-9999|"; # Location Country Code
-	print F "$forecast_json->{latitude}|"; #	Location Latitude
+	print F "-9999|"; # Location Country Code (not available in Weatherflow API)
+	print F "$forecast_json->{latitude}|"; # Location Latitude
 	print F "$forecast_json->{longitude}|"; # Location Longitude
 	print F "$forecast_json->{station}->{elevation}|"; # Location Elevation
 	print F sprintf("%.1f",$current_observation_json->{obs}->[0]->{air_temperature}), "|"; # Temperature
@@ -202,72 +205,70 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("%.0f",$current_observation_json->{obs}->[0]->{wind_chill}), "|"; # Windchill
 	print F "$current_observation_json->{obs}->[0]->{sea_level_pressure}|"; # Pressure
 	print F sprintf("%.1f",$current_observation_json->{obs}->[0]->{dew_point}), "|"; # Dew Point
-	print F "-9999|"; # Visibility
+	print F "-9999|"; # Visibility (not available in Weatherflow API)
 	print F "$current_observation_json->{obs}->[0]->{solar_radiation}|"; #Solar Radiation
 	print F "$current_observation_json->{obs}->[0]->{heat_index}|"; #Heat Index
 	print F "$current_observation_json->{obs}->[0]->{uv}|"; # UV Index
 	print F sprintf("%.3f",$current_observation_json->{obs}->[0]->{precip_accum_local_day}), "|";  # Precipitation Today
-	print F sprintf("%.3f",$current_observation_json->{obs}->[0]->{precip_accum_last_1hr}), "|"; # Precipitation 1hr
+	print F sprintf("%.3f",$forecast_json->{forecast}->{hourly}->[0]->{precip}), "|"; # Precipitation 1hr (note: forecast, to reflect the expected rain in mm/h)
 	# Convert Weather string into Weather Code and convert icon name
+	# Possible Icon Values:
+	#  clear-day
+	#  clear-night
+	#  cloudy
+	#  foggy
+	#  partly-cloudy-day
+	#  partly-cloudy-night
+	#  possibly-rainy-day
+	#  possibly-rainy-night
+	#  possibly-sleet-day
+	#  possibly-sleet-night
+	#  possibly-snow-day
+	#  possibly-snow-night
+	#  possibly-thunderstorm-day
+	#  possibly-thunderstorm-night
+	#  rainy
+	#  sleet
+	#  snow
+	#  thunderstorm
+	#  windy
 	$weather = $forecast_json->{current_conditions}->{icon};
-	$weather =~ s/\-night|\-day//; # No -night and -day
-	$weather =~ s/cc\-//; # No cc-
-	$weather =~ s/\-//; # No -
-	$weather =~ s/possibly/chance/; # added for wf: replace possibly by chance
+	$weather =~ s/\-night|\-day//; # remove -night and -day
+	$weather =~ s/\-//; # remove -
+	$weather =~ s/possibly/chance/; # replace possibly by chance
 	$weather =~ tr/A-Z/a-z/; # All Lowercase
-	my $icon = $weather;
+	my $icon = $weather; # by default the Weather4Lox icon name is equal to the Weatherflow icon name, or changed below
 	if ($weather eq "clear") {$weather = "1";}
-	#elsif ($weather eq "sunny") {$weather = "1";}
-	#elsif ($weather eq "partlysunny") {$weather = "3";}
-	#elsif ($weather eq "mostlysunny") {$weather = "2";}
 	elsif ($weather eq "partlycloudy") {$weather = "2";}
-	#elsif ($weather eq "mostlycloudy") {$weather = "3";}
 	elsif ($weather eq "cloudy") {$weather = "4";}
-	#elsif ($weather eq "overcast") {$weather = "4";}
-	#elsif ($weather eq "chanceflurries") {$weather = "18";}
-	elsif ($weather eq "chancesleet") {$weather = "18";}
-	elsif ($weather eq "chancesnow") {$weather = "20";}
-	elsif ($weather eq "snowlikely") {$weather = "20"; $icon="chancesnow"} # added for wf
-	#elsif ($weather eq "flurries") {$weather = "16";}
 	elsif ($weather eq "sleet") {$weather = "19";}
+	elsif ($weather eq "chancesleet") {$weather = "18";}
 	elsif ($weather eq "snow") {$weather = "21";}
-	elsif ($weather eq "chancerain") {$weather = "12";}
-	elsif ($weather eq "chancerainy") {$weather = "12"; $icon="chancerain"} # added for wf
-	elsif ($weather eq "rainy") {$weather = "12"; $icon="chancerain"}  # added for wf
-	elsif ($weather eq "rain") {$weather = "13";}
-	#elsif ($weather eq "chancetstorms") {$weather = "14";}
-	#elsif ($weather eq "tstorms") {$weather = "15";}
-	elsif ($weather eq "fog") {$weather = "6";}
-	#elsif ($weather eq "hazy") {$weather = "5";}
-	elsif ($weather eq "wind") {$weather = "22";}
+	elsif ($weather eq "chancesnow") {$weather = "20";}
+	elsif ($weather eq "rainy") {$weather = "12"; $icon="chancerain"}
+	elsif ($weather eq "chancerainy") {$weather = "12"; $icon="chancerain"}
+	elsif ($weather eq "chancethunderstorm") {$weather = "14"; $icon="chancetstorms"}
+	elsif ($weather eq "thunderstorm") {$weather = "15"; $icon="tstorms"}
+	elsif ($weather eq "foggy") {$weather = "6"; $icon="fog"}
+	elsif ($weather eq "windy") {$weather = "22"; $icon="wind"}
 	else {$weather = "0";}
-	print F "$icon|"; # Weather Icon
+	print F "$icon|"; # Weather4Lox Weather Icon name
 	print F "$weather|"; # Weather Code
-	print F "$forecast_json->{current_conditions}->{conditions}|"; # Weather Description
-	
-	#print F $forecast_json->{daily}->{data}->[0]->{moonPhase}*100, "|"; 
-	# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
-	#my $moonphase = $forecast_json->{daily}->{data}->[0]->{moonPhase};
-	#if ($moonphase le "0.5") {
-	#	$moonphase = $moonphase * 2 * 100;
-	#} else {
-	#	$moonphase = (1 - $moonphase) * 2 * 100;
-	#}
-	print F "-9999|"; # Moon percent Illuminated
-	print F "-9999|"; # Moon: Age of Moon
-	print F "-9999|"; # Moon: Phase of Moon
-	print F "-9999|"; # Moon: Hemisphere
-	
+	print F "$forecast_json->{current_conditions}->{conditions}|"; # Weather Description (note: forecast, since current observation does not have this info)
+	print F "-9999|"; # Moon percent Illuminated (not available in Weatherflow API)
+	print F "-9999|"; # Moon: Age of Moon (not available in Weatherflow API)
+	print F "-9999|"; # Moon: Phase of Moon (not available in Weatherflow API)
+	print F "-9999|"; # Moon: Hemisphere (not available in Weatherflow API)
 	$t = localtime($forecast_json->{forecast}->{daily}->[0]->{sunrise}); 
 	print F sprintf("%02d", $t->hour), "|"; # Sunrise
 	print F sprintf("%02d", $t->min), "|";
 	$t = localtime($forecast_json->{forecast}->{daily}->[0]->{sunset});
 	print F sprintf("%02d", $t->hour), "|"; # Sunset
 	print F sprintf("%02d", $t->min), "|";
-	print F "-9999|"; # Density of atmospheric ozone
-	print F "-9999|"; # Sky (clouds) %
+	print F "-9999|"; # Density of atmospheric ozone (not available in Weatherflow API)
+	print F "-9999|"; # Sky (clouds) % (not available in Weatherflow API)
 	print F $forecast_json->{forecast}->{daily}->[0]->{precip_probability}*100, "|"; # % of Precipitation
-	print F "-9999|"; # Snow
+	print F "-9999|"; # Snow (not available in Weatherflow API)
 close(F);
 
 LOGOK "Saving current data to $lbplogdir/current.dat.tmp successfully.";
@@ -301,96 +302,76 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 	binmode F, ':encoding(UTF-8)';
 	my $i = 1;
 	for my $results( @{$forecast_json->{forecast}->{daily}} ){
-		print F "$i|";
+		print F "$i|"; # day count
 		$i++;
-		print F $results->{day_start_local}, "|";
+		print F $results->{day_start_local}, "|"; # Date Epoche
 		$t = localtime($results->{day_start_local});
-		print F sprintf("%02d", $t->mday), "|";
-		print F sprintf("%02d", $t->mon), "|";
+		print F sprintf("%02d", $t->mday), "|"; # Date: Day 
+		print F sprintf("%02d", $t->mon), "|"; # Date: Month
 		my @month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH'}) );
 		$t->mon_list(@month);
-		print F $t->monname . "|";
+		print F $t->monname . "|"; # Date: Month name
 		@month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH_SH'}) );
 		$t->mon_list(@month);
-		print F $t->monname . "|";
-		print F $t->year . "|";
-		print F sprintf("%02d", $t->hour), "|";
-		print F sprintf("%02d", $t->min), "|";
+		print F $t->monname . "|"; # Date: Month name short
+		print F $t->year . "|"; # Date: Year
+		print F sprintf("%02d", $t->hour), "|"; # Date: Hour
+		print F sprintf("%02d", $t->min), "|"; # Date: Minutes
 		my @days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS'}) );
 		$t->day_list(@days);
-		print F $t->wdayname . "|";
+		print F $t->wdayname . "|"; # Date: weekday name
 		@days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS_SH'}) );
 		$t->day_list(@days);
-		print F $t->wdayname . "|";
-		print F sprintf("%.1f",$results->{air_temp_high}), "|";
-		print F sprintf("%.1f",$results->{air_temp_low}), "|";
-		print F $results->{precip_probability}, "|";
-		print F "-9999|"; # Precipitation Forecast
-		print F "-9999|"; # Snow Forecast
-		print F "-9999|"; # Max. Wind Speed
-		print F "-9999|"; # Max. Wind Dir Descript.
-		print F "-9999|"; # Max. Wind Dir 
-		print F "-9999|"; # Ave. Wind Speed
-		print F "-9999|"; # Ave. Wind Dir Descript.
-		print F "-9999|"; # Ave. Wind Dir
-		print F "-9999|"; # Ave. Humidity
-		print F "-9999|"; # Max. Humidity
-		print F "-9999|"; # Min. Humidity
+		print F $t->wdayname . "|"; # Date: weekday short name
+		print F sprintf("%.1f",$results->{air_temp_high}), "|"; # High temperature
+		print F sprintf("%.1f",$results->{air_temp_low}), "|"; # Low temperature
+		print F $results->{precip_probability}, "|"; # % of Precipitation
+		print F "-9999|"; # Precipitation Forecast (not available in Weatherflow API)
+		print F "-9999|"; # Snow Forecast (not available in Weatherflow API)
+		print F "-9999|"; # Max. Wind Speed (not available in Weatherflow API)
+		print F "-9999|"; # Max. Wind Dir Descript. (not available in Weatherflow API)
+		print F "-9999|"; # Max. Wind Dir  (not available in Weatherflow API)
+		print F "-9999|"; # Ave. Wind Speed (not available in Weatherflow API)
+		print F "-9999|"; # Ave. Wind Dir Descript. (not available in Weatherflow API)
+		print F "-9999|"; # Ave. Wind Dir (not available in Weatherflow API)
+		print F "-9999|"; # Ave. Humidity (not available in Weatherflow API)
+		print F "-9999|"; # Max. Humidity (not available in Weatherflow API)
+		print F "-9999|"; # Min. Humidity (not available in Weatherflow API)
 		$weather = $results->{icon}; # Icon Name
 		$weather =~ s/\-night|\-day//; # No -night and -day
-	    $weather =~ s/cc\-//; # No cc-
 		$weather =~ s/\-//; # No -
 		$weather =~ s/possibly/chance/; # added fr wf: replace possibly by chance
 		$weather =~ tr/A-Z/a-z/; # All Lowercase
-		my $icon = $weather;
+		my $icon = $weather; # by default the Weather4Lox icon name is equal to the Weatherflow icon name, or changed below
 		if ($weather eq "clear") {$weather = "1";}
-		#elsif ($weather eq "sunny") {$weather = "1";}
-		#elsif ($weather eq "partlysunny") {$weather = "3";}
-		#elsif ($weather eq "mostlysunny") {$weather = "2";}
 		elsif ($weather eq "partlycloudy") {$weather = "2";}
-		#elsif ($weather eq "mostlycloudy") {$weather = "3";}
 		elsif ($weather eq "cloudy") {$weather = "4";}
-		#elsif ($weather eq "overcast") {$weather = "4";}
-		#elsif ($weather eq "chanceflurries") {$weather = "18";}
-		elsif ($weather eq "chancesleet") {$weather = "18";}
-		elsif ($weather eq "chancesnow") {$weather = "20";}
-		elsif ($weather eq "snowlikely") {$weather = "20"; $icon="chancesnow"} # added for wf
-		#elsif ($weather eq "flurries") {$weather = "16";}
 		elsif ($weather eq "sleet") {$weather = "19";}
+		elsif ($weather eq "chancesleet") {$weather = "18";}
 		elsif ($weather eq "snow") {$weather = "21";}
-		elsif ($weather eq "chancerain") {$weather = "12";}
-		elsif ($weather eq "chancerainy") {$weather = "12"; $icon="chancerain"} # added for wf
-		elsif ($weather eq "rainy") {$weather = "12"; $icon="chancerain"} # added for wf
-		elsif ($weather eq "rain") {$weather = "13";}
-		#elsif ($weather eq "chancetstorms") {$weather = "14";}
-		#elsif ($weather eq "tstorms") {$weather = "15";}
-		elsif ($weather eq "fog") {$weather = "6";}
-		#elsif ($weather eq "hazy") {$weather = "5";}
-		elsif ($weather eq "wind") {$weather = "22";}
+		elsif ($weather eq "chancesnow") {$weather = "20";}
+		elsif ($weather eq "rainy") {$weather = "12"; $icon="chancerain"}
+		elsif ($weather eq "chancerainy") {$weather = "12"; $icon="chancerain"}
+		elsif ($weather eq "chancethunderstorm") {$weather = "14"; $icon="chancetstorms"}
+		elsif ($weather eq "thunderstorm") {$weather = "15"; $icon="tstorms"}
+		elsif ($weather eq "foggy") {$weather = "6";}
+		elsif ($weather eq "windy") {$weather = "22";}
 		else {$weather = "0";}
-		print F "$icon|"; # Icon
-		print F "$weather|"; # Weather Code
+		print F "$icon|"; # Weather4Lox Weather Icon name
+		print F "$weather|"; # Weather4Lox Weather Code 
 		print F "$results->{conditions}|"; # Weather Description
-		print F "-9999|"; # Density of atmospheric ozone
-		# print F $results->{moonPhase}*100, "|"; 
-		# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
-		#my $moonphase = $results->{moonPhase};
-		#if ($moonphase le "0.5") {
-		#	$moonphase = $moonphase * 2 * 100;
-		#} else {
-		#	$moonphase = (1 - $moonphase) * 2 * 100;
-		#}
-		print F "-9999|"; # Moon: precent Illuminated
-		print F "-9999|"; # 	Dew Point
-		print F "-9999|"; # Pressure
-		print F "-9999|"; #UV Index
+		print F "-9999|"; # Density of atmospheric ozone (not available in Weatherflow API)
+		print F "-9999|"; # Moon: precent Illuminated (not available in Weatherflow API)
+		print F "-9999|"; # Dew Point (not available in Weatherflow API)
+		print F "-9999|"; # Pressure (not available in Weatherflow API)
+		print F "-9999|"; #UV Index (not available in Weatherflow API)
 		$t = localtime($results->{sunrise}); # Sunrise
 		print F sprintf("%02d", $t->hour), "|"; 
 		print F sprintf("%02d", $t->min), "|";
-		$t = localtime($results->{sunset});# Sunset
+		$t = localtime($results->{sunset}); # Sunset
 		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
-		print F "-9999|"; # Visibility
+		print F "-9999|"; # Visibility  (not available in Weatherflow API)
 		print F "-9999|"; # ??
 		print F "\n";
 	}
@@ -431,32 +412,32 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 			$n++;
 			next;
 		} 
-		print F "$i|";
+		print F "$i|"; # Hour count
 		$i++;
-		print F $results->{time}, "|";
+		print F $results->{time}, "|"; # Date: Epoche
 		$t = localtime($results->{time});
-		print F sprintf("%02d", $t->mday), "|";
-		print F sprintf("%02d", $t->mon), "|";
+		print F sprintf("%02d", $t->mday), "|"; # Date: Day
+		print F sprintf("%02d", $t->mon), "|"; # Date: Month
 		my @month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH'}) );
 		$t->mon_list(@month);
-		print F $t->monname . "|";
+		print F $t->monname . "|"; # Date: Month name
 		@month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH_SH'}) );
 		$t->mon_list(@month);
-		print F $t->monname . "|";
+		print F $t->monname . "|"; # Date: Month short name
 		print F $t->year . "|";
-		print F sprintf("%02d", $t->hour), "|";
-		print F sprintf("%02d", $t->min), "|";
+		print F sprintf("%02d", $t->hour), "|"; # Date: hour
+		print F sprintf("%02d", $t->min), "|"; # Date: minutes
 		my @days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS'}) );
 		$t->day_list(@days);
-		print F $t->wdayname . "|";
+		print F $t->wdayname . "|"; # Date: Weekday name
 		@days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS_SH'}) );
 		$t->day_list(@days);
-		print F $t->wdayname . "|";
-		print F sprintf("%.1f",$results->{air_temperature}), "|";
-		print F sprintf("%.1f",$results->{feels_like}), "|";
-		print F "-9999|"; # Heat Index
-		print F $results->{relative_humidity}, "|";
-		$wdir = $results->{wind_direction};
+		print F $t->wdayname . "|"; # Date: Weekday short name
+		print F sprintf("%.1f",$results->{air_temperature}), "|"; # Temperature (air)
+		print F sprintf("%.1f",$results->{feels_like}), "|"; # Feelslike Temperature
+		print F "-9999|"; # Heat Index (not available in Weatherflow API)
+		print F $results->{relative_humidity}, "|"; # Humidity
+		$wdir = $results->{wind_direction}; 
 		if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 		if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
 		if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
@@ -466,57 +447,44 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
 		if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
 		if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
-		print F "$wdirdes|";
-		print F "$results->{wind_direction}|";
-		print F sprintf("%.1f",$results->{wind_avg} * 3.6), "|";
-		#print F sprintf("%.1f",$results->{windGust} * 3.6), "|";
-		print F sprintf("%.1f",$results->{feels_like}), "|";
+		print F "$wdirdes|"; # Wind Dir. Description
+		print F "$results->{wind_direction}|"; # Wind Dir. (grad)
+		print F sprintf("%.1f",$results->{wind_avg} * 3.6), "|"; # Wind Speed in Km/h
+		print F sprintf("%.1f",$results->{feels_like}), "|"; # TODI Wind Chill same as feels like?
 		print F "$results->{sea_level_pressure}|";
-		print F "-9999|"; # Dewpoint
-		print F "-9999|"; # Sky (clouds) cover
-		print F "-9999|"; # Sky Description
-		print F "$results->{uv}|";
+		print F "-9999|"; # Dewpoint (not available in Weatherflow API)
+		print F "-9999|"; # Sky (clouds) cover (not available in Weatherflow API)
+		print F "-9999|"; # Sky Description (not available in Weatherflow API)
+		print F "$results->{uv}|"; # UV Index
 		print F $results->{precip}, "|";  # Quant. Precipitation FC in mm
-		print F "-9999|"; # 	Snow Forecast
+		print F "-9999|"; # Snow Forecast (not available in Weatherflow API)
 		print F $results->{precip_probability}, "|"; 
 		$weather = $results->{icon};
 		$weather =~ s/\-night|\-day//; # No -night and -day
-		$weather =~ s/cc\-//; # No cc-
 		$weather =~ s/\-//; # No -
 		$weather =~ s/possibly/chance/; # replace possibly by chance
 		$weather =~ tr/A-Z/a-z/; # All Lowercase
-		my $icon = $weather;
+		my $icon = $weather; # by default the Weather4Lox icon name is equal to the Weatherflow icon name, or changed below
 		if ($weather eq "clear") {$weather = "1";}
-		#elsif ($weather eq "sunny") {$weather = "1";}
-		#elsif ($weather eq "partlysunny") {$weather = "3";}
-		#elsif ($weather eq "mostlysunny") {$weather = "2";}
 		elsif ($weather eq "partlycloudy") {$weather = "2";}
-		#elsif ($weather eq "mostlycloudy") {$weather = "3";}
 		elsif ($weather eq "cloudy") {$weather = "4";}
-		#elsif ($weather eq "overcast") {$weather = "4";}
-		#elsif ($weather eq "chanceflurries") {$weather = "18";}
-		elsif ($weather eq "chancesleet") {$weather = "18";}
-		elsif ($weather eq "chancesnow") {$weather = "20";}
-		elsif ($weather eq "snowlikely") {$weather = "20";  $icon = "chancesnow"} # added for wf
-		#elsif ($weather eq "flurries") {$weather = "16";}
 		elsif ($weather eq "sleet") {$weather = "19";}
+		elsif ($weather eq "chancesleet") {$weather = "18";}
 		elsif ($weather eq "snow") {$weather = "21";}
-		elsif ($weather eq "chancerain") {$weather = "12";}
-		elsif ($weather eq "chancerainy") {$weather = "12"; $icon="chancerain"} # added for wf
-		elsif ($weather eq "rainy") {$weather = "12"; $icon = "chancerain"} # added for wf
-		elsif ($weather eq "rain") {$weather = "13";}
-		#elsif ($weather eq "chancetstorms") {$weather = "14";}
-		#elsif ($weather eq "tstorms") {$weather = "15";}
-		elsif ($weather eq "fog") {$weather = "6";}
-		#elsif ($weather eq "hazy") {$weather = "5";}
-		elsif ($weather eq "wind") {$weather = "22";}
+		elsif ($weather eq "chancesnow") {$weather = "20";}
+		elsif ($weather eq "rainy") {$weather = "12"; $icon="chancerain"}
+		elsif ($weather eq "chancerainy") {$weather = "12"; $icon="chancerain"}
+		elsif ($weather eq "chancethunderstorm") {$weather = "14"; $icon="chancetstorms"}
+		elsif ($weather eq "thunderstorm") {$weather = "15"; $icon="tstorms"}
+		elsif ($weather eq "foggy") {$weather = "6";}
+		elsif ($weather eq "windy") {$weather = "22";}
 		else {$weather = "0";}
-		print F "$weather|"; # Weather Code
-		print F "$icon|"; # Icon
-		print F "$results->{conditions}|";
-		print F "-9999|"; # Ozone
-		print F "-9999|";
-		print F "-9999|";
+		print F "$weather|"; # Weather4Lox Weather Code
+		print F "$icon|"; # Weather4Lox Weather Icon name
+		print F "$results->{conditions}|"; # Weather description
+		print F "-9999|"; # Ozone (not available in Weatherflow API)
+		print F "-9999|"; # ??
+		print F "-9999|"; # ??
 		print F "\n";
 	}
 close(F);
