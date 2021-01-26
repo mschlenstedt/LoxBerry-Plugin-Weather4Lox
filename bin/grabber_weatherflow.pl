@@ -354,8 +354,8 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		elsif ($weather eq "chancerainy") {$weather = "12"; $icon="chancerain"}
 		elsif ($weather eq "chancethunderstorm") {$weather = "14"; $icon="chancetstorms"}
 		elsif ($weather eq "thunderstorm") {$weather = "15"; $icon="tstorms"}
-		elsif ($weather eq "foggy") {$weather = "6";}
-		elsif ($weather eq "windy") {$weather = "22";}
+		elsif ($weather eq "foggy") {$weather = "6"; $icon="fog"}
+		elsif ($weather eq "windy") {$weather = "22"; $icon="wind"}
 		else {$weather = "0";}
 		print F "$icon|"; # Weather4Lox Weather Icon name
 		print F "$weather|"; # Weather4Lox Weather Code 
@@ -476,8 +476,8 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		elsif ($weather eq "chancerainy") {$weather = "12"; $icon="chancerain"}
 		elsif ($weather eq "chancethunderstorm") {$weather = "14"; $icon="chancetstorms"}
 		elsif ($weather eq "thunderstorm") {$weather = "15"; $icon="tstorms"}
-		elsif ($weather eq "foggy") {$weather = "6";}
-		elsif ($weather eq "windy") {$weather = "22";}
+		elsif ($weather eq "foggy") {$weather = "6"; $icon="fog"}
+		elsif ($weather eq "windy") {$weather = "22"; $icon="wind"}
 		else {$weather = "0";}
 		print F "$weather|"; # Weather4Lox Weather Code
 		print F "$icon|"; # Weather4Lox Weather Icon name
