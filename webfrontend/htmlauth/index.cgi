@@ -90,8 +90,8 @@ if ($R::saveformdata1) {
 	$R::weatherbitcoordlong =~ tr/,/./;
 	$R::openweathercoordlat =~ tr/,/./;
 	$R::openweathercoordlong =~ tr/,/./;
-	$R::weatherflowcoordlat =~ tr/,/./;
-	$R::weatherflowcoordlong =~ tr/,/./;
+	#$R::weatherflowcoordlat =~ tr/,/./;
+	#$R::weatherflowcoordlong =~ tr/,/./;
 
 	# Check for Station : DARKSKY
 	if ($R::weatherservice eq "darksky") {
@@ -200,8 +200,8 @@ if ($R::saveformdata1) {
 	$cfg->param("OPENWEATHER.COUNTRY", "$R::openweathercountry");
 
 	$cfg->param("WEATHERFLOW.APIKEY", "$R::weatherflowapikey");
-	$cfg->param("WEATHERFLOW.COORDLAT", "$R::weatherflowcoordlat");
-	$cfg->param("WEATHERFLOW.COORDLONG", "$R::weatherflowcoordlong");
+	#$cfg->param("WEATHERFLOW.COORDLAT", "$R::weatherflowcoordlat");
+	#$cfg->param("WEATHERFLOW.COORDLONG", "$R::weatherflowcoordlong");
 	$cfg->param("WEATHERFLOW.LANG", "$R::weatherflowlang");
 	$cfg->param("WEATHERFLOW.CITY", "$R::weatherflowcity");
 	$cfg->param("WEATHERFLOW.COUNTRY", "$R::weatherflowcountry");
@@ -779,56 +779,10 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( OPENWEATHERLANG => $openweatherlang );
   
   # Weatherflow Language
-  @values = ('af', 'ar', 'az', 'bg', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'eu', 'fa', 'fi', 'fr', 'gl', 'he', 'hi', 'hr', 'hu', 'id', 'it', 'ja', 'kr', 'la', 'lt', 'mk', 'no', 'nl', 'pl', 'pt', 'pt_br', 'ro', 'ru', 'se', 'sk', 'sl', 'sr', 'th', 'tr', 'uk', 'vi', 'zh_cn', 'zh_tw', 'zu');
+  @values = ('en');
 
   %labels = (
-	'af' => 'Africaans',
-	'ar' => 'Arabic',
-	'az' => 'Azerbaijani',
-	'bg' => 'Bulgarian',
-	'ca' => 'Catalan',
-	'ca' => 'Catalan',
-	'cz' => 'Czech',
-	'da' => 'Danish',
-	'de' => 'German',
-	'el' => 'Greek',
 	'en' => 'English',
-	'es' => 'Spanish',
-	'eu' => 'Basque',
-	'fa' => 'Persian (Farsi)',
-	'fi' => 'Finnish',
-	'fr' => 'French',
-	'hr' => 'Croatian',
-	'ga' => 'Galician',
-	'he' => 'Hebrew',
-	'hi' => 'Hindi',
-	'hr' => 'Croatian',
-	'hu' => 'Hungarian',
-	'id' => 'Indonesian',
-	'it' => 'Italian',
-	'ja' => 'Japanese',
-	'kr' => 'Korean',
-	'la' => 'Latvian',
-	'lt' => 'Lithuanian',
-	'mk' => 'Macedonian',
-	'no' => 'Norwegian',
-	'nl' => 'Dutch',
-	'pl' => 'Polish',
-	'pt' => 'Portuguese',
-	'pt_br' => 'Portuguese Brasil',
-	'ro' => 'Romanian',
-	'ru' => 'Russian',
-	'se' => 'Swedish',
-	'sk' => 'Slovak',
-	'sl' => 'Slovenian',
-	'sr' => 'Serbian',
-	'th' => 'Thai',
-	'tr' => 'Turkish',
-	'uk' => 'Ukrainian',
-	'vi' => 'Vietnamese',
-	'zh_cn' => 'simplified Chinese',
-	'zh_tw' => 'traditional Chinese',
-	'zu' => 'Zulu',
     );
   my $weatherflowlang = $cgi->popup_menu(
         -name    => 'weatherflowlang',
@@ -1287,11 +1241,11 @@ sub weatherflowquery
 {
 
     # Update API key to comply with Weatherflow format
-    my $apikey = $cfg->param("WEATHERFLOW.APIKEY");
-    $apikey =~ s/^(.{8})(.{4})(.{4})(.{4})(.{12})/$1\-$2\-$3\-$4\-$5/;
+    #my $apikey = $R::weatherflowapikey;
+    #$apikey =~ s/^(.{8})(.{4})(.{4})(.{4})(.{12})/$1\-$2\-$3\-$4\-$5/;
 	
     # Get data from Weatherflow Server (API request) for testing API Key
-    my $query = "$url\/observations\/station\/$R::weatherflowstationid?token=$apikey";
+    my $query = "$url\/observations\/station\/$R::weatherflowstationid?token=$R::weatherflowapikey";
     my $ua = new LWP::UserAgent;
     my $res = $ua->get($query);
     my $json = $res->decoded_content();

@@ -44,8 +44,8 @@ my $pcfg         = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $url          = $pcfg->param("WEATHERFLOW.URL");
 my $apikey       = $pcfg->param("WEATHERFLOW.APIKEY");
 my $lang         = $pcfg->param("WEATHERFLOW.LANG");
-my $coordlat     = $pcfg->param("WEATHERFLOW.COORDLAT");
-my $coordlong    = $pcfg->param("WEATHERFLOW.COORDLONG");
+#my $coordlat     = $pcfg->param("WEATHERFLOW.COORDLAT");
+#my $coordlong    = $pcfg->param("WEATHERFLOW.COORDLONG");
 my $city         = $pcfg->param("WEATHERFLOW.CITY");
 my $country      = $pcfg->param("WEATHERFLOW.COUNTRY");
 my $stationid    = $pcfg->param("WEATHERFLOW.STATIONID");
@@ -81,7 +81,7 @@ if ($verbose) {
 }
 
 # Update API key to comply with Wetherflow format
-$apikey =~ s/^(.{8})(.{4})(.{4})(.{4})(.{12})/$1\-$2\-$3\-$4\-$5/;
+#$apikey =~ s/^(.{8})(.{4})(.{4})(.{4})(.{12})/$1\-$2\-$3\-$4\-$5/;
 
 LOGSTART "Weather4Lox GRABBER_WEATHERFLOW process started";
 LOGDEB "This is $0 Version $version";
@@ -117,6 +117,18 @@ my $forecast_json = decode_json( $json );
 
 # end retreiving forecast data
 
+my $t;
+my $weather;
+my $icon;
+my $wdir;
+my $wdirdes;
+my @filecontent;
+my $i;
+my $error;
+
+
+if ( $current ) { # Start current
+
 # Get current station observation from Weatherflow Server
 # API : https://weatherflow.github.io/Tempest/api/swagger/#!/observations/getStationObservation
 my $queryurlcr_curr = "$url\/observations/station/$stationid?token=$apikey";
@@ -145,18 +157,6 @@ if ($urlstatuscode_curr ne "200") {
 my $current_observation_json = decode_json( $json_curr );
 
 # end retreiving current station observation data
-
-my $t;
-my $weather;
-my $icon;
-my $wdir;
-my $wdirdes;
-my @filecontent;
-my $i;
-my $error;
-
-
-if ( $current ) { # Start current
 
 # Write location data into database
 $t = localtime($forecast_json->{current_conditions}->{time});

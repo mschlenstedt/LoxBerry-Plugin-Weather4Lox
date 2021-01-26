@@ -511,7 +511,7 @@
 															<label id="labelweatherflowapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="weatherflowapikey" name="weatherflowapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WEATHERFLOW.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
+																<input id="weatherflowapikey" name="weatherflowapikey" type="text" data-validation-rule="^([A-Za-z0-9\-]){36}$" class="textfield" value="<TMPL_VAR WEATHERFLOW.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
 														</td>
 														<td width="5%" valign="middle">
 															&nbsp;
@@ -520,7 +520,7 @@
 															&nbsp;
 														</td>
 													</tr>
-													<tr>
+													<!--<tr>
 														<td width="25%" valign="top">
 															<br><label id="labelweatherflowcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
 														</td>
@@ -557,7 +557,7 @@
 															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
 															</a>
 														</td>
-													</tr>
+													</tr>-->
 													<tr>
 														<td width="25%">
 															<label id="labelweatherflowlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
@@ -612,7 +612,7 @@
 															&nbsp;
 														</td>
 														<td width="20%">
-															&nbsp;
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_WEATHERFLOWSTATIONID></font>
 														</td>
 													</tr>
 													<!--
