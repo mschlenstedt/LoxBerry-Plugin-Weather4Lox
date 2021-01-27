@@ -1618,7 +1618,7 @@ if ($emu) {
       } elsif (@fields[27] eq "3") {
         $loxweathercode = "8";
       } elsif (@fields[27] eq "4") {
-        $loxweathercode = "9";
+        $loxweathercode = "22";
       } elsif (@fields[27] eq "5") {
         $loxweathercode = "10";
       } elsif (@fields[27] eq "6") {
