@@ -407,11 +407,6 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 	$i = 1;
 	my $n = 0;
 	for my $results( @{$forecast_json->{forecast}->{hourly}} ){
-		# Skip first dataset (eq to current)
-		if ($n eq "0") {
-			$n++;
-			next;
-		} 
 		print F "$i|"; # Hour count
 		$i++;
 		print F $results->{time}, "|"; # Date: Epoche
