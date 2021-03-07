@@ -184,7 +184,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|"; # Location Country Code (not available in Weatherflow API)
 	print F "$forecast_json->{latitude}|"; # Location Latitude
 	print F "$forecast_json->{longitude}|"; # Location Longitude
-	print F "$forecast_json->{station}->{elevation}|"; # Location Elevation
+	print F "$current_observation_json->{elevation}|"; # Location Elevation (Height in meters above sea level)
 	print F sprintf("%.1f",$current_observation_json->{obs}->[0]->{air_temperature}), "|"; # Temperature
 	print F sprintf("%.1f",$current_observation_json->{obs}->[0]->{feels_like}), "|"; # Feelslike Temp
 	print F "$current_observation_json->{obs}->[0]->{relative_humidity}|"; # Rel. Humidity
