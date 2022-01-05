@@ -101,7 +101,7 @@ if ($urlstatuscode ne "200") {
 }
 
 # Get data from Wunderground Server (API request) for current conditions
-my $wgqueryurlcr = "$wuurl?apiKey=$apikey&stationId=$stationid&format=json&units=m";
+my $wgqueryurlcr = "$wuurl?apiKey=$apikey&stationId=$stationid&format=json&units=m&numericPrecision=decimal";
 
 LOGINF "Fetching Data for Station $stationid";
 LOGDEB "URL: $wgqueryurlcr";
