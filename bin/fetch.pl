@@ -143,6 +143,14 @@ if ( $pcfg->param("SERVER.FOSHKGRABBER") ) {
 	$log->open;
 }
 
+# Grab some data from PWSCatchUpload
+if ( $pcfg->param("SERVER.PWSCATCHUPLOADGRABBER") ) {
+	LOGINF "Starting Grabber grabber_pwscatchupload.pl";
+	$log->close;
+	system ("$lbpbindir/grabber_pwscatchupload.pl $verbose_opt");
+	$log->open;
+}
+
 # Grab some data from Loxone Miniserver
 if ( $pcfg->param("SERVER.LOXGRABBER") ) {
 	LOGINF "Starting Grabber grabber_loxone.pl";

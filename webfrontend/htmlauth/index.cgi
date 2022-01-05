@@ -210,6 +210,8 @@ if ($R::saveformdata1) {
 	$cfg->param("FOSHK.SERVER", "$R::foshkserver");
 	$cfg->param("FOSHK.PORT", "$R::foshkport");
 
+	$cfg->param("SERVER.PWSCATCHUPLOADGRABBER", "$R::pwscatchuploadgrabber");
+	$cfg->param("SERVER.WUGRABBER", "$R::wugrabber");
 	$cfg->param("SERVER.WUGRABBER", "$R::wugrabber");
 	$cfg->param("SERVER.LOXGRABBER", "$R::loxgrabber");
 	$cfg->param("SERVER.FOSHKGRABBER", "$R::foshkgrabber");
@@ -557,6 +559,21 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.FOSHKGRABBER'),
     );
   $template->param( FOSHKGRABBER => $foshkgrabber );
+
+  # PWSCatchUploadGrabber
+  @values = ('0', '1' );
+  %labels = (
+        '0' => $L{'SETTINGS.LABEL_OFF'},
+        '1' => $L{'SETTINGS.LABEL_ON'},
+    );
+  my $pwscatchuploadgrabber = $cgi->popup_menu(
+        -name    => 'pwscatchuploadgrabber',
+        -id      => 'pwscatchuploadgrabber',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.PWSCATCHUPLOADGRABBER'),
+    );
+  $template->param( PWSCATCHUPLOADGRABBER => $pwscatchuploadgrabber );
 
   # GetData
   @values = ('0', '1' );
