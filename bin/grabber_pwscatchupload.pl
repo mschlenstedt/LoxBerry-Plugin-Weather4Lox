@@ -30,6 +30,7 @@ use LoxBerry::Log;
 use JSON qw( decode_json ); 
 use File::Copy;
 use Getopt::Long;
+use Encode qw(decode encode);
 #use Time::Piece;
 #use Data::Dumper;
 
@@ -95,15 +96,14 @@ my %wu_response;
 %wu_weather = (
 	"cur_tt" => 11,
 	"cur_hu" => 13,
+	"cur_w_dirdes" => 14,
 	"cur_w_dir" => 15,
 	"cur_w_sp" => 16,
 	"cur_w_gu" => 17,
 	"cur_w_ch" => 18,
 	"cur_pr" => 19,
 	"cur_dp" => 20,
-	"cur_sr" => 22,
-	"cur_prec_today" => 25,
-	"cur_prec_1hr" => 26
+	"cur_sr" => 22
 );
 
 # Generate array from hash
@@ -132,8 +132,8 @@ if ($decoded_json->{cur_w_dir}) {
   }
 }
 $wu_response{cur_w_sp} = $decoded_json->{cur_w_sp} if $decoded_json->{cur_w_sp};
-$wu_reguonse{cur_w_gu} = $decoded_json->{cur_w_gu} if $decoded_json->{cur_w_gu};
-$wu_response{cur_w_ch} = sprintf("%.1f",$decoded_json->{cur__w_ch}) if $decoded_json->{cur_w_ch};
+$wu_response{cur_w_gu} = $decoded_json->{cur_w_gu} if $decoded_json->{cur_w_gu};
+$wu_response{cur_w_ch} = sprintf("%.1f",$decoded_json->{cur_w_ch}) if $decoded_json->{cur_w_ch};
 $wu_response{cur_pr} = $decoded_json->{cur_pr} if $decoded_json->{cur_pr};
 $wu_response{cur_dp} = $decoded_json->{cur_dp} if $decoded_json->{cur_dp};
 $wu_response{cur_sr} = $decoded_json->{cur_sr} if $decoded_json->{cur_sr};

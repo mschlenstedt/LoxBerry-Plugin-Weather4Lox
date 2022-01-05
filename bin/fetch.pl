@@ -80,7 +80,7 @@ if ($verbose) {
 	$verbose_opt = "-v";
 }
 
-LOGSTART "Weather4Lox FETCH process started";
+LOGSTART "Weather4Lox FETCH process";
 LOGDEB "This is $0 Version $version";
 
 if (-e "$lbpbindir/grabber_$service.pl") {
@@ -163,13 +163,13 @@ if ( $pcfg->param("SERVER.LOXGRABBER") ) {
 LOGINF "Starting script datatoloxone.pl";
 $log->close;
 system ("$lbpbindir/datatoloxone.pl $verbose_opt");
-
-# Exit
 $log->open;
+
 exit;
 
 END
 {
+	LOGOK "Done";
 	LOGEND;
 }
 
