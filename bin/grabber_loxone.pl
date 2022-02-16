@@ -138,7 +138,7 @@ my @values = split /\|/, $datafile_str;
 # Add WinDir Description w4l_cur_w_dir
 my $wdir = $lox_response{w4l_cur_w_dir};
 my $wdirdes;
-if ($wdir and $wdir ne "-9999") {
+if (defined($wdir) and $wdir ne "-9999") {
 	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
 	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
@@ -153,7 +153,7 @@ if ($wdir and $wdir ne "-9999") {
 
 foreach my $resp (keys %lox_response) {
     # print STDERR "Object $resp has value " . $lox_response{$resp};
-	if($lox_response{$resp} and $lox_response{$resp} ne "-9999" and $lox_weather_vi{$resp} ) {
+	if(defined($lox_response{$resp}) and $lox_response{$resp} ne "-9999" and defined($lox_weather_vi{$resp}) ) {
 		my $col = $lox_weather_vi{$resp};
 		$values[$col] = $lox_response{$resp};
 		$values[$col] =~ s/^([-\d\.]+).*/$1/g;
