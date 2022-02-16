@@ -176,7 +176,7 @@ my @values = split /\|/, $datafile_str;
 
 foreach my $resp (keys %wu_weather ) {
 	#print STDERR "Object $resp has value " . $wu_response{$resp} . "\n";
-	if($wu_response{$resp} and $wu_response{$resp} ne "-9999") {
+	if(defined($wu_response{$resp}) and $wu_response{$resp} ne "-9999") {
 		my $col = $wu_weather{$resp};
 		$values[$col] = $wu_response{$resp};
 		$values[$col] =~ s/^([-\d\.]+).*/$1/g;
