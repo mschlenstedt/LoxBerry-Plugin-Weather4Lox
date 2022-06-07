@@ -736,7 +736,7 @@ open(F,"+<$lbplogdir/current.dat.tmp");
 		s/\|n\/a\|/"|-9999.00|"/eg;
 		s/\|N\/A\|/"|-9999.00|"/eg;
 		if ($moonpercent) {
-			s/MOONPERCENT/$moonpercent/eg;
+			s/\|MOONPERCENT\|/"|$moonpercent|"/eg;
 		}
 		LOGDEB "Cleaned:  $_";
 		print F "$_\n";
