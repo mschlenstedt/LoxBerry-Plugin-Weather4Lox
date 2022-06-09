@@ -337,7 +337,6 @@ if ($urlstatuscode ne "200") {
 my $decoded_json = decode_json( "$json" );
 
 $error = 0;
-my $moonpercent;
 open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
   flock(F,2);
 	if ($error) {
@@ -542,7 +541,6 @@ if ($urlstatuscode ne "200") {
 my $decoded_json = decode_json( "$json" );
 
 $error = 0;
-my $moonpercent;
 open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
   flock(F,2);
 	if ($error) {
