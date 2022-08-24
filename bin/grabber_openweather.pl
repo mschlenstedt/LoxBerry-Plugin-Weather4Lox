@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
-# grabber for fetching data from Weatherbit.io
-# fetches weather data (current and forecast) from Weatherbit.io
+# grabber for fetching data from openweathermap.org
+# fetches weather data (current and forecast) from openweathermap.org
 
 # Copyright 2016-2018 Michael Schlenstedt, michael@loxberry.de
 #
@@ -79,8 +79,8 @@ LOGSTART "Weather4Lox GRABBER_OPENWEATHER process started";
 LOGDEB "This is $0 Version $version";
 
 
-# Get data from Weatherbit Server (API request) for current conditions
-my $queryurlcr = "$url/onecall?appid=$apikey&$stationid&lang=$lang&units=metric";
+# Get data from openweathermap.org (API request) for current conditions
+my $queryurlcr = "$url/3.0/onecall?appid=$apikey&$stationid&lang=$lang&units=metric";
 
 my $error = 0;
 LOGINF "Fetching Current Data for Location $stationid";
@@ -769,7 +769,7 @@ close(F);
 if ($i < 168) {
 
 	# Get data from OPenWeatherMap Server (API request) for current conditions
-	$queryurlcr = "$url/forecast?appid=$apikey&$stationid&lang=$lang&units=metric&cnt=40";
+	$queryurlcr = "$url/2.5/forecast?appid=$apikey&$stationid&lang=$lang&units=metric&cnt=40";
 
 	LOGINF "Fetching additional 3-Hourly Forecat Data for Location $stationid to interpolite hourly data";
 	LOGDEB "URL: $queryurlcr";
