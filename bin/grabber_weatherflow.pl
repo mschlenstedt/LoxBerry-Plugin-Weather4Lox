@@ -131,6 +131,7 @@ if ( $current ) { # Start current
 
 # Get current station observation from Weatherflow Server
 # API : https://weatherflow.github.io/Tempest/api/swagger/#!/observations/getStationObservation
+# Docs: https://apidocs.tempestwx.com/reference/get_better-forecast-1
 my $queryurlcr_curr = "$url\/observations/station/$stationid?token=$apikey";
 
 LOGINF "Fetching Current Data for Station $stationid";
@@ -234,6 +235,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	#  windy
 	$weather = $forecast_json->{current_conditions}->{icon};
 	$weather =~ s/\-night|\-day//; # remove -night and -day
+	$weather =~ s/cc\-//; # remove cc- (current Weatherflow API bug)
 	$weather =~ s/\-//; # remove -
 	$weather =~ s/possibly/chance/; # replace possibly by chance
 	$weather =~ tr/A-Z/a-z/; # All Lowercase
