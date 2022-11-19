@@ -1409,7 +1409,7 @@ if ($emu) {
     print F ";";
     printf ( F "%3d", @fields[17]);
     print F ";";
-    print F "  0;  0;  0;";
+    print F "    0;    0;    0;";
     printf ( F "%5.1f", @fields[26]);
     print F ";";
     print F "  0;0.0;";

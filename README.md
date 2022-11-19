@@ -1,3 +1,3 @@
 # LoxBerry-Plugin-Weather4Lox
 
-A LoxBerry Plugin: https://www.loxwiki.eu/display/LOXBERRY/Plugins
+A LoxBerry Plugin: https://wiki.loxberry.de/plugins/weather4loxone/start
