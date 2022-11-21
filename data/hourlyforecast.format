@@ -1,5 +1,5 @@
 #
-# Daily Forecast Database
+# Hourly Forecast Database
 #
 #  0: Period (1: +1 Hour, 2: +2 Hour, etc.)
 #  1: Epoche Timestamp
@@ -19,7 +19,7 @@
 # 15: Wind Direction Description
 # 16: Wind Direction (Dregrees)
 # 17: Wind Speed (kph)
-# 18: Windchill (kph)
+# 18: Windchill (C)
 # 19: Pressure (mbar)
 # 20: Dewpoint (C)
 # 21: Sky (%)

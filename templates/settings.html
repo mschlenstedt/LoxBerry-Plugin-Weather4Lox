@@ -317,102 +317,6 @@
 													</tr>
 													<tr>
 														<td colspan=3 width="75%" valign="middle">
-															<h2><TMPL_VAR SETTINGS.LABEL_WEATHERBIT_SETTINGS></h2>
-														</td>
-														<td align="right">
-																						<a href="https://www.weatherbit.io/" target="_blank"><b>Powered by the Weatherbit API</a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelweatherbitapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
-														</td>
-														<td width="50%">
-																<input id="weatherbitapikey" name="weatherbitapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WEATHERBIT.APIKEY>" data-validation-optional="true" 
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%" valign="top">
-															<br><label id="labelweatherbitcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
-														</td>
-														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td>
-															<label id="labelweatherbitcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-															</td>
-															<td>
-															<input id="weatherbitcoordlat" name="weatherbitcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLAT>" 
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-															</td>
-															<td>
-															<label id="labelweatherbitcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-															</td>
-															<td>
-															<input id="weatherbitcoordlong" name="weatherbitcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLONG>"
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-															</td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<a id="weatherbitcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-															data-role="button" id="btnweatherbitaddresssearch" data-inline="true" data-mini="true"
-															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=weatherbit',
-															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
-															</a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelweatherbitlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR WEATHERBITLANG>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelweatherbitcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
-														</td>
-														<td width="50%">
-															<input id="weatherbitcountry" name="weatherbitcountry" type="text" class="textfield" value="<TMPL_VAR WEATHERBIT.COUNTRY>">
-															<!-- Only for compatibility to address search -->
-															<input type="hidden" id="weatherbitcity" name="weatherbitcity" class="textfield" value="">
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=4>
-														&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td colspan=3 width="75%" valign="middle">
 															<h2><TMPL_VAR SETTINGS.LABEL_OPENWEATHER_SETTINGS></h2>
 														</td>
 														<td align="right">
@@ -511,6 +415,214 @@
 														</td>
 														<td width="20%">
 															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+															<h2><TMPL_VAR SETTINGS.LABEL_VISUALCROSSING_SETTINGS></h2>
+														</td>
+														<td align="right">
+															<a href="https://www.visualcrossing.com/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/visualcrossing.svg"></a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelvisualcrossingapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+														</td>
+														<td width="50%">
+																<input id="visualcrossingapikey" name="visualcrossingapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR VISUALCROSSING.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%" valign="top">
+															<br><label id="labelvisualcrossingcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labelvisualcrossingcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+															</td>
+															<td>
+															<input id="visualcrossingcoordlat" name="visualcrossingcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLAT>" 
+																data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+															</td>
+															<td>
+															<label id="labelvisualcrossingcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+															</td>
+															<td>
+															<input id="visualcrossingcoordlong" name="visualcrossingcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLONG>"
+																data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<a id="visualcrossingcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+															data-role="button" id="btnvisualcrossingaddresssearch" data-inline="true" data-mini="true"
+															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=visualcrossing',
+															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+															</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelvisualcrossinglang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR VISUALCROSSINGLANG>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelvisualcrossingcity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
+														</td>
+														<td width="50%">
+															<input id="visualcrossingcity" name="visualcrossingcity" type="text" class="textfield" value="<TMPL_VAR VISUALCROSSING.STATION>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelvisualcrossingcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
+														</td>
+														<td width="50%">
+															<input id="visualcrossingcountry" name="visualcrossingcountry" type="text" class="textfield" value="<TMPL_VAR VISUALCROSSING.COUNTRY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td colspan=3 width="75%" valign="middle">
+															<h2><TMPL_VAR SETTINGS.LABEL_WEATHERBIT_SETTINGS></h2>
+														</td>
+														<td align="right">
+																						<a href="https://www.weatherbit.io/" target="_blank"><b>Powered by the Weatherbit API</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherbitapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+														</td>
+														<td width="50%">
+																<input id="weatherbitapikey" name="weatherbitapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WEATHERBIT.APIKEY>" data-validation-optional="true" 
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%" valign="top">
+															<br><label id="labelweatherbitcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td>
+															<label id="labelweatherbitcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+															</td>
+															<td>
+															<input id="weatherbitcoordlat" name="weatherbitcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLAT>" 
+																data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+															</td>
+															<td>
+															<label id="labelweatherbitcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+															</td>
+															<td>
+															<input id="weatherbitcoordlong" name="weatherbitcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLONG>"
+																data-validation-optional="true"
+																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<a id="weatherbitcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+															data-role="button" id="btnweatherbitaddresssearch" data-inline="true" data-mini="true"
+															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=weatherbit',
+															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+															</a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherbitlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR WEATHERBITLANG>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelweatherbitcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
+														</td>
+														<td width="50%">
+															<input id="weatherbitcountry" name="weatherbitcountry" type="text" class="textfield" value="<TMPL_VAR WEATHERBIT.COUNTRY>">
+															<!-- Only for compatibility to address search -->
+															<input type="hidden" id="weatherbitcity" name="weatherbitcity" class="textfield" value="">
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														&nbsp;
 														</td>
 													</tr>
 													<tr>

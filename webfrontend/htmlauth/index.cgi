@@ -47,12 +47,13 @@ my $version = LoxBerry::System::pluginversion();
 # Settings
 my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
-$cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data");
+$cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data/2.5");
 $cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
 $cfg->param("DARKSKY.URL", "https://api.darksky.net");
 $cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/current");
 $cfg->param("FOSHK.URL", "observations/current/json/units=m");
 $cfg->param("WEATHERFLOW.URL", "https://swd.weatherflow.com/swd/rest");
+$cfg->param("VISUALCROSSING.URL", "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline");
 
 $cfg->save();
 
@@ -90,8 +91,8 @@ if ($R::saveformdata1) {
 	$R::weatherbitcoordlong =~ tr/,/./;
 	$R::openweathercoordlat =~ tr/,/./;
 	$R::openweathercoordlong =~ tr/,/./;
-	#$R::weatherflowcoordlat =~ tr/,/./;
-	#$R::weatherflowcoordlong =~ tr/,/./;
+	$R::visualcrossingcoordlat =~ tr/,/./;
+	$R::visualcrossingcoordlong =~ tr/,/./;
 
 	# Check for Station : DARKSKY
 	if ($R::weatherservice eq "darksky") {
@@ -153,6 +154,21 @@ if ($R::saveformdata1) {
 		}
 	}
 	
+	# Check for Station : VISUALCROSSING
+	if ($R::weatherservice eq "visualcrossing") {
+		our $url = $cfg->param("VISUALCROSSING.URL");
+		our $querystation = $R::openweathercoordlat . "," . $R::openweathercoordlong;
+		# 1. attempt to query VisualCrossing
+		&visualcrossingquery;
+		$found = 0;
+		if ( !$error && $decoded_json->{latitude} ) {
+			$found = 1;
+		}
+		if ( !$error && !$found ) {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
+		}
+	}
+	
 	# Check for Station : WUNDERGROUND
 	if ($R::wugrabber) {
 		our $url = $cfg->param("WUNDERGROUND.URL");
@@ -206,6 +222,13 @@ if ($R::saveformdata1) {
 	$cfg->param("WEATHERFLOW.CITY", "$R::weatherflowcity");
 	$cfg->param("WEATHERFLOW.COUNTRY", "$R::weatherflowcountry");
 	$cfg->param("WEATHERFLOW.STATIONID", "$R::weatherflowstationid");
+
+	$cfg->param("VISUALCROSSING.APIKEY", "$R::visualcrossingapikey");
+	$cfg->param("VISUALCROSSING.COORDLAT", "$R::visualcrossingcoordlat");
+	$cfg->param("VISUALCROSSING.COORDLONG", "$R::visualcrossingcoordlong");
+	$cfg->param("VISUALCROSSING.LANG", "$R::visualcrossinglang");
+	$cfg->param("VISUALCROSSING.STATION", "$R::visualcrossingcity");
+	$cfg->param("VISUALCROSSING.COUNTRY", "$R::visualcrossingcountry");
 	
 	$cfg->param("FOSHK.SERVER", "$R::foshkserver");
 	$cfg->param("FOSHK.PORT", "$R::foshkport");
@@ -420,9 +443,10 @@ if ($R::form eq "1" || !$R::form) {
   my %labels;
 
   # Weather Service
-  @values = ( 'openweather', 'weatherbit', 'weatherflow', 'darksky',  );
+  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', 'darksky',  );
   %labels = (
         'openweather' => 'OpenWeatherMap',
+        'visualcrossing' => 'Visual Crossing',
         'weatherbit' => 'Weatherbit',
         'weatherflow' => 'Weatherflow',
         'darksky' => 'Dark Sky',
@@ -437,9 +461,10 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( WEATHERSERVICE => $wservice );
 
   # DFC Weather Service
-  @values = ( 'openweather', 'weatherbit', 'weatherflow', 'darksky',  );
+  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', 'darksky',  );
   %labels = (
         'openweather' => 'OpenWeatherMap',
+        'visualcrossing' => 'Visual Crossing',
         'weatherbit' => 'Weatherbit',
         'weatherflow' => 'Weatherflow',
         'darksky' => 'Dark Sky',
@@ -469,9 +494,10 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( USEALTERNATEDFC => $usealternatedfc );
 
   # HFC Weather Service
-  @values = ( 'openweather', 'weatherbit', 'weatherflow', 'darksky',  );
+  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', 'darksky',  );
   %labels = (
         'openweather' => 'OpenWeatherMap',
+        'visualcrossing' => 'Visual Crossing',
         'weatherbit' => 'Weatherbit',
         'weatherflow' => 'Weatherflow',
         'darksky' => 'Dark Sky',
@@ -809,7 +835,33 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('WEATHERFLOW.LANG'),
     );
   $template->param( WEATHERFLOWLANG => $weatherflowlang );
-  
+
+  # VisualCrossing Language
+  @values = ('de', 'es', 'fi', 'fr', 'it', 'ja', 'ko', 'pt', 'ru', 'nl', 'sr', 'zh');
+
+  %labels = (
+	'de' => 'German',
+	'en' => 'English',
+	'es' => 'Spanish',
+	'fi' => 'Finnish',
+	'fr' => 'French',
+	'it' => 'Italian',
+	'ja' => 'Japanese',
+	'ko' => 'Korean',
+	'nl' => 'Netherlands',
+	'pt' => 'Portuguese',
+	'ru' => 'Russian',
+	'sr' => 'Serbian',
+	'zh' => 'simplified Chinese',
+    );
+  my $visualcrossinglang = $cgi->popup_menu(
+        -name    => 'visualcrossinglang',
+        -id      => 'visualcrossinglang',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('VISUALCROSSING.LANG'),
+    );
+  $template->param( VISUALCROSSINGLANG => $visualcrossinglang );
   
   # Statiotyp
   @values = ('statid', 'coord', 'autoip');
@@ -1225,7 +1277,7 @@ sub openweatherquery
 {
 
         # Get data from Weatherbit Server (API request) for testing API Key
-        my $query = "$url\/3.0/onecall?appid=$R::openweatherapikey&$querystation";
+        my $query = "$url\/onecall?appid=$R::openweatherapikey&$querystation";
         my $ua = new LWP::UserAgent;
         my $res = $ua->get($query);
         my $json = $res->decoded_content();
@@ -1286,6 +1338,40 @@ sub weatherflowquery
 	return();
 
 }
+
+#####################################################
+# Query Visualcrossing
+#####################################################
+
+sub visualcrossingquery
+{
+
+        # Get data from VisualCrossing Server (API request) for testing API Key
+	my $query = "$url/$querystation?unitGroup=metric&include=current&key=$R::visualcrossingapikey&contentType=json";
+        my $ua = new LWP::UserAgent;
+        my $res = $ua->get($query);
+        my $json = $res->decoded_content();
+
+        # Check status of request
+        my $urlstatus = $res->status_line;
+        my $urlstatuscode = substr($urlstatus,0,3);
+
+	if ($urlstatuscode ne "200" && $urlstatuscode ne "401" ) {
+	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+	}
+
+	if ($urlstatuscode eq "401" ) {
+	        $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+	}
+
+        # Decode JSON response from server
+	if (!$error) {
+        	our $decoded_json = decode_json( $json );
+	}
+	return();
+
+}
+
 
 #####################################################
 # Error

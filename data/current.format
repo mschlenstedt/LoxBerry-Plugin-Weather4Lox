@@ -33,7 +33,7 @@
 # 29: Weather Description
 # 30: Moon: Percent Illuminated (%)
 # 31: Moon: Age of Moon (d)
-# 32: Moon: Phase of Moon
+# 32: Moon: Phase of Moon (%)
 # 33: Moon: Hemisphere
 # 34: Time Sunrise HOUR
 # 35: Time Sunrise MINUTES
