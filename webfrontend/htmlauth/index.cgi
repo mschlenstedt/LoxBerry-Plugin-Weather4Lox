@@ -157,7 +157,7 @@ if ($R::saveformdata1) {
 	# Check for Station : VISUALCROSSING
 	if ($R::weatherservice eq "visualcrossing") {
 		our $url = $cfg->param("VISUALCROSSING.URL");
-		our $querystation = $R::openweathercoordlat . "," . $R::openweathercoordlong;
+		our $querystation = $R::visualcrossingcoordlat . "," . $R::visualcrossingcoordlong;
 		# 1. attempt to query VisualCrossing
 		&visualcrossingquery;
 		$found = 0;
@@ -837,7 +837,7 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( WEATHERFLOWLANG => $weatherflowlang );
 
   # VisualCrossing Language
-  @values = ('de', 'es', 'fi', 'fr', 'it', 'ja', 'ko', 'pt', 'ru', 'nl', 'sr', 'zh');
+  @values = ('de', 'en', 'es', 'fi', 'fr', 'it', 'ja', 'ko', 'pt', 'ru', 'nl', 'sr', 'zh');
 
   %labels = (
 	'de' => 'German',
