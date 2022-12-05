@@ -47,7 +47,7 @@ my $version = LoxBerry::System::pluginversion();
 # Settings
 my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
-$cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data/2.5");
+$cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data");
 $cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
 $cfg->param("DARKSKY.URL", "https://api.darksky.net");
 $cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/current");
