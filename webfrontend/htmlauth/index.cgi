@@ -1277,7 +1277,7 @@ sub openweatherquery
 {
 
         # Get data from Weatherbit Server (API request) for testing API Key
-        my $query = "$url\/onecall?appid=$R::openweatherapikey&$querystation";
+        my $query = "$url\/3.0/onecall?appid=$R::openweatherapikey&$querystation";
         my $ua = new LWP::UserAgent;
         my $res = $ua->get($query);
         my $json = $res->decoded_content();
