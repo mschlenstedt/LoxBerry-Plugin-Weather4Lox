@@ -603,7 +603,7 @@ close(F);
 if ($i < 168) {
 
 	# Get data from OPenWeatherMap Server (API request) for current conditions
-	$queryurlcr = "$url/2.5/forecast?appid=$apikey&$stationid&lang=$lang&units=metric&cnt=40";
+	$queryurlcr = "$url/3.0/forecast?appid=$apikey&$stationid&lang=$lang&units=metric&cnt=40";
 
 	LOGINF "Fetching additional 3-Hourly Forecat Data for Location $stationid to interpolite hourly data";
 	LOGDEB "URL: $queryurlcr";
