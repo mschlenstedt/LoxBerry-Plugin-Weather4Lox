@@ -49,6 +49,7 @@ case "$1" in
 		touch /etc/dnsmasq.d/$pluginname.conf > /dev/null 2>&1
 		echo "Enabling DNSMasq Configuration for WU4Lox"
 		echo "address=/weather.loxone.com/$OWNIP" > /etc/dnsmasq.d/$pluginname.conf 
+		echo "address=/weather-beta.loxone.com/$OWNIP" >> /etc/dnsmasq.d/$pluginname.conf 
 		service dnsmasq restart > /dev/null 2>&1
 	fi
 	# Enable Apache Config
