@@ -14,7 +14,7 @@ echo "<INFO> Copy back existing log files"
 cp -p -v -r /tmp/$ARGV1\_upgrade/log/$ARGV3/* $ARGV5/log/plugins/$ARGV3/ 
 
 echo "<INFO> Copy back custom theme files"
-cp -p -v -r /tmp/$ARGV1\_upgrade/themes/$i $ARGV5/templates/plugins/$ARGV3/themes
+cp -p -v -r /tmp/$ARGV1\_upgrade/themes/* $ARGV5/templates/plugins/$ARGV3/themes
 
 echo "<INFO> Remove temporary folders"
 rm -r /tmp/$ARGV1\_upgrade
