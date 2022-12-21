@@ -115,6 +115,7 @@ my $wdirdes;
 my $moonphase;
 my @filecontent;
 my $i;
+my $currentepoche;
 
 #
 # Fetch current data
@@ -135,7 +136,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
-	my $currentepoche = $decoded_json->{currentConditions}->{datetimeEpoch}; # Needed during hourly forecast
+	$currentepoche = $decoded_json->{currentConditions}->{datetimeEpoch}; # Needed during hourly forecast
 	print F "$decoded_json->{currentConditions}->{datetimeEpoch}|";
 	my $date = qx(date -R -d "\@$decoded_json->{currentConditions}->{datetimeEpoch}");
 	chomp ($date);
