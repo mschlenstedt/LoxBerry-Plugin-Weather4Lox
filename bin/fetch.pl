@@ -1,9 +1,10 @@
 #!/usr/bin/perl
 
 # fetch.pl
-# fetches weather data (current and forecast) from Wunderground
+# fetches weather data (current and forecast) from weather services
 
-# Copyright 2016-2018 Michael Schlenstedt, michael@loxberry.de
+# Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
+#                     mr-manuel, https://github.com/mr-manuel
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,15 +47,44 @@ if ( $pcfg->param("SERVER.USEALTERNATEHFC") ) {
 	$servicehfc = $pcfg->param("SERVER.WEATHERSERVICEHFC");
 }
 
-# Which grabber should grab which weather data?
-my $service_opt = "--current";
+# Commandline options
+my $verbose = '';
 
-#if (  ($servicedfc && $servicedfc eq $service) || !$servicedfc ) {
-#	$service_opt .= " --daily";
-#}
-#if (  ($servicehfc && $servicehfc eq $service) || !$servicehfc ) {
-#	$service_opt .= " --hourly";
-#}
+GetOptions ('verbose' => \$verbose,
+            'quiet'   => sub { $verbose = 0 },
+            'cronjob' => \$cronjob,
+            'current' => \$current,
+            'daily' => \$daily,
+            'hourly' => \$hourly);
+
+# Check if script was called from cronjob
+if ( $cronjob ){
+
+	my $service_opt = "";
+	
+	if ( $current ){
+		$service_opt .= " --current";
+	}
+	if ( $daily ){
+		$service_opt .= " --daily";
+	}
+	if ( $hourly ){
+		$service_opt .= " --hourly";
+	}
+
+} else {
+
+	# Which grabber should grab which weather data?
+	my $service_opt = "--current";
+
+	if (  ($servicedfc && $servicedfc eq $service) || !$servicedfc ) {
+		$service_opt .= " --daily";
+	}
+	if (  ($servicehfc && $servicehfc eq $service) || !$servicehfc ) {
+		$service_opt .= " --hourly";
+	}
+
+}
 
 # Create a logging object
 my $log = LoxBerry::Log->new (
@@ -64,12 +94,6 @@ my $log = LoxBerry::Log->new (
 	#filename => "$lbplogdir/weather4lox.log",
 	#append => 1,
 );
-
-# Commandline options
-my $verbose = '';
-
-GetOptions ('verbose' => \$verbose,
-            'quiet'   => sub { $verbose = 0 });
 
 # Due to a bug in the Logging routine, set the loglevel fix to 3
 #$log->loglevel(3);
