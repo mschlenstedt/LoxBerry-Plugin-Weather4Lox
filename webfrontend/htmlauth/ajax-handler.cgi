@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
-# Copyright 2019 Michael Schlenstedt, michael@loxberry.de
-#                Christian Fenzl, christian@loxberry.de
+# Copyright 2019-2023 Michael Schlenstedt, michael@loxberry.de
+#                     Christian Fenzl, christian@loxberry.de
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
