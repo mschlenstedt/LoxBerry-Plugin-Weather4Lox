@@ -241,7 +241,9 @@ if ($R::saveformdata1) {
 	$cfg->param("SERVER.USEALTERNATEDFC", "$R::usealternatedfc");
 	$cfg->param("SERVER.USEALTERNATEHFC", "$R::usealternatehfc");
 	$cfg->param("SERVER.GETDATA", "$R::getdata");
+	$cfg->param("SERVER.GETDATA_FORECAST", "$R::getdata_forecast");
 	$cfg->param("SERVER.CRON", "$R::cron");
+	$cfg->param("SERVER.CRON_FORECAST", "$R::cron_forecast");
 	$cfg->param("SERVER.METRIC", "$R::metric");
 	$cfg->param("SERVER.WEATHERSERVICE", "$R::weatherservice");
 	$cfg->param("SERVER.WEATHERSERVICEDFC", "$R::weatherservicedfc");
@@ -332,6 +334,92 @@ if ($R::saveformdata1) {
 	  unlink ("$lbhomedir/system/cron/cron.15min/$lbpplugindir");
 	  unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
 	  unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
+	}
+		
+	# Create Cronjob Forecast
+	$cron_name_forecast = $lbpplugindir . '_forecast';
+	if ($R::getdata_forecast eq "1") 
+	{
+	  if ($R::cron_forecast eq "1") 
+	  {
+	    system ("ln -s $lbpbindir/fetch_forecast.pl $lbhomedir/system/cron/cron.01min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.03min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.05min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.10min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.15min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.30min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.hourly/$cron_name_forecast");
+	  }
+	  if ($R::cron_forecast eq "3") 
+	  {
+	    system ("ln -s $lbpbindir/fetch_forecast.pl $lbhomedir/system/cron/cron.03min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.01min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.05min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.10min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.15min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.30min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.hourly/$cron_name_forecast");
+	  }
+	  if ($R::cron_forecast eq "5") 
+	  {
+	    system ("ln -s $lbpbindir/fetch_forecast.pl $lbhomedir/system/cron/cron.05min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.01min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.03min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.10min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.15min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.30min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.hourly/$cron_name_forecast");
+	  }
+	  if ($R::cron_forecast eq "10") 
+	  {
+	    system ("ln -s $lbpbindir/fetch_forecast.pl $lbhomedir/system/cron/cron.10min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.1min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.3min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.5min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.15min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.30min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.hourly/$cron_name_forecast");
+	  }
+	  if ($R::cron_forecast eq "15") 
+	  {
+	    system ("ln -s $lbpbindir/fetch_forecast.pl $lbhomedir/system/cron/cron.15min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.01min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.03min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.05min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.10min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.30min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.hourly/$cron_name_forecast");
+	  }
+	  if ($R::cron_forecast eq "30") 
+	  {
+	    system ("ln -s $lbpbindir/fetch_forecast.pl $lbhomedir/system/cron/cron.30min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.01min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.03min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.05min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.10min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.15min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.hourly/$cron_name_forecast");
+	  }
+	  if ($R::cron_forecast eq "60") 
+	  {
+	    system ("ln -s $lbpbindir/fetch_forecast.pl $lbhomedir/system/cron/cron.hourly/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.01min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.03min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.05min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.10min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.15min/$cron_name_forecast");
+	    unlink ("$lbhomedir/system/cron/cron.30min/$cron_name_forecast");
+	  }
+	} 
+	else
+	{
+	  unlink ("$lbhomedir/system/cron/cron.01min/$cron_name_forecast");
+	  unlink ("$lbhomedir/system/cron/cron.03min/$cron_name_forecast");
+	  unlink ("$lbhomedir/system/cron/cron.05min/$cron_name_forecast");
+	  unlink ("$lbhomedir/system/cron/cron.10min/$cron_name_forecast");
+	  unlink ("$lbhomedir/system/cron/cron.15min/$cron_name_forecast");
+	  unlink ("$lbhomedir/system/cron/cron.30min/$cron_name_forecast");
+	  unlink ("$lbhomedir/system/cron/cron.hourly/$cron_name_forecast");
 	}
 	
 	# Error template
@@ -616,6 +704,21 @@ if ($R::form eq "1" || !$R::form) {
     );
   $template->param( GETDATA => $getdata );
 
+  # GetData Forecast
+  @values = ('0', '1' );
+  %labels = (
+        '0' => $L{'SETTINGS.LABEL_OFF'},
+        '1' => $L{'SETTINGS.LABEL_ON'},
+    );
+  my $getdata_forecast = $cgi->popup_menu(
+        -name    => 'getdata_forecast',
+        -id      => 'getdata_forecast',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.GETDATA_FORECAST'),
+    );
+  $template->param( GETDATA_FORECAST => $getdata_forecast );
+
   # Cron
   @values = ('1', '3', '5', '10', '15', '30', '60' );
   %labels = (
@@ -635,6 +738,26 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.CRON'),
     );
   $template->param( CRON => $cron );
+
+  # Cron Forecast
+  @values = ('1', '3', '5', '10', '15', '30', '60' );
+  %labels = (
+        '1' => $L{'SETTINGS.LABEL_1MINUTE'},
+        '3' => $L{'SETTINGS.LABEL_3MINUTE'},
+        '5' => $L{'SETTINGS.LABEL_5MINUTE'},
+        '10' => $L{'SETTINGS.LABEL_10MINUTE'},
+        '15' => $L{'SETTINGS.LABEL_15MINUTE'},
+        '30' => $L{'SETTINGS.LABEL_30MINUTE'},
+        '60' => $L{'SETTINGS.LABEL_60MINUTE'},
+    );
+  my $cron_forecast = $cgi->popup_menu(
+        -name    => 'cron_forecast',
+        -id      => 'cron_forecast',
+        -values  => \@values,
+	-labels  => \%labels,
+	-default => $cfg->param('SERVER.CRON_FORECAST'),
+    );
+  $template->param( CRON_FORECAST => $cron_forecast );
 
   # DarkSky Language
   @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'ja', 'ka', 'ko', 'kw', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tet', 'tr', 'uk', 'x-pig-latin', 'zh', 'zh-tw');

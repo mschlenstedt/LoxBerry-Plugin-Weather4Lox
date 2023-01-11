@@ -47,14 +47,14 @@ if ( $pcfg->param("SERVER.USEALTERNATEHFC") ) {
 }
 
 # Which grabber should grab which weather data?
-my $service_opt = "--current";
+#my $service_opt = "--current";
 
-#if (  ($servicedfc && $servicedfc eq $service) || !$servicedfc ) {
-#	$service_opt .= " --daily";
-#}
-#if (  ($servicehfc && $servicehfc eq $service) || !$servicehfc ) {
-#	$service_opt .= " --hourly";
-#}
+if (  ($servicedfc && $servicedfc eq $service) || !$servicedfc ) {
+	$service_opt .= " --daily";
+}
+if (  ($servicehfc && $servicehfc eq $service) || !$servicehfc ) {
+	$service_opt .= " --hourly";
+}
 
 # Create a logging object
 my $log = LoxBerry::Log->new (

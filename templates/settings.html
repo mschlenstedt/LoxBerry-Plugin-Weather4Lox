@@ -46,6 +46,31 @@
 													</tr>
 													<tr>
 														<td width="25%">
+															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="20%">
+															<fieldset>
+															<TMPL_VAR GETDATA>
+															</fieldset>
+															</td>
+															<td>
+															<TMPL_VAR CRON>
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
 															<label id="labelusealternatedfc"><TMPL_VAR SETTINGS.LABEL_USEALTERNATEDFC></label>
 														</td>
 														<td width="50%">
@@ -84,6 +109,31 @@
 													</tr>
 													<tr>
 														<td width="25%">
+															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA_FORECAST></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="20%">
+															<fieldset>
+															<TMPL_VAR GETDATA_FORECAST>
+															</fieldset>
+															</td>
+															<td>
+															<TMPL_VAR CRON_FORECAST>
+															</td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%" valign="middle">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
 															<label id="labelmetric"><TMPL_VAR SETTINGS.LABEL_UNITS></label>
 														</td>
 														<td width="50%">
@@ -94,31 +144,6 @@
 														</td>
 														<td width="20%">
 															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
-														</td>
-														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td width="20%">
-															<fieldset>
-															<TMPL_VAR GETDATA>
-															</fieldset>
-															</td>
-															<td>
-															<TMPL_VAR CRON>
-															</td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
 														</td>
 													</tr>
 													<tr>
@@ -895,6 +920,7 @@
 
 									// Add some attributes PERL::CGI doesn't provide
 									$('select[name=getdata]').attr('data-role','flipswitch');
+									$('select[name=getdata_forecast]').attr('data-role','flipswitch');
 									$('select[name=loxgrabber]').attr('data-role','flipswitch');
 									$('select[name=wugrabber]').attr('data-role','flipswitch');
 									$('select[name=foshkgrabber]').attr('data-role','flipswitch');
@@ -914,7 +940,9 @@
 									$('select[name=metric]').attr('data-mini','true');
 									//$('select[name=metric]').attr('data-native-menu','false');
 									$('select[name=cron]').attr('data-mini','true');
+									$('select[name=cron_forecast]').attr('data-mini','true');
 									//$('select[name=cron]').attr('data-native-menu','false');
+									//$('select[name=cron_forecast]').attr('data-native-menu','false');
 
 									// Get Data
 									$( document ).on( 'change', '#getdata', function ( e ) {
@@ -926,6 +954,19 @@
 											//alert("Aus!");
 											$('#cron').addClass('ui-disabled');
 											$('#cron').selectmenu('refresh');
+										}
+									});
+
+									// Get Data
+									$( document ).on( 'change', '#getdata_forecast', function ( e ) {
+										if ( $( "select[name=getdata_forecast]" ).val()  === "1" ) {
+											//alert("An!");
+											$('#cron_forecast').removeClass('ui-disabled');
+											$('#cron_forecast').selectmenu('refresh');
+										} else {
+											//alert("Aus!");
+											$('#cron_forecast').addClass('ui-disabled');
+											$('#cron_forecast').selectmenu('refresh');
 										}
 									});
 
@@ -994,6 +1035,9 @@
 											$('#weatherservicehfc').addClass('ui-disabled');
 										}
 										if ( $( "select[name=getdata]" ).val()  === "0" ) {
+											$('#cron').addClass('ui-disabled');
+										}
+										if ( $( "select[name=getdata_forecast]" ).val()  === "0" ) {
 											$('#cron').addClass('ui-disabled');
 										}
 										if ( $( "select[name=wugrabber]" ).val()  === "0" ) {
