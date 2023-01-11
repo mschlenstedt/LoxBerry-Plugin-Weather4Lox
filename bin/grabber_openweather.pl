@@ -3,7 +3,7 @@
 # grabber for fetching data from openweathermap.org
 # fetches weather data (current and forecast) from openweathermap.org
 
-# Copyright 2016-2012 Michael Schlenstedt, michael@loxberry.de
+# Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -244,7 +244,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	if ($weather eq "803") { $code = "4";  $icon = "cloudy" };
 	if ($weather eq "804") { $code = "5";  $icon = "overcast" };
 	if (!$icon) { $icon = "clear" };
-  if (!$code) { $code = "1" };
+	if (!$code) { $code = "1" };
 	print F "$icon|";
 	print F "$code|";
 	print F "$decoded_json->{current}->{weather}->[0]->{description}|";
@@ -588,8 +588,8 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		if ($weather eq "804") { $code = "5";  $icon = "overcast" };
 		if (!$icon) { $icon = "clear" };
 		if (!$code) { $code = "1" };
-		print F "$icon|";
 		print F "$code|";
+		print F "$icon|";
 		print F "$results->{weather}->[0]->{description}|";
 		print F "-9999|";
 		print F "-9999|";

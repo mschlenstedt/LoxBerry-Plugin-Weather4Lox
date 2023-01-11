@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright 2016 Michael Schlenstedt, michael@loxberry.de
+# Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ my $version = LoxBerry::System::pluginversion();
 # Settings
 my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
-$cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data/2.5");
+$cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data");
 $cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
 $cfg->param("DARKSKY.URL", "https://api.darksky.net");
 $cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/current");
@@ -1400,7 +1400,7 @@ sub openweatherquery
 {
 
         # Get data from Weatherbit Server (API request) for testing API Key
-        my $query = "$url\/onecall?appid=$R::openweatherapikey&$querystation";
+        my $query = "$url\/3.0/onecall?appid=$R::openweatherapikey&$querystation";
         my $ua = new LWP::UserAgent;
         my $res = $ua->get($query);
         my $json = $res->decoded_content();

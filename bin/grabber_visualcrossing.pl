@@ -3,7 +3,7 @@
 # grabber for fetching data from openweathermap.org
 # fetches weather data (current and forecast) from openweathermap.org
 
-# Copyright 2016-2012 Michael Schlenstedt, michael@loxberry.de
+# Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -115,6 +115,7 @@ my $wdirdes;
 my $moonphase;
 my @filecontent;
 my $i;
+my $currentepoche;
 
 #
 # Fetch current data
@@ -135,6 +136,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
+	$currentepoche = $decoded_json->{currentConditions}->{datetimeEpoch}; # Needed during hourly forecast
 	print F "$decoded_json->{currentConditions}->{datetimeEpoch}|";
 	my $date = qx(date -R -d "\@$decoded_json->{currentConditions}->{datetimeEpoch}");
 	chomp ($date);
@@ -381,12 +383,11 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
-	my $now = time();
 	$i = 1;
 	for my $resultsdays ( @{$decoded_json->{days}} ){
 		for my $results( @{$resultsdays->{hours}} ){
 			# Skip first datasets of current day
-			if ($now >= $results->{datetimeEpoch}) {
+			if ($currentepoche >= $results->{datetimeEpoch}) {
 				next;
 			}
 			print F "$i|";
