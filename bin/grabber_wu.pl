@@ -3,7 +3,7 @@
 # Grabber for overwriting data by WeatherUnderground data
 
 # Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
-# 			          Christian Fenzl, christian@loxberry.de
+#                     Christian Fenzl, christian@loxberry.de
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
