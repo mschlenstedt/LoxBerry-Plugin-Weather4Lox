@@ -48,6 +48,7 @@ if ( $pcfg->param("SERVER.USEALTERNATEHFC") ) {
 
 # Which grabber should grab which weather data?
 #my $service_opt = "--current";
+my $service_opt = "";
 
 if (  ($servicedfc && $servicedfc eq $service) || !$servicedfc ) {
 	$service_opt .= " --daily";
