@@ -5,9 +5,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -81,7 +81,7 @@ my %L = LoxBerry::Web::readlanguage($template, "language.ini");
 
 # Save Form 1 (Server Settings)
 if ($R::saveformdata1) {
-	
+
   	$template->param( FORMNO => '1' );
 	$R::wucoordlat =~ tr/,/./;
 	$R::wucoordlong =~ tr/,/./;
@@ -108,7 +108,7 @@ if ($R::saveformdata1) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
 		}
 	}
-	
+
 	# Check for Station : WEATHERBIT
 	if ($R::weatherservice eq "weatherbit") {
 		our $url = $cfg->param("WEATHERBIT.URL");
@@ -123,7 +123,7 @@ if ($R::saveformdata1) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
 		}
 	}
-	
+
 	# Check for Station : OPENWEATHER
 	if ($R::weatherservice eq "openweather") {
 		our $url = $cfg->param("OPENWEATHER.URL");
@@ -153,7 +153,7 @@ if ($R::saveformdata1) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
 		}
 	}
-	
+
 	# Check for Station : VISUALCROSSING
 	if ($R::weatherservice eq "visualcrossing") {
 		our $url = $cfg->param("VISUALCROSSING.URL");
@@ -168,7 +168,7 @@ if ($R::saveformdata1) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
 		}
 	}
-	
+
 	# Check for Station : WUNDERGROUND
 	if ($R::wugrabber) {
 		our $url = $cfg->param("WUNDERGROUND.URL");
@@ -182,8 +182,8 @@ if ($R::saveformdata1) {
 			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
 		}
 	}
-	
-	
+
+
 	# OK - now installing...
 
 	# Write configuration file(s)
@@ -229,7 +229,7 @@ if ($R::saveformdata1) {
 	$cfg->param("VISUALCROSSING.LANG", "$R::visualcrossinglang");
 	$cfg->param("VISUALCROSSING.STATION", "$R::visualcrossingcity");
 	$cfg->param("VISUALCROSSING.COUNTRY", "$R::visualcrossingcountry");
-	
+
 	$cfg->param("FOSHK.SERVER", "$R::foshkserver");
 	$cfg->param("FOSHK.PORT", "$R::foshkport");
 
@@ -242,21 +242,21 @@ if ($R::saveformdata1) {
 	$cfg->param("SERVER.USEALTERNATEHFC", "$R::usealternatehfc");
 	$cfg->param("SERVER.GETDATA", "$R::getdata");
 	$cfg->param("SERVER.CRON", "$R::cron");
-	$cfg->param("SERVER.CRON_FORECAST", "$R::cron_forecast");
+	$cfg->param("SERVER.CRON_ALTERNATE", "$R::cron_alternate");
 	$cfg->param("SERVER.METRIC", "$R::metric");
 	$cfg->param("SERVER.WEATHERSERVICE", "$R::weatherservice");
 	$cfg->param("SERVER.WEATHERSERVICEDFC", "$R::weatherservicedfc");
 	$cfg->param("SERVER.WEATHERSERVICEHFC", "$R::weatherservicehfc");
 
 	$cfg->save();
-		
+
 	# Create Cronjob
 	if ($R::getdata eq "1"){
 		system ("ln -s $lbpbindir/cronjob.pl $lbhomedir/system/cron/cron.01min/$lbpplugindir");
 	} else {
 		unlink ("$lbhomedir/system/cron/cron.01min/$lbpplugindir");
 	}
-	
+
 	# Error template
 	if ($error) {
 		# Template output
@@ -273,7 +273,7 @@ if ($R::saveformdata1) {
 
 # Save Form 2 (Miniserver)
 if ($R::saveformdata2) {
-	
+
   	$template->param( FORMNO => '2' );
 
 	my $dfc;
@@ -296,7 +296,7 @@ if ($R::saveformdata2) {
 			}
 		}
 	}
-	
+
 	# Write configuration file(s)
 	$cfg->param("SERVER.SENDDFC", "$dfc");
 	$cfg->param("SERVER.SENDHFC", "$hfc");
@@ -305,7 +305,7 @@ if ($R::saveformdata2) {
 	$cfg->param("SERVER.MSNO", "$R::msno");
 
 	$cfg->save();
-	
+
 	# Template output
 	&save;
 
@@ -315,7 +315,7 @@ if ($R::saveformdata2) {
 
 # Save Form 3 (Website)
 if ($R::saveformdata3) {
-	
+
   	$template->param( FORMNO => '3' );
 
 	# Write configuration file(s)
@@ -325,7 +325,7 @@ if ($R::saveformdata3) {
 	$cfg->param("WEB.LANG", "$R::themelang");
 
 	$cfg->save();
-	
+
 	# Enable/Disable CloudEmu
 	if ( $R::emu ) {
 		system("sudo $lbpbindir/cloudemu enable > /dev/null 2>&1");
@@ -570,14 +570,14 @@ if ($R::form eq "1" || !$R::form) {
         '30' => $L{'SETTINGS.LABEL_30MINUTE'},
         '60' => $L{'SETTINGS.LABEL_60MINUTE'},
     );
-  my $cron_forecast = $cgi->popup_menu(
-        -name    => 'cron_forecast',
-        -id      => 'cron_forecast',
+  my $cron_alternate = $cgi->popup_menu(
+        -name    => 'cron_alternate',
+        -id      => 'cron_alternate',
         -values  => \@values,
 	-labels  => \%labels,
-	-default => $cfg->param('SERVER.CRON_FORECAST'),
+	-default => $cfg->param('SERVER.CRON_ALTERNATE'),
     );
-  $template->param( CRON_FORECAST => $cron_forecast );
+  $template->param( CRON_ALTERNATE => $cron_alternate );
 
   # DarkSky Language
   @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'ja', 'ka', 'ko', 'kw', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tet', 'tr', 'uk', 'x-pig-latin', 'zh', 'zh-tw');
@@ -763,7 +763,7 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('OPENWEATHER.LANG'),
     );
   $template->param( OPENWEATHERLANG => $openweatherlang );
-  
+
   # Weatherflow Language
   @values = ('en');
 
@@ -805,7 +805,7 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('VISUALCROSSING.LANG'),
     );
   $template->param( VISUALCROSSINGLANG => $visualcrossinglang );
-  
+
   # Statiotyp
   @values = ('statid', 'coord', 'autoip');
   %labels = (
@@ -992,7 +992,7 @@ if ($R::form eq "1" || !$R::form) {
   $navbar{3}{active} = 1;
   $template->param( "FORM3", 1);
   $template->param( "WEBSITE", "http://$ENV{HTTP_HOST}/plugins/$lbpplugindir/webpage.html");
-  
+
   # Check for installed DNSMASQ-Plugin
   my $checkdnsmasq = LoxBerry::System::plugindata('DNSmasq');
   if ( $checkdnsmasq->{PLUGINDB_TITLE} ) {
@@ -1075,7 +1075,7 @@ if ($R::form eq "1" || !$R::form) {
   $navbar{99}{active} = 1;
   $template->param( "FORM99", 1 );
   $template->param( "LOGLIST_HTML", LoxBerry::Web::loglist_html() );
-  
+
 }
 
 # Template Vars and Form parts
@@ -1114,7 +1114,7 @@ sub wuquery
 		$apikey =~ s/\n//g;
 		$apikey =~ s/.*apiKey=([0-9a-z]*)\&.*/$1/g;
 	}
-	
+
 	print STDERR "API: $apikey\n";
 
         # Get data from Wunderground Server (API request) for testing API Key and Station
@@ -1124,7 +1124,7 @@ sub wuquery
 		$ua = new LWP::UserAgent;
 		$res = $ua->get($query);
 		my $json = $res->decoded_content();
-	
+
 		# Check status of request
 		my $urlstatus = $res->status_line;
 		my $urlstatuscode = substr($urlstatus,0,3);
@@ -1255,7 +1255,7 @@ sub weatherflowquery
     # Update API key to comply with Weatherflow format
     #my $apikey = $R::weatherflowapikey;
     #$apikey =~ s/^(.{8})(.{4})(.{4})(.{4})(.{12})/$1\-$2\-$3\-$4\-$5/;
-	
+
     # Get data from Weatherflow Server (API request) for testing API Key
     my $query = "$url\/observations\/station\/$R::weatherflowstationid?token=$R::weatherflowapikey";
     my $ua = new LWP::UserAgent;

@@ -124,10 +124,10 @@
 													</tr>
 													<tr>
 														<td width="25%">
-															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA_FORECAST></label>
+															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA_ALTERNATE></label>
 														</td>
 														<td width="50%">
-															<TMPL_VAR CRON_FORECAST>
+															<TMPL_VAR CRON_ALTERNATE>
 														</td>
 														<td width="5%">
 															&nbsp;
@@ -253,7 +253,7 @@
 															<label id="labeldarkskyapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="darkskyapikey" name="darkskyapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR DARKSKY.APIKEY>" 
+																<input id="darkskyapikey" name="darkskyapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR DARKSKY.APIKEY>"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
 														</td>
 														<td width="5%">
@@ -274,7 +274,7 @@
 																	<label id="labeldarkskycoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
 																</td>
 																<td>
-																	<input id="darkskycoordlat" name="darkskycoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR DARKSKY.COORDLAT>" 
+																	<input id="darkskycoordlat" name="darkskycoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR DARKSKY.COORDLAT>"
 																		data-validation-optional="true"
 																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
 																</td>
@@ -282,7 +282,7 @@
 																	<label id="labeldarkskycoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
 																</td>
 																<td>
-																<input id="darkskycoordlong" name="darkskycoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR DARKSKY.COORDLONG>" 
+																<input id="darkskycoordlong" name="darkskycoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR DARKSKY.COORDLONG>"
 																	data-validation-optional="true"
 																	data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
 																</td>
@@ -380,7 +380,7 @@
 																	<label id="labelopenweathercoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
 																</td>
 																<td>
-																	<input id="openweathercoordlat" name="openweathercoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLAT>" 
+																	<input id="openweathercoordlat" name="openweathercoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLAT>"
 																		data-validation-optional="true"
 																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
 																</td>
@@ -486,7 +486,7 @@
 																	<label id="labelvisualcrossingcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
 																</td>
 																<td>
-																	<input id="visualcrossingcoordlat" name="visualcrossingcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLAT>" 
+																	<input id="visualcrossingcoordlat" name="visualcrossingcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLAT>"
 																		data-validation-optional="true"
 																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
 																</td>
@@ -572,7 +572,7 @@
 															<label id="labelweatherbitapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-															<input id="weatherbitapikey" name="weatherbitapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WEATHERBIT.APIKEY>" data-validation-optional="true" 
+															<input id="weatherbitapikey" name="weatherbitapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WEATHERBIT.APIKEY>" data-validation-optional="true"
 															data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
 														</td>
 														<td width="5%">
@@ -593,7 +593,7 @@
 																	<label id="labelweatherbitcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
 																</td>
 																<td>
-																	<input id="weatherbitcoordlat" name="weatherbitcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLAT>" 
+																	<input id="weatherbitcoordlat" name="weatherbitcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLAT>"
 																		data-validation-optional="true"
 																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
 																</td>
@@ -687,7 +687,7 @@
 																	<label id="labelweatherflowcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
 																</td>
 																<td>
-																	<input id="weatherflowcoordlat" name="weatherflowcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERFLOW.COORDLAT>" 
+																	<input id="weatherflowcoordlat" name="weatherflowcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERFLOW.COORDLAT>"
 																		data-validation-optional="true"
 																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
 																</td>
@@ -784,7 +784,7 @@
 															<label id="labelwuapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="wuapikey" name="wuapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.APIKEY>" 
+																<input id="wuapikey" name="wuapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.APIKEY>"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
 														</td>
 														<td width="5%">
@@ -815,8 +815,8 @@
 															<label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
 														</td>
 														<td width="50%">
-																<input id="wustationid" name="wustationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" 
-																data-validation-allowing=":,." data-validation-optional="true" 
+																<input id="wustationid" name="wustationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>"
+																data-validation-allowing=":,." data-validation-optional="true"
                 data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
 														</td>
 														<td width="5%">
@@ -837,7 +837,7 @@
 																	<label id="labelwucoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
 																</td>
 																<td>
-																	<input id="wucoordlat" name="wucoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLAT>" 
+																	<input id="wucoordlat" name="wucoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLAT>"
 																		data-validation-allowing="range[-90;90],float" data-validation-optional="true"
 																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
 																</td>
@@ -845,7 +845,7 @@
 																	<label id="labelwucoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
 																</td>
 																<td>
-																	<input id="wucoordlong" name="wucoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLONG>" 
+																	<input id="wucoordlong" name="wucoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLONG>"
 																		data-validation-allowing="range[-180;180],float" data-validation-optional="true"
 																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
 																</td>
@@ -942,9 +942,9 @@
 									$('select[name=metric]').attr('data-mini','true');
 									//$('select[name=metric]').attr('data-native-menu','false');
 									$('select[name=cron]').attr('data-mini','true');
-									$('select[name=cron_forecast]').attr('data-mini','true');
+									$('select[name=cron_alternate]').attr('data-mini','true');
 									//$('select[name=cron]').attr('data-native-menu','false');
-									//$('select[name=cron_forecast]').attr('data-native-menu','false');
+									//$('select[name=cron_alternate]').attr('data-native-menu','false');
 
 									// Get Data
 									$( document ).on( 'change', '#getdata', function ( e ) {
@@ -963,12 +963,12 @@
 									$( document ).on( 'change', '#getdata_forecast', function ( e ) {
 										if ( $( "select[name=getdata_forecast]" ).val()  === "1" ) {
 											//alert("An!");
-											$('#cron_forecast').removeClass('ui-disabled');
-											$('#cron_forecast').selectmenu('refresh');
+											$('#cron_alternate').removeClass('ui-disabled');
+											$('#cron_alternate').selectmenu('refresh');
 										} else {
 											//alert("Aus!");
-											$('#cron_forecast').addClass('ui-disabled');
-											$('#cron_forecast').selectmenu('refresh');
+											$('#cron_alternate').addClass('ui-disabled');
+											$('#cron_alternate').selectmenu('refresh');
 										}
 									});
 
@@ -1058,11 +1058,11 @@
 									{
 
 										$("#fetchstate").attr("style", "color:blue").html("<TMPL_VAR SETTINGS.HINT_FETCHWAIT>");
-										$.ajax( { 
+										$.ajax( {
 												type: 'POST',
 												url: "./ajax-handler.cgi",
-												data: { 
-													ajax: 'fetch', 
+												data: {
+													ajax: 'fetch',
 												}
 											} )
 										.done(function(resp) {
@@ -1127,7 +1127,7 @@
 																					<label id="labeludpport"><TMPL_VAR SETTINGS.LABEL_UDPPORT></label>
 																				</td>
 																				<td>
-																					<input id="udpport" name="udpport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR SERVER.UDPPORT>" 
+																					<input id="udpport" name="udpport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR SERVER.UDPPORT>"
 																					data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_UDPPORT>">
 																				</td>
 																			</tr>

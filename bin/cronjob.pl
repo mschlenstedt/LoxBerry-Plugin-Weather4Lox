@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # cronjob.pl
-# manages cronjob calls and the fetch interval for current and forecast
+# manages cronjob calls and the fetch interval for default and alternate
 # weather data
 
 # Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
@@ -39,7 +39,7 @@ my $version = LoxBerry::System::pluginversion();
 
 my $pcfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $cron = $pcfg->param("SERVER.CRON");
-my $cron_forecast = $pcfg->param("SERVER.CRON_FORECAST");
+my $cron_alternate = $pcfg->param("SERVER.CRON_ALTERNATE");
 
 # Commandline options
 my $verbose = '';
@@ -72,27 +72,26 @@ LOGDEB "This is $0 Version $version";
 my $timestamp = time();
 my $timestamp_minute_round_down = int($timestamp / 60);
 
-# sample may not work
-my $command_opt = "";
+my $command_opt = '';
 
 LOGDEB "$timestamp_minute_round_down / $cron = " . ($timestamp_minute_round_down / $cron);
 if ( $timestamp_minute_round_down % $cron eq 0 ){
-	LOGINF "Fetch interval ($cron) for current weather data reached";
-    $command_opt .= ' --current'
+	LOGINF "Fetch interval ($cron) for weather data reached";
+    $command_opt .= ' --default'
 } else {
-	LOGINF "Fetch interval ($cron) for current weather data NOT reached";
+	LOGINF "Fetch interval ($cron) for weather data NOT reached";
 }
 
-LOGDEB "$timestamp_minute_round_down / $cron_forecast = " . ($timestamp_minute_round_down / $cron_forecast);
-if ( $timestamp_minute_round_down % $cron_forecast eq 0 ){
-	LOGINF "Fetch interval ($cron_forecast) for daily and hourly weather data reached";
-    $command_opt .= ' --daily --hourly'
+LOGDEB "$timestamp_minute_round_down / $cron_alternate = " . ($timestamp_minute_round_down / $cron_alternate);
+if ( $timestamp_minute_round_down % $cron_alternate eq 0 ){
+	LOGINF "Fetch interval ($cron_alternate) for alternate weather data reached";
+    $command_opt .= ' --alternate'
 } else {
-	LOGINF "Fetch interval ($cron_forecast) for daily and hourly weather data NOT reached";
+	LOGINF "Fetch interval ($cron_alternate) for alternate weather data NOT reached";
 }
 
 if ( $command_opt ne "" ){
-	LOGDEB "Fetch data with following command: fetch.pl $command_opt";
+	LOGDEB "Fetch data with following command: $lbpbindir/fetch.pl --cronjob $command_opt";
 	system ("$lbpbindir/fetch.pl --cronjob $command_opt >/dev/null 2>&1");
 	return ("0");
 }
