@@ -251,8 +251,7 @@ if ($R::saveformdata1) {
 	$cfg->save();
 		
 	# Create Cronjob
-	if ($R::getdata eq "1") 
-	{
+	if ($R::getdata eq "1"){
 		system ("ln -s $lbpbindir/cronjob.pl $lbhomedir/system/cron/cron.01min/$lbpplugindir");
 	} else {
 		unlink ("$lbhomedir/system/cron/cron.01min/$lbpplugindir");

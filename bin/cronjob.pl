@@ -38,26 +38,56 @@ my $version = LoxBerry::System::pluginversion();
 my $pcfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $cron = $pcfg->param("SERVER.CRON");
 my $cron_forecast = $pcfg->param("SERVER.CRON_FORECAST");
-my $service = $pcfg->param("SERVER.WEATHERSERVICE");
-my $servicedfc;
-my $servicehfc;
-# check if "Alternative Weather Service for Daily Forecast" is enabled
-if ( $pcfg->param("SERVER.USEALTERNATEDFC") ) {
-	$servicedfc = $pcfg->param("SERVER.WEATHERSERVICEDFC");
-}
-# check if "Alternative Weather Service for Hourly Forecast" is enabled
-if ( $pcfg->param("SERVER.USEALTERNATEHFC") ) {
-	$servicehfc = $pcfg->param("SERVER.WEATHERSERVICEHFC");
+
+# Commandline options
+my $verbose = '';
+
+GetOptions ('verbose' => \$verbose,
+            'quiet'   => sub { $verbose = 0 });
+
+# Create a logging object
+my $log = LoxBerry::Log->new (
+	package => 'weather4lox',
+	name => 'cronjob',
+	logdir => "$lbplogdir",
+	#filename => "$lbplogdir/weather4lox.log",
+	#append => 1,
+);
+
+# Due to a bug in the Logging routine, set the loglevel fix to 3
+#$log->loglevel(3);
+my $verbose_opt;
+if ($verbose) {
+	$log->stdout(1);
+	$log->loglevel(7);
+	$verbose_opt = "-v";
 }
 
+LOGSTART "Weather4Lox CRONJOB process";
+LOGDEB "This is $0 Version $version";
+
+# calculate time
+my $timestamp = time();
+my $timestamp_minute_round_down = int($timestamp / 60);
+
 # sample may not work
-my $command_opt = ""
-if ( $timestamp % ( $cron * 60 ) eq 0 ){
+my $command_opt = "";
+LOGDEB "$timestamp_minute_round_down / $cron = " . ($timestamp_minute_round_down / $cron);
+if ( $timestamp_minute_round_down % $cron eq 0 ){
+	LOGINF "Fetch interval for current weather data reached";
     $command_opt .= ' --current'
+} else {
+	LOGINF "Fetch interval for current weather data NOT reached";
 }
-if ( $timestamp % ( $cron_forecast * 60 ) eq 0 ){
+LOGDEB "$timestamp_minute_round_down / $cron_forecast = " . ($timestamp_minute_round_down / $cron_forecast);
+if ( $timestamp_minute_round_down % $cron_forecast eq 0 ){
+	LOGINF "Fetch interval for daily and hourly weather data reached";
     $command_opt .= ' --daily --hourly'
+} else {
+	LOGINF "Fetch interval for daily and hourly weather data NOT reached";
 }
+
+LOGINF "Fetch data with following arguments: $command_opt";
 
 if ( $command_opt ne "" ){
 
@@ -66,15 +96,10 @@ if ( $command_opt ne "" ){
 
 }
 
+exit;
 
-# TODO:
-# Programmieren, dass jede Abfrage den Einstellungen entspricht. z.B. current alle 5 minuten, hourly alle 15 minuten
-
-## on update delete all old cron links
-#unlink ("$lbhomedir/system/cron/cron.01min/$lbpplugindir");
-#unlink ("$lbhomedir/system/cron/cron.03min/$lbpplugindir");
-#unlink ("$lbhomedir/system/cron/cron.05min/$lbpplugindir");
-#unlink ("$lbhomedir/system/cron/cron.10min/$lbpplugindir");
-#unlink ("$lbhomedir/system/cron/cron.15min/$lbpplugindir");
-#unlink ("$lbhomedir/system/cron/cron.30min/$lbpplugindir");
-#unlink ("$lbhomedir/system/cron/cron.hourly/$lbpplugindir");
+END
+{
+	LOGOK "Done";
+	LOGEND;
+}

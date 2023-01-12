@@ -65,10 +65,10 @@ if ( $cronjob ){
 	if ( $current ){
 		$service_opt .= " --current";
 	}
-	if ( $daily ){
+	if ( $daily && ( ($servicedfc && $servicedfc eq $service) || !$servicedfc ) ){
 		$service_opt .= " --daily";
 	}
-	if ( $hourly ){
+	if ( $hourly && ( ($servicehfc && $servicehfc eq $service) || !$servicehfc ) ){
 		$service_opt .= " --hourly";
 	}
 
@@ -77,10 +77,10 @@ if ( $cronjob ){
 	# Which grabber should grab which weather data?
 	my $service_opt = "--current";
 
-	if (  ($servicedfc && $servicedfc eq $service) || !$servicedfc ) {
+	if ( ($servicedfc && $servicedfc eq $service) || !$servicedfc ) {
 		$service_opt .= " --daily";
 	}
-	if (  ($servicehfc && $servicehfc eq $service) || !$servicehfc ) {
+	if ( ($servicehfc && $servicehfc eq $service) || !$servicehfc ) {
 		$service_opt .= " --hourly";
 	}
 
