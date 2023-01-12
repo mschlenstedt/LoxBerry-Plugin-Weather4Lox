@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 
 # cronjob.pl
-# fetches weather data (current and forecast) from Wunderground
+# manages cronjob calls and the fetch interval for current and forecast
+# weather data
 
 # Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
 #                     mr-manuel, https://github.com/mr-manuel
