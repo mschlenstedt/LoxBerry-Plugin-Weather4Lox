@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # fetch.pl
-# fetches weather data (current and forecast) from weather services
+# fetches weather data (current and forecast) from Weather Services
 
 # Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
 #                     mr-manuel, https://github.com/mr-manuel

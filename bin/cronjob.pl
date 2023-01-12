@@ -72,28 +72,27 @@ my $timestamp_minute_round_down = int($timestamp / 60);
 
 # sample may not work
 my $command_opt = "";
+
 LOGDEB "$timestamp_minute_round_down / $cron = " . ($timestamp_minute_round_down / $cron);
 if ( $timestamp_minute_round_down % $cron eq 0 ){
-	LOGINF "Fetch interval for current weather data reached";
+	LOGINF "Fetch interval ($cron) for current weather data reached";
     $command_opt .= ' --current'
 } else {
-	LOGINF "Fetch interval for current weather data NOT reached";
+	LOGINF "Fetch interval ($cron) for current weather data NOT reached";
 }
+
 LOGDEB "$timestamp_minute_round_down / $cron_forecast = " . ($timestamp_minute_round_down / $cron_forecast);
 if ( $timestamp_minute_round_down % $cron_forecast eq 0 ){
-	LOGINF "Fetch interval for daily and hourly weather data reached";
+	LOGINF "Fetch interval ($cron_forecast) for daily and hourly weather data reached";
     $command_opt .= ' --daily --hourly'
 } else {
-	LOGINF "Fetch interval for daily and hourly weather data NOT reached";
+	LOGINF "Fetch interval ($cron_forecast) for daily and hourly weather data NOT reached";
 }
 
-LOGINF "Fetch data with following arguments: $command_opt";
-
 if ( $command_opt ne "" ){
-
+	LOGDEB "Fetch data with following command: fetch.pl $command_opt";
 	system ("$lbpbindir/fetch.pl --cronjob $command_opt >/dev/null 2>&1");
 	return ("0");
-
 }
 
 exit;
