@@ -4,7 +4,6 @@
 # fetches weather data (current and forecast) from Weather Services
 
 # Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
-#                     mr-manuel, https://github.com/mr-manuel
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

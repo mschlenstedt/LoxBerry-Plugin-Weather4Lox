@@ -26,14 +26,6 @@ iniparser $ARGV5/config/plugins/$ARGV3/weather4lox.cfg "SERVER"
 echo "<INFO> Recreate cronjob for fetching data from Weather Services"
 ln -s $ARGV5/bin/plugins/$ARGV3/cronjob.pl $ARGV5/system/cron/cron.01min/$ARGV3
 
-# remove old cronjob files?
-#ln -s $ARGV5/bin/plugins/$ARGV3/fetch.pl $ARGV5/system/cron/cron.03min/$ARGV3
-#ln -s $ARGV5/bin/plugins/$ARGV3/fetch.pl $ARGV5/system/cron/cron.05min/$ARGV3
-#ln -s $ARGV5/bin/plugins/$ARGV3/fetch.pl $ARGV5/system/cron/cron.10min/$ARGV3
-#ln -s $ARGV5/bin/plugins/$ARGV3/fetch.pl $ARGV5/system/cron/cron.15min/$ARGV3
-#ln -s $ARGV5/bin/plugins/$ARGV3/fetch.pl $ARGV5/system/cron/cron.30min/$ARGV3
-#ln -s $ARGV5/bin/plugins/$ARGV3/fetch.pl $ARGV5/system/cron/cron.hourly/$ARGV3
-
 if [ $SERVEREMU -eq 1 ]; then
 	echo "<INFO> Enabling Cloud Weather Emulator"
         $ARGV5/bin/plugins/$ARGV3/cloudemu enable > /dev/null 2>&1
