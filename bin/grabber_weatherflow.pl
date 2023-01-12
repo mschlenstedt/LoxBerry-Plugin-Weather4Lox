@@ -3,7 +3,7 @@
 # grabber for fetching data from Weatherflow
 # fetches weather data (current and forecast) from Weatherflow
 #
-# Copyright 2016-2018 Michael Schlenstedt, michael@loxberry.de
+# Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
 # Copyright 2020 Martin Barnasconi, nufke@barnasconi.net
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

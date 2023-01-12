@@ -3,7 +3,7 @@
 # grabber for fetching data from DarkSky
 # fetches weather data (current and forecast) from DarkSky
 
-# Copyright 2016-2018 Michael Schlenstedt, michael@loxberry.de
+# Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

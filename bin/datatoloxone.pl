@@ -1,13 +1,13 @@
 #!/usr/bin/perl
 
-# Copyright 2016 Michael Schlenstedt, michael@loxberry.de
+# Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,6 +85,9 @@ open(F,">$lbplogdir/weatherdata.html");
   print F "";
   flock(F,8);
 close(F);
+
+# Current date
+my $datenow = DateTime->now;
 
 # Date Reference: Convert into Loxone Epoche (1.1.2009)
 my $dateref = DateTime->new(
@@ -252,39 +255,39 @@ $name = "cur_uvi";
 $value = @fields[24];
 &send;
 
-$name = "cur_prec_today"; 
+$name = "cur_prec_today";
 if (!$metric) {$value = @fields[25]*0.0393700787} else {$value = @fields[25]};
 &send;
 
-$name = "cur_prec_1hr"; 
+$name = "cur_prec_1hr";
 if (!$metric) {$value = @fields[26]*0.0393700787} else {$value = @fields[26]};
 &send;
 
-$name = "cur_we_icon"; 
+$name = "cur_we_icon";
 $value = @fields[27];
 #&send;
 
-$name = "cur_we_code"; 
+$name = "cur_we_code";
 $value = @fields[28];
 &send;
 
-$name = "cur_we_des"; 
+$name = "cur_we_des";
 $value = @fields[29];
 #&send;
 
-$name = "cur_moon_p"; 
+$name = "cur_moon_p";
 $value = @fields[30];
 &send;
 
-$name = "cur_moon_a"; 
+$name = "cur_moon_a";
 $value = @fields[31];
 &send;
 
-$name = "cur_moon_ph"; 
+$name = "cur_moon_ph";
 $value = @fields[32];
 #&send;
 
-$name = "cur_moon_h"; 
+$name = "cur_moon_h";
 $value = @fields[33];
 #&send;
 
@@ -835,7 +838,7 @@ foreach (@hfcdata){
     if ( $tmpttmax4 < @fields[11] ) { $tmpttmax4 = @fields[11]; }
     if ( $tmppopmin4 > @fields[26] ) { $tmppopmin4 = @fields[26]; }
     if ( $tmppopmax4 < @fields[26] ) { $tmppopmax4 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 8 ) {
     $tmpprec8 = $tmpprec8 + @fields[24] if @fields[24] > 0;
     $tmpsnow8 = $tmpsnow8 + @fields[25] if @fields[25] > 0;
@@ -843,7 +846,7 @@ foreach (@hfcdata){
     if ( $tmpttmax8 < @fields[11] ) { $tmpttmax8 = @fields[11]; }
     if ( $tmppopmin8 > @fields[26] ) { $tmppopmin8 = @fields[26]; }
     if ( $tmppopmax8 < @fields[26] ) { $tmppopmax8 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 16 ) {
     $tmpprec16 = $tmpprec16 + @fields[24] if @fields[24] > 0;
     $tmpsnow16 = $tmpsnow16 + @fields[25] if @fields[25] > 0;
@@ -851,7 +854,7 @@ foreach (@hfcdata){
     if ( $tmpttmax16 < @fields[11] ) { $tmpttmax16 = @fields[11]; }
     if ( $tmppopmin16 > @fields[26] ) { $tmppopmin16 = @fields[26]; }
     if ( $tmppopmax16 < @fields[26] ) { $tmppopmax16 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 24 ) {
     $tmpprec24 = $tmpprec24 + @fields[24] if @fields[24] > 0;
     $tmpsnow24 = $tmpsnow24 + @fields[25] if @fields[25] > 0;
@@ -859,7 +862,7 @@ foreach (@hfcdata){
     if ( $tmpttmax24 < @fields[11] ) { $tmpttmax24 = @fields[11]; }
     if ( $tmppopmin24 > @fields[26] ) { $tmppopmin24 = @fields[26]; }
     if ( $tmppopmax24 < @fields[26] ) { $tmppopmax24 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 32 ) {
     $tmpprec32 = $tmpprec32 + @fields[24] if @fields[24] > 0;
     $tmpsnow32 = $tmpsnow32 + @fields[25] if @fields[25] > 0;
@@ -867,7 +870,7 @@ foreach (@hfcdata){
     if ( $tmpttmax32 < @fields[11] ) { $tmpttmax32 = @fields[11]; }
     if ( $tmppopmin32 > @fields[26] ) { $tmppopmin32 = @fields[26]; }
     if ( $tmppopmax32 < @fields[26] ) { $tmppopmax32 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 40 ) {
     $tmpprec40 = $tmpprec40 + @fields[24] if @fields[24] > 0;
     $tmpsnow40 = $tmpsnow40 + @fields[25] if @fields[25] > 0;
@@ -875,7 +878,7 @@ foreach (@hfcdata){
     if ( $tmpttmax40 < @fields[11] ) { $tmpttmax40 = @fields[11]; }
     if ( $tmppopmin40 > @fields[26] ) { $tmppopmin40 = @fields[26]; }
     if ( $tmppopmax40 < @fields[26] ) { $tmppopmax40 = @fields[26]; }
-  } 
+  }
   if ( @fields[0] <= 48 ) {
     $tmpprec48 = $tmpprec48 + @fields[24] if @fields[24] > 0;
     $tmpsnow48 = $tmpsnow48 + @fields[25] if @fields[25] > 0;
@@ -883,7 +886,7 @@ foreach (@hfcdata){
     if ( $tmpttmax48 < @fields[11] ) { $tmpttmax48 = @fields[11]; }
     if ( $tmppopmin48 > @fields[26] ) { $tmppopmin48 = @fields[26]; }
     if ( $tmppopmax48 < @fields[26] ) { $tmppopmax48 = @fields[26]; }
-  } 
+  }
 
 }
 
@@ -1360,7 +1363,7 @@ LOGOK "Webpages created successfully.";
 #        ^                  ^                          ^                  ^            ^        ^
 #        URL                Port                       MS MAC             Coord        Format   Height
 #
-# The format could be 1 or 2, although Miniserver only seems to use format=1 
+# The format could be 1 or 2, although Miniserver only seems to use format=1
 # (format=2 is xml-output, but with less weather data)
 # The height is the geogr. height of your installation (seems to be used for windspeed etc.). You
 # can give the heights in meter or set this to auto or left blank (=auto).
@@ -1389,41 +1392,51 @@ if ($emu) {
   open(F,">$lbplogdir/index.txt");
     flock(F,2);
     print F "<mb_metadata>\n";
-    print F "id;name;longitude;latitude;height (m.asl.);country;timezone;utc-timedifference;sunrise;sunset;";
+    print F "id;name;longitude;latitude;height (m.asl.);country;timezone;utc-timedifference;sunrise;sunset;\n";
     print F "local date;weekday;local time;temperature(C);feeledTemperature(C);windspeed(km/h);winddirection(degr);wind gust(km/h);low clouds(%);medium clouds(%);high clouds(%);precipitation(mm);probability of Precip(%);snowFraction;sea level pressure(hPa);relative humidity(%);CAPE;picto-code;radiation (W/m2);\n";
-    print F "</mb_metadata><valid_until>2030-12-31</valid_until>\n";
+    print F "</mb_metadata>\n";
+    print F "<valid_until>" . (($datenow->year)+5) . "-12-31</valid_until>\n";
     print F "<station>\n";
     print F ";@fields[5];@fields[9];@fields[8];@fields[10];@fields[6];@fields[2];UTC" . substr (@fields[4], 0, 3) . "." . substr (@fields[4], 3, 2);
-    print F ";@fields[34]:@fields[35];@fields[36]:@fields[37];\n"; 
-    print F $epochdate->dmy('.') . ";";
-    print F $epochdate->day_abbr() . ";";
+    print F ";@fields[34]:@fields[35];@fields[36]:@fields[37];\n";
+    print F $epochdate->dmy('.') . ";\t";
+    print F $epochdate->day_abbr() . ";\t";
     printf ( F "%02d",$epochdate->hour() );
-    print F ";";
-    printf ( F "%5.1f", @fields[11]);
-    print F ";";
-    printf ( F "%5.1f", @fields[12]);
-    print F ";";
-    printf ( F "%3d", @fields[16]);
-    print F ";";
-    printf ( F "%3d", @fields[15]);
-    print F ";";
-    printf ( F "%3d", @fields[17]);
-    print F ";";
-    print F "    0;    0;    0;";
-    printf ( F "%5.1f", @fields[26]);
-    print F ";";
-    print F "  0;0.0;";
-    printf ( F "%4d", @fields[19]);
-    print F ";";
-    printf ( F "%3d", @fields[13]);
-    print F ";";
-    print F "     0;";
+    print F ";\t";
+    printf ( F "%1.2f", @fields[11]);
+    print F ";\t";
+    printf ( F "%1.1f", @fields[12]);
+    print F ";\t";
+    printf ( F "%1d", @fields[16]);
+    print F ";\t";
+    printf ( F "%1d", @fields[15]);
+    print F ";\t";
+    printf ( F "%1d", @fields[17]);
+    print F ";\t";
+    printf ( F "%1d", 0);
+    print F ";\t";
+    printf ( F "%1d", 0);
+    print F ";\t";
+    printf ( F "%1d", 0);
+    print F ";\t";
+    printf ( F "%1d", @fields[26]);
+    print F ";\t";
+    printf ( F "%1d", 0);
+    print F ";\t";
+    printf ( F "%1.1f", 0);
+    print F ";\t";
+    printf ( F "%1d", @fields[19]);
+    print F ";\t";
+    printf ( F "%1d", @fields[13]);
+    print F ";\t";
+    printf ( F "%1d", 0);
+    print F ";\t";
     # Convert WU Weathercode to Lox Weathercode
-    # WU: https://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary 
+    # WU: https://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary
     # Lox: https://www.loxone.com/dede/kb/weather-service/ seems not to be right (anymore),
     # correct Loxone Weather Types are:
     #  1 - wolkenlos
-    #  2 - heiter 
+    #  2 - heiter
     #  3 - heiter
     #  4 - heiter
     #  5 - heiter
@@ -1501,9 +1514,9 @@ if ($emu) {
     } else {
       $loxweathercode = @fields[28];
     }
-    printf ( F "%2d", $loxweathercode);
-    print F ";";
-    printf ( F "%4d", @fields[22]);
+    printf ( F "%1d", $loxweathercode);
+    print F ";\t";
+    printf ( F "%1.2f", @fields[22]);
     print F ";\n";
   flock(F,8);
   close(F);
@@ -1543,42 +1556,44 @@ if ($emu) {
       );
 
       # "local date;weekday;local time;temperature(C);feeledTemperature(C);windspeed(km/h);winddirection(degr);wind gust(km/h);low clouds(%);medium clouds(%);high clouds(%);precipitation(mm);probability of Precip(%);snowFraction;sea level pressure(hPa);relative humidity(%);CAPE;picto-code;radiation (W/m2);\n";
-      print F $hfcdate->dmy('.') . ";";
-      print F $hfcdate->day_abbr() . ";";
+      print F $hfcdate->dmy('.') . ";\t";
+      print F $hfcdate->day_abbr() . ";\t";
       printf ( F "%02d",$hfcdate->hour() );
-      print F ";";
-      printf ( F "%5.1f", @fields[11]);
-      print F ";";
-      printf ( F "%5.1f", @fields[12]);
-      print F ";";
-      printf ( F "%3d", @fields[17]);
-      print F ";";
-      printf ( F "%3d", @fields[16]);
-      print F ";";
-      printf ( F "%3d", @fields[17]);
-      print F ";";
-      printf ( F "%3d", @fields[21]);
-      print F ";";
-      printf ( F "%3d", @fields[21]);
-      print F ";";
-      printf ( F "%3d", @fields[21]);
-      print F ";";
-      printf ( F "%5.1f", @fields[24]);
-      print F ";";
-      printf ( F "%3d", @fields[26]);
-      print F ";";
-      print F "0.0;";
-      printf ( F "%4d", @fields[19]);
-      print F ";";
-      printf ( F "%3d", @fields[14]);
-      print F ";";
-      print F "     0;";
+      print F ";\t";
+      printf ( F "%1.2f", @fields[11]);
+      print F ";\t";
+      printf ( F "%1.2f", @fields[12]);
+      print F ";\t";
+      printf ( F "%1d", @fields[17]);
+      print F ";\t";
+      printf ( F "%1d", @fields[16]);
+      print F ";\t";
+      printf ( F "%1d", @fields[17]);
+      print F ";\t";
+      printf ( F "%1d", @fields[21]);
+      print F ";\t";
+      printf ( F "%1d", @fields[21]);
+      print F ";\t";
+      printf ( F "%1d", @fields[21]);
+      print F ";\t";
+      printf ( F "%1d", @fields[24]);
+      print F ";\t";
+      printf ( F "%1d", @fields[26]);
+      print F ";\t";
+      printf ( F "%1.1f", 0);
+      print F ";\t";
+      printf ( F "%1d", @fields[19]);
+      print F ";\t";
+      printf ( F "%1d", @fields[14]);
+      print F ";\t";
+      printf ( F "%1d", 0);
+      print F ";\t";
       # Convert WU Weathercode to Lox Weathercode
-      # WU: https://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary 
+      # WU: https://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary
       # Lox: https://www.loxone.com/dede/kb/weather-service/ seems not to be right (anymore),
       # correct Loxone Weather Types are:
       #  1 - wolkenlos
-      #  2 - heiter 
+      #  2 - heiter
       #  3 - heiter
       #  4 - heiter
       #  5 - heiter
@@ -1656,9 +1671,9 @@ if ($emu) {
       } else {
         $loxweathercode = @fields[27];
       }
-      printf ( F "%2d", $loxweathercode);
-      print F ";";
-      printf ( F "%4d", @fields[31]);
+      printf ( F "%1d", $loxweathercode);
+      print F ";\t";
+      printf ( F "%1.2f", @fields[31]);
       print F ";\n";
 
       $i++;
@@ -1693,7 +1708,7 @@ sub send {
 	# Send by UDP
 	my $msno = defined $pcfg->param("SERVER.MSNO") ? $pcfg->param("SERVER.MSNO") : 1;
 	my %miniservers = LoxBerry::System::get_miniservers();
-	
+
 	#if ($miniservers{1}{IPAddress} ne "" && $sendudp) {
 	if ($sendudp) {
 		$tmpudp .= "$name\@$value; ";
@@ -1726,4 +1741,3 @@ END
 {
 	LOGEND;
 }
-
