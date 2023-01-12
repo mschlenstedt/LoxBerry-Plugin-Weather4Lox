@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # fetch.pl
-# fetches weather data (default and alternate) from Weather Services
+# fetches weather data (current and forecast) from Weather Services
 
 # Copyright 2016-2023 Michael Schlenstedt, michael@loxberry.de
 #
@@ -47,10 +47,10 @@ if ( $pcfg->param("SERVER.USEALTERNATEHFC") ) {
 }
 
 # Commandline options
-my $verbose;
-my $cronjob;
-my $default;
-my $alternate;
+my $verbose = '';
+my $cronjob = '';
+my $default = '';
+my $alternate = '';
 
 GetOptions ('verbose' => \$verbose,
             'quiet'   => sub { $verbose = 0 },
