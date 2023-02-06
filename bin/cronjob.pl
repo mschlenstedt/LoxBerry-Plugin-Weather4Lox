@@ -92,8 +92,7 @@ if ( $timestamp_minute_round_down % $cron_alternate eq 0 ){
 
 if ( $command_opt ne "" ){
 	LOGDEB "Fetch data with following command: $lbpbindir/fetch.pl --cronjob $command_opt";
-	system ("$lbpbindir/fetch.pl --cronjob $command_opt >/dev/null 2>&1");
-	return ("0");
+	system ("$lbpbindir/fetch.pl --cronjob $command_opt");
 }
 
 exit;

@@ -28,7 +28,7 @@ use warnings;
 use LoxBerry::System;
 use LoxBerry::Log;
 use LWP::UserAgent;
-use JSON qw( decode_json ); 
+use JSON qw( decode_json );
 use File::Copy;
 use Getopt::Long;
 use Time::Piece;
@@ -171,7 +171,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
-	print F "$forecast_json->{current_conditions}->{time}|"; # Date Epoche 
+	print F "$forecast_json->{current_conditions}->{time}|"; # Date Epoche
 	print F $t, " ", sprintf("+%04d", $forecast_json->{timezone_offset_minutes}/60 * 100), "|"; # Date RFC822
 	my $tz_short = qx(TZ='$forecast_json->{timezone}' date +%Z);
 	chomp ($tz_short);
@@ -261,7 +261,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|"; # Moon: Age of Moon (not available in Weatherflow API)
 	print F "-9999|"; # Moon: Phase of Moon (not available in Weatherflow API)
 	print F "-9999|"; # Moon: Hemisphere (not available in Weatherflow API)
-	$t = localtime($forecast_json->{forecast}->{daily}->[0]->{sunrise}); 
+	$t = localtime($forecast_json->{forecast}->{daily}->[0]->{sunrise});
 	print F sprintf("%02d", $t->hour), "|"; # Sunrise
 	print F sprintf("%02d", $t->min), "|";
 	$t = localtime($forecast_json->{forecast}->{daily}->[0]->{sunset});
@@ -308,7 +308,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		$i++;
 		print F $results->{day_start_local}, "|"; # Date Epoche
 		$t = localtime($results->{day_start_local});
-		print F sprintf("%02d", $t->mday), "|"; # Date: Day 
+		print F sprintf("%02d", $t->mday), "|"; # Date: Day
 		print F sprintf("%02d", $t->mon), "|"; # Date: Month
 		my @month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH'}) );
 		$t->mon_list(@month);
@@ -360,7 +360,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		elsif ($weather eq "windy") {$weather = "22"; $icon="wind"}
 		else {$weather = "0";}
 		print F "$icon|"; # Weather4Lox Weather Icon name
-		print F "$weather|"; # Weather4Lox Weather Code 
+		print F "$weather|"; # Weather4Lox Weather Code
 		print F "$results->{conditions}|"; # Weather Description
 		print F "-9999|"; # Density of atmospheric ozone (not available in Weatherflow API)
 		print F "-9999|"; # Moon: precent Illuminated (not available in Weatherflow API)
@@ -368,7 +368,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "-9999|"; # Pressure (not available in Weatherflow API)
 		print F "-9999|"; #UV Index (not available in Weatherflow API)
 		$t = localtime($results->{sunrise}); # Sunrise
-		print F sprintf("%02d", $t->hour), "|"; 
+		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
 		$t = localtime($results->{sunset}); # Sunset
 		print F sprintf("%02d", $t->hour), "|";
@@ -434,7 +434,7 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F sprintf("%.1f",$results->{feels_like}), "|"; # Feelslike Temperature
 		print F "-9999|"; # Heat Index (not available in Weatherflow API)
 		print F $results->{relative_humidity}, "|"; # Humidity
-		$wdir = $results->{wind_direction}; 
+		$wdir = $results->{wind_direction};
 		if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
 		if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
 		if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
@@ -455,7 +455,7 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$results->{uv}|"; # UV Index
 		print F $results->{precip}, "|";  # Quant. Precipitation FC in mm
 		print F "-9999|"; # Snow Forecast (not available in Weatherflow API)
-		print F $results->{precip_probability}, "|"; 
+		print F $results->{precip_probability}, "|";
 		$weather = $results->{icon};
 		$weather =~ s/\-night|\-day//; # No -night and -day
 		$weather =~ s/\-//; # No -
@@ -610,4 +610,3 @@ END
 {
 	LOGEND;
 }
-

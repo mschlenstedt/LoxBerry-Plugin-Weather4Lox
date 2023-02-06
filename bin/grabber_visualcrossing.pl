@@ -115,7 +115,7 @@ my $wdirdes;
 my $moonphase;
 my @filecontent;
 my $i;
-my $currentepoche;
+my $currentepoche = 0;
 
 #
 # Fetch current data

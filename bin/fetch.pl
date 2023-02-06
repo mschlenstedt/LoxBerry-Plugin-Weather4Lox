@@ -63,8 +63,8 @@ my $log = LoxBerry::Log->new (
 	package => 'weather4lox',
 	name => 'fetch',
 	logdir => "$lbplogdir",
-	#filename => "$lbplogdir/weather4lox.log",
-	#append => 1,
+	filename => "$lbplogdir/weather4lox.log",
+	append => 1,
 );
 
 # Due to a bug in the Logging routine, set the loglevel fix to 3
@@ -186,4 +186,3 @@ END
 	LOGOK "Done";
 	LOGEND;
 }
-
