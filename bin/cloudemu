@@ -33,7 +33,7 @@ PING=`ping -c1 $OWNIP`
 if [ $? -ne 0 ]; then
 	echo "Cannot reach my own IP address $OWNIP. Giving up."
 	exit 1
-fi		
+fi
 
 # Check for DNSMasq Plugin
 CHECKDNSMASQ=`cat $LBSDATA/plugindatabase.dat | grep -c -i DNSmasq`
@@ -48,8 +48,8 @@ case "$1" in
 		echo "My own IP is $OWNIP. Redirecting weather.loxone.com to $OWNIP."
 		touch /etc/dnsmasq.d/$pluginname.conf > /dev/null 2>&1
 		echo "Enabling DNSMasq Configuration for WU4Lox"
-		echo "address=/weather.loxone.com/$OWNIP" > /etc/dnsmasq.d/$pluginname.conf 
-		echo "address=/weather-beta.loxone.com/$OWNIP" >> /etc/dnsmasq.d/$pluginname.conf 
+		echo "address=/weather.loxone.com/$OWNIP" > /etc/dnsmasq.d/$pluginname.conf
+		echo "address=/weather-beta.loxone.com/$OWNIP" >> /etc/dnsmasq.d/$pluginname.conf
 		service dnsmasq restart > /dev/null 2>&1
 	fi
 	# Enable Apache Config

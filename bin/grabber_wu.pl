@@ -27,7 +27,7 @@ use warnings;
 use LoxBerry::System;
 use LoxBerry::Log;
 use LWP::UserAgent;
-use JSON qw( decode_json ); 
+use JSON qw( decode_json );
 use File::Copy;
 use Getopt::Long;
 use Time::Piece;
@@ -50,7 +50,7 @@ my $currentname    	= "$lbplogdir/current.dat";
 my %L = LoxBerry::System::readlanguage("language.ini");
 
 # Create a logging object
-my $log = LoxBerry::Log->new ( 	
+my $log = LoxBerry::Log->new (
 	package => 'weather4lox',
 	name => 'grabber_wu',
 	logdir => "$lbplogdir",
@@ -221,7 +221,7 @@ eval {
 	#binmode $fh, ':encoding(UTF-8)';
 	print $fh $newline;
 	close $fh;
-} 
+}
 or do {
     LOGCRIT "Could not write $currentnametmp: $@";
 	exit 2;

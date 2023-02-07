@@ -28,7 +28,7 @@ use LoxBerry::System;
 use LoxBerry::Log;
 use LoxBerry::IO;
 #use LWP::UserAgent;
-#use JSON qw( decode_json ); 
+#use JSON qw( decode_json );
 use File::Copy;
 use Getopt::Long;
 use Time::Piece;
@@ -172,7 +172,7 @@ eval {
 	#binmode $fh, ':encoding(UTF-8)';
 	print $fh $newline;
 	close $fh;
-} 
+}
 or do {
     LOGCRIT "Could not write $currentnametmp: $@";
 	exit 2;

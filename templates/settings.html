@@ -1,13 +1,24 @@
+									<style>
+										td {
+											vertical-align: middle;
+										}
+										label {
+											margin: 0 10px 0 0 !important;
+										}
+										.ui-input-text {
+											margin: 0 !important;
+										}
+									</style>
 <TMPL_IF FORM1>
 									<center>
-											<br>
+										<br>
 									</center>
 									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=1">
 										<input type="hidden" name="saveformdata1" value="1">
 											<div class="form-group">
 												<table class="formtable" border="0" width="100%" cellpadding="10">
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
+														<td colspan=3 width="75%">
 															<h2><TMPL_VAR SETTINGS.LABEL_SERVER_SETTINGS></h2>
 														</td>
 														<td align="right">
@@ -21,7 +32,7 @@
 														<td width="50%">
 															<a id="fetch" data-role="button" style="background-color: rgba(67, 236, 48, 0.4);" data-mini="true" href="javascript:fetchweather()"><TMPL_VAR SETTINGS.BUTTON_FETCH></a>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -31,13 +42,18 @@
 														</td>
 													</tr>
 													<tr>
+														<td colspan="4">
+															<hr>
+														</td>
+													</tr>
+													<tr>
 														<td width="25%">
 															<label id="labelweatherservice"><TMPL_VAR SETTINGS.LABEL_WEATHERSERVICE></label>
 														</td>
 														<td width="50%">
 															<TMPL_VAR WEATHERSERVICE>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -46,17 +62,41 @@
 													</tr>
 													<tr>
 														<td width="25%">
+															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
+														</td>
+														<td width="50%">
+															<table border="0" width="100%">
+																<tr>
+																	<td><fieldset><TMPL_VAR GETDATA></fieldset></td>
+																	<td width="100%"><TMPL_VAR CRON></td>
+																 </tr>
+															</table>
+														</td>
+														<td width="5%">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan="4">
+															<hr>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
 															<label id="labelusealternatedfc"><TMPL_VAR SETTINGS.LABEL_USEALTERNATEDFC></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-																			<td><TMPL_VAR USEALTERNATEDFC></td>
-																			<td width="100%"><TMPL_VAR WEATHERSERVICEDFC></td>
-															</tr>
+															<table border="0" width="100%">
+																<tr>
+																	<td><TMPL_VAR USEALTERNATEDFC></td>
+																	<td width="100%"><TMPL_VAR WEATHERSERVICEDFC></td>
+																</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -68,18 +108,37 @@
 															<label id="labelusealternatehfc"><TMPL_VAR SETTINGS.LABEL_USEALTERNATEHFC></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-																			<td><TMPL_VAR USEALTERNATEHFC></td>
-																			<td width="100%"><TMPL_VAR WEATHERSERVICEHFC></td>
-															</tr>
+															<table border="0" width="100%">
+																<tr>
+																	<td><TMPL_VAR USEALTERNATEHFC></td>
+																	<td width="100%"><TMPL_VAR WEATHERSERVICEHFC></td>
+																</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
 															<font size="-1"><TMPL_VAR SETTINGS.HINT_USEALTERNATEHFC></font>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA_ALTERNATE></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR CRON_ALTERNATE>
+														</td>
+														<td width="5%">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan="4">
+															<hr>
 														</td>
 													</tr>
 													<tr>
@@ -89,36 +148,11 @@
 														<td width="50%">
 															<TMPL_VAR METRIC>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
 															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
-														</td>
-														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td width="20%">
-															<fieldset>
-															<TMPL_VAR GETDATA>
-															</fieldset>
-															</td>
-															<td>
-															<TMPL_VAR CRON>
-															</td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%" valign="middle">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
 														</td>
 													</tr>
 													<tr>
@@ -126,17 +160,16 @@
 															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_WUGRABBER></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-																			<td><TMPL_VAR WUGRABBER></td>
-																			<td width="20%" align="right"><label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label></td>
-																			<td width="80%"><input id="wustationid" name="wustationid" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
-																			<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font></td>
-															</tr>
+															<table border="0" width="100%">
+																<tr>
+																	<td><TMPL_VAR WUGRABBER></td>
+																	<td width="20%" align="right"><label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label></td>
+																	<td width="80%"><input id="wustationid" name="wustationid" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
+																	<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font></td>
+																</tr>
 															</table>
 														</td>
-														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -148,18 +181,18 @@
 															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_FOSHKGRABBER></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
+															<table border="0" width="100%">
 															<tr>
-																			<td><TMPL_VAR FOSHKGRABBER></td>
-																			<td width="10%" align="right"><label id="labelfoshkserver" style="margin-top:15px"><TMPL_VAR SETTINGS.LABEL_FOSHKSERVER></label></td>
-																			<td width="40%"><input id="foshkserver" name="foshkserver" type="text" data-validation-rule="special:hostname_or_ipaddr" class="textfield" value="<TMPL_VAR FOSHK.SERVER>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKSERVER>"></td>
-																			<td width="10%" align="right"><label id="labelfoshkport" style="margin-top:15px"><TMPL_VAR SETTINGS.LABEL_FOSHKPORT></label></td>
-																			<td width="40%"><input id="foshkport" name="foshkport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR FOSHK.PORT>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKPORT>">
-																			</td>
+																<td><TMPL_VAR FOSHKGRABBER></td>
+																<td width="10%" align="right"><label id="labelfoshkserver" style="margin-top:15px"><TMPL_VAR SETTINGS.LABEL_FOSHKSERVER></label></td>
+																<td width="40%"><input id="foshkserver" name="foshkserver" type="text" data-validation-rule="special:hostname_or_ipaddr" class="textfield" value="<TMPL_VAR FOSHK.SERVER>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKSERVER>"></td>
+																<td width="10%" align="right"><label id="labelfoshkport" style="margin-top:15px"><TMPL_VAR SETTINGS.LABEL_FOSHKPORT></label></td>
+																<td width="40%"><input id="foshkport" name="foshkport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR FOSHK.PORT>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKPORT>">
+																</td>
 															</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -174,7 +207,7 @@
 															<TMPL_VAR PWSCATCHUPLOADGRABBER>
 														</td>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -188,7 +221,7 @@
 														<td width="50%">
 															<TMPL_VAR LOXGRABBER>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -196,7 +229,7 @@
 														</td>
 													</tr>
 													<tr>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -208,7 +241,7 @@
 														</td>
 													</tr>
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
+														<td colspan=3 width="75%">
 															<h2><TMPL_VAR SETTINGS.LABEL_DARKSKY_SETTINGS></h2>
 														</td>
 														<td align="right">
@@ -220,10 +253,10 @@
 															<label id="labeldarkskyapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="darkskyapikey" name="darkskyapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR DARKSKY.APIKEY>" 
+																<input id="darkskyapikey" name="darkskyapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR DARKSKY.APIKEY>"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -231,40 +264,39 @@
 														</td>
 													</tr>
 													<tr>
-														<td width="25%" valign="top">
-															<br><label id="labeldarkskycoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														<td width="25%">
+															<label id="labeldarkskycoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
+															<table border="0" width="100%">
 															<tr>
-															<td>
-															<label id="labeldarkskycoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-															</td>
-															<td>
-															<input id="darkskycoordlat" name="darkskycoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR DARKSKY.COORDLAT>" 
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-															</td>
-															<td>
-															<label id="labeldarkskycoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-															</td>
-															<td>
-															<input id="darkskycoordlong" name="darkskycoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR DARKSKY.COORDLONG>" 
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-															</td>
+																<td align="right">
+																	<label id="labeldarkskycoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+																</td>
+																<td>
+																	<input id="darkskycoordlat" name="darkskycoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR DARKSKY.COORDLAT>"
+																		data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+																</td>
+																<td align="right">
+																	<label id="labeldarkskycoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+																</td>
+																<td>
+																<input id="darkskycoordlong" name="darkskycoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR DARKSKY.COORDLONG>"
+																	data-validation-optional="true"
+																	data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+																</td>
 															</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
 															<a id="darkskycoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-															data-role="button" id="btndarkskyaddresssearch" data-inline="true" data-mini="true"
-															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=darksky',
-															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+																onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=darksky',
+																'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+																<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
 															</a>
 														</td>
 													</tr>
@@ -275,7 +307,7 @@
 														<td width="50%">
 															<TMPL_VAR DARKSKYLANG>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -289,7 +321,7 @@
 														<td width="50%">
 															<input id="darkskycity" name="darkskycity" type="text" class="textfield" value="<TMPL_VAR DARKSKY.STATION>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -303,7 +335,7 @@
 														<td width="50%">
 															<input id="darkskycountry" name="darkskycountry" type="text" class="textfield" value="<TMPL_VAR DARKSKY.COUNTRY>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -316,7 +348,7 @@
 														</td>
 													</tr>
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
+														<td colspan=3 width="75%">
 															<h2><TMPL_VAR SETTINGS.LABEL_OPENWEATHER_SETTINGS></h2>
 														</td>
 														<td align="right">
@@ -330,7 +362,7 @@
 														<td width="50%">
 																<input id="openweatherapikey" name="openweatherapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR OPENWEATHER.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -338,40 +370,39 @@
 														</td>
 													</tr>
 													<tr>
-														<td width="25%" valign="top">
-															<br><label id="labelopenweathercoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														<td width="25%">
+															<label id="labelopenweathercoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
+															<table border="0" width="100%">
 															<tr>
-															<td>
-															<label id="labelopenweathercoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-															</td>
-															<td>
-															<input id="openweathercoordlat" name="openweathercoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLAT>" 
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-															</td>
-															<td>
-															<label id="labelopenweathercoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-															</td>
-															<td>
-															<input id="openweathercoordlong" name="openweathercoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLONG>"
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-															</td>
+																<td align="right">
+																	<label id="labelopenweathercoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+																</td>
+																<td>
+																	<input id="openweathercoordlat" name="openweathercoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLAT>"
+																		data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+																</td>
+																<td align="right">
+																	<label id="labelopenweathercoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+																</td>
+																<td>
+																	<input id="openweathercoordlong" name="openweathercoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLONG>"
+																		data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+																</td>
 															</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
 															<a id="openweathercoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-															data-role="button" id="btnopenweatheraddresssearch" data-inline="true" data-mini="true"
-															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=openweather',
-															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+																onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=openweather',
+																'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+																<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
 															</a>
 														</td>
 													</tr>
@@ -382,7 +413,7 @@
 														<td width="50%">
 															<TMPL_VAR OPENWEATHERLANG>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -396,7 +427,7 @@
 														<td width="50%">
 															<input id="openweathercity" name="openweathercity" type="text" class="textfield" value="<TMPL_VAR OPENWEATHER.STATION>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -410,7 +441,7 @@
 														<td width="50%">
 															<input id="openweathercountry" name="openweathercountry" type="text" class="textfield" value="<TMPL_VAR OPENWEATHER.COUNTRY>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -423,7 +454,7 @@
 														</td>
 													</tr>
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
+														<td colspan=3 width="75%">
 															<h2><TMPL_VAR SETTINGS.LABEL_VISUALCROSSING_SETTINGS></h2>
 														</td>
 														<td align="right">
@@ -435,9 +466,9 @@
 															<label id="labelvisualcrossingapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="visualcrossingapikey" name="visualcrossingapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR VISUALCROSSING.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
+															<input id="visualcrossingapikey" name="visualcrossingapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR VISUALCROSSING.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -445,40 +476,39 @@
 														</td>
 													</tr>
 													<tr>
-														<td width="25%" valign="top">
-															<br><label id="labelvisualcrossingcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														<td width="25%">
+															<label id="labelvisualcrossingcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
+															<table border="0" width="100%">
 															<tr>
-															<td>
-															<label id="labelvisualcrossingcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-															</td>
-															<td>
-															<input id="visualcrossingcoordlat" name="visualcrossingcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLAT>" 
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-															</td>
-															<td>
-															<label id="labelvisualcrossingcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-															</td>
-															<td>
-															<input id="visualcrossingcoordlong" name="visualcrossingcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLONG>"
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-															</td>
+																<td align="right">
+																	<label id="labelvisualcrossingcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+																</td>
+																<td>
+																	<input id="visualcrossingcoordlat" name="visualcrossingcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLAT>"
+																		data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+																</td>
+																<td align="right">
+																	<label id="labelvisualcrossingcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+																</td>
+																<td>
+																	<input id="visualcrossingcoordlong" name="visualcrossingcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLONG>"
+																		data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+																</td>
 															</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
 															<a id="visualcrossingcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-															data-role="button" id="btnvisualcrossingaddresssearch" data-inline="true" data-mini="true"
-															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=visualcrossing',
-															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+																onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=visualcrossing',
+																'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+																<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
 															</a>
 														</td>
 													</tr>
@@ -489,7 +519,7 @@
 														<td width="50%">
 															<TMPL_VAR VISUALCROSSINGLANG>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -503,7 +533,7 @@
 														<td width="50%">
 															<input id="visualcrossingcity" name="visualcrossingcity" type="text" class="textfield" value="<TMPL_VAR VISUALCROSSING.STATION>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -517,7 +547,7 @@
 														<td width="50%">
 															<input id="visualcrossingcountry" name="visualcrossingcountry" type="text" class="textfield" value="<TMPL_VAR VISUALCROSSING.COUNTRY>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -530,7 +560,7 @@
 														</td>
 													</tr>
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
+														<td colspan=3 width="75%">
 															<h2><TMPL_VAR SETTINGS.LABEL_WEATHERBIT_SETTINGS></h2>
 														</td>
 														<td align="right">
@@ -542,10 +572,10 @@
 															<label id="labelweatherbitapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="weatherbitapikey" name="weatherbitapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WEATHERBIT.APIKEY>" data-validation-optional="true" 
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
+															<input id="weatherbitapikey" name="weatherbitapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WEATHERBIT.APIKEY>" data-validation-optional="true"
+															data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -553,40 +583,39 @@
 														</td>
 													</tr>
 													<tr>
-														<td width="25%" valign="top">
-															<br><label id="labelweatherbitcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+														<td width="25%">
+															<label id="labelweatherbitcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
+															<table border="0" width="100%">
 															<tr>
-															<td>
-															<label id="labelweatherbitcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-															</td>
-															<td>
-															<input id="weatherbitcoordlat" name="weatherbitcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLAT>" 
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-															</td>
-															<td>
-															<label id="labelweatherbitcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-															</td>
-															<td>
-															<input id="weatherbitcoordlong" name="weatherbitcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLONG>"
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-															</td>
+																<td align="right">
+																	<label id="labelweatherbitcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+																</td>
+																<td>
+																	<input id="weatherbitcoordlat" name="weatherbitcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLAT>"
+																		data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+																</td>
+																<td align="right">
+																	<label id="labelweatherbitcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+																</td>
+																<td>
+																	<input id="weatherbitcoordlong" name="weatherbitcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR WEATHERBIT.COORDLONG>"
+																		data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+																</td>
 															</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
 															<a id="weatherbitcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-															data-role="button" id="btnweatherbitaddresssearch" data-inline="true" data-mini="true"
-															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=weatherbit',
-															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+																onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=weatherbit',
+																'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+																<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
 															</a>
 														</td>
 													</tr>
@@ -597,7 +626,7 @@
 														<td width="50%">
 															<TMPL_VAR WEATHERBITLANG>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -613,7 +642,7 @@
 															<!-- Only for compatibility to address search -->
 															<input type="hidden" id="weatherbitcity" name="weatherbitcity" class="textfield" value="">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -626,7 +655,7 @@
 														</td>
 													</tr>
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
+														<td colspan=3 width="75%">
 															<h2><TMPL_VAR SETTINGS.LABEL_WEATHERFLOW_SETTINGS></h2>
 														</td>
 														<td align="right">
@@ -638,9 +667,9 @@
 															<label id="labelweatherflowapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="weatherflowapikey" name="weatherflowapikey" type="text" data-validation-rule="^([A-Za-z0-9\-]){36}$" class="textfield" value="<TMPL_VAR WEATHERFLOW.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
+															<input id="weatherflowapikey" name="weatherflowapikey" type="text" data-validation-rule="^([A-Za-z0-9\-]){36}$" class="textfield" value="<TMPL_VAR WEATHERFLOW.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -652,36 +681,35 @@
 															<br><label id="labelweatherflowcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
+															<table border="0" width="100%">
 															<tr>
-															<td>
-															<label id="labelweatherflowcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-															</td>
-															<td>
-															<input id="weatherflowcoordlat" name="weatherflowcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERFLOW.COORDLAT>" 
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-															</td>
-															<td>
-															<label id="labelweatherflowcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-															</td>
-															<td>
-															<input id="weatherflowcoordlong" name="weatherflowcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR WEATHERFLOW.COORDLONG>"
-																data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-															</td>
+																<td align="right">
+																	<label id="labelweatherflowcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+																</td>
+																<td>
+																	<input id="weatherflowcoordlat" name="weatherflowcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR WEATHERFLOW.COORDLAT>"
+																		data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+																</td>
+																<td>
+																	<label id="labelweatherflowcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+																</td>
+																<td align="right">
+																	<input id="weatherflowcoordlong" name="weatherflowcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR WEATHERFLOW.COORDLONG>"
+																		data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+																</td>
 															</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
 															<a id="weatherflowcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-															data-role="button" id="btnweatherflowaddresssearch" data-inline="true" data-mini="true"
-															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=weatherflow',
-															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+																onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=weatherflow',
+																'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+																<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
 															</a>
 														</td>
 													</tr>-->
@@ -692,7 +720,7 @@
 														<td width="50%">
 															<TMPL_VAR WEATHERFLOWLANG>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -706,7 +734,7 @@
 														<td width="50%">
 															<input id="weatherflowcity" name="weatherflowcity" type="text" class="textfield" value="<TMPL_VAR WEATHERFLOW.CITY>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -720,7 +748,7 @@
 														<td width="50%">
 															<input id="weatherflowcountry" name="weatherflowcountry" type="text" class="textfield" value="<TMPL_VAR WEATHERFLOW.COUNTRY>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -733,9 +761,9 @@
 															<label id="labelweatherflowstationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
 														</td>
 														<td width="50%">
-																<input id="weatherflowstationid" name="weatherflowstationid" type="text" data-validation-rule="special:number" class="textfield" value="<TMPL_VAR WEATHERFLOW.STATIONID>"  data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>" data-validation-optional="true" >
+															<input id="weatherflowstationid" name="weatherflowstationid" type="text" data-validation-rule="special:number" class="textfield" value="<TMPL_VAR WEATHERFLOW.STATIONID>"  data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>" data-validation-optional="true" >
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -744,7 +772,7 @@
 													</tr>
 													<!--
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
+														<td colspan=3 width="75%">
 															<h2><TMPL_VAR SETTINGS.LABEL_WU_SETTINGS></h2>
 														</td>
 														<td align="right">
@@ -756,10 +784,10 @@
 															<label id="labelwuapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
 														</td>
 														<td width="50%">
-																<input id="wuapikey" name="wuapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.APIKEY>" 
+																<input id="wuapikey" name="wuapikey" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.APIKEY>"
 																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -775,7 +803,7 @@
 															<TMPL_VAR WUSTATIONTYP>
 															</fieldset>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -787,11 +815,11 @@
 															<label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
 														</td>
 														<td width="50%">
-																<input id="wustationid" name="wustationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" 
-																data-validation-allowing=":,." data-validation-optional="true" 
+																<input id="wustationid" name="wustationid" type="text" data-validation="alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>"
+																data-validation-allowing=":,." data-validation-optional="true"
                 data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -803,38 +831,37 @@
 															<br><label id="labelwucoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
+															<table border="0" width="100%">
 															<tr>
-															<td>
-															<label id="labelwucoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-															</td>
-															<td>
-															<input id="wucoordlat" name="wucoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLAT>" 
-																data-validation-allowing="range[-90;90],float" data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-															</td>
-															<td>
-															<label id="labelwucoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-															</td>
-															<td>
-															<input id="wucoordlong" name="wucoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLONG>" 
-																data-validation-allowing="range[-180;180],float" data-validation-optional="true"
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-															</td>
+																<td align="right">
+																	<label id="labelwucoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+																</td>
+																<td>
+																	<input id="wucoordlat" name="wucoordlat" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLAT>"
+																		data-validation-allowing="range[-90;90],float" data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+																</td>
+																<td align="right">
+																	<label id="labelwucoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+																</td>
+																<td>
+																	<input id="wucoordlong" name="wucoordlong" type="text" data-validation="number" class="textfield" value="<TMPL_VAR WUNDERGROUND.COORDLONG>"
+																		data-validation-allowing="range[-180;180],float" data-validation-optional="true"
+																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+																</td>
 															</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
 															<a id="wucoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-															data-role="button" id="btnwuaddresssearch" data-inline="true" data-mini="true"
-															onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=wu',
-															'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-															<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
-															<input id="wucity" name="wucity" type="hidden" value="">
-															<input id="wucountry" name="wucountry" type="hidden" value="">
+																onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=wu',
+																'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+																<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+																<input id="wucity" name="wucity" type="hidden" value="">
+																<input id="wucountry" name="wucountry" type="hidden" value="">
 															</a>
 														</td>
 													</tr>
@@ -845,7 +872,7 @@
 														<td width="50%">
 															<TMPL_VAR WULANG>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -895,6 +922,7 @@
 
 									// Add some attributes PERL::CGI doesn't provide
 									$('select[name=getdata]').attr('data-role','flipswitch');
+									$('select[name=getdata_forecast]').attr('data-role','flipswitch');
 									$('select[name=loxgrabber]').attr('data-role','flipswitch');
 									$('select[name=wugrabber]').attr('data-role','flipswitch');
 									$('select[name=foshkgrabber]').attr('data-role','flipswitch');
@@ -914,7 +942,9 @@
 									$('select[name=metric]').attr('data-mini','true');
 									//$('select[name=metric]').attr('data-native-menu','false');
 									$('select[name=cron]').attr('data-mini','true');
+									$('select[name=cron_alternate]').attr('data-mini','true');
 									//$('select[name=cron]').attr('data-native-menu','false');
+									//$('select[name=cron_alternate]').attr('data-native-menu','false');
 
 									// Get Data
 									$( document ).on( 'change', '#getdata', function ( e ) {
@@ -926,6 +956,19 @@
 											//alert("Aus!");
 											$('#cron').addClass('ui-disabled');
 											$('#cron').selectmenu('refresh');
+										}
+									});
+
+									// Get Data
+									$( document ).on( 'change', '#getdata_forecast', function ( e ) {
+										if ( $( "select[name=getdata_forecast]" ).val()  === "1" ) {
+											//alert("An!");
+											$('#cron_alternate').removeClass('ui-disabled');
+											$('#cron_alternate').selectmenu('refresh');
+										} else {
+											//alert("Aus!");
+											$('#cron_alternate').addClass('ui-disabled');
+											$('#cron_alternate').selectmenu('refresh');
 										}
 									});
 
@@ -996,6 +1039,9 @@
 										if ( $( "select[name=getdata]" ).val()  === "0" ) {
 											$('#cron').addClass('ui-disabled');
 										}
+										if ( $( "select[name=getdata_forecast]" ).val()  === "0" ) {
+											$('#cron').addClass('ui-disabled');
+										}
 										if ( $( "select[name=wugrabber]" ).val()  === "0" ) {
 											$('#labelwustationid').addClass('ui-disabled');
 											$('#wustationid').addClass('ui-disabled');
@@ -1012,11 +1058,11 @@
 									{
 
 										$("#fetchstate").attr("style", "color:blue").html("<TMPL_VAR SETTINGS.HINT_FETCHWAIT>");
-										$.ajax( { 
+										$.ajax( {
 												type: 'POST',
 												url: "./ajax-handler.cgi",
-												data: { 
-													ajax: 'fetch', 
+												data: {
+													ajax: 'fetch',
 												}
 											} )
 										.done(function(resp) {
@@ -1041,11 +1087,11 @@
 											<div class="form-group">
 												<table class="formtable" border="0" width="100%" cellpadding="10">
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
-														<h2><TMPL_VAR SETTINGS.LABEL_MINISERVERCONNECTION></h2>
+														<td colspan=3 width="75%">
+															<h2><TMPL_VAR SETTINGS.LABEL_MINISERVERCONNECTION></h2>
 														</td>
 														<td align="right">
-														&nbsp;
+															&nbsp;
 														</td>
 													</tr>
 													<tr>
@@ -1055,7 +1101,7 @@
 														<td width="50%">
 															<TMPL_VAR MINISERVER>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -1067,30 +1113,30 @@
 															<label id="labelsendudp"><TMPL_VAR SETTINGS.LABEL_SENDBYUDP></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td width="20%">
-															<fieldset>
-															<TMPL_VAR SENDUDP>
-															</fieldset>
-															</td>
-															<td>
-															<table border=0 width="100%">
-															<tr>
-															<td>
-															<label id="labeludpport"><TMPL_VAR SETTINGS.LABEL_UDPPORT></label>
-															</td>
-															<td>
-																<input id="udpport" name="udpport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR SERVER.UDPPORT>" 
-																data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_UDPPORT>">
-															</td>
-															</tr>
-															</table>
-															</td>
-															</tr>
+															<table border="0" width="100%">
+																<tr>
+																	<td width="20%">
+																		<fieldset>
+																			<TMPL_VAR SENDUDP>
+																		</fieldset>
+																	</td>
+																	<td>
+																		<table border="0" width="100%">
+																			<tr>
+																				<td align="right">
+																					<label id="labeludpport"><TMPL_VAR SETTINGS.LABEL_UDPPORT></label>
+																				</td>
+																				<td>
+																					<input id="udpport" name="udpport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR SERVER.UDPPORT>"
+																					data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_UDPPORT>">
+																				</td>
+																			</tr>
+																		</table>
+																	</td>
+																</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -1102,20 +1148,23 @@
 															<label id="labelsendhtml"><TMPL_VAR SETTINGS.LABEL_SENDBYHTML></label>
 														</td>
 														<td width="50%">
-														  <table border=0>
-																<tr><td>
-														  <fieldset>
-														  	 <select id="sendhtml" name="sendhtml" data-role="flipswitch" disabled=disabled>
-														  		<option value="0"><TMPL_VAR SETTINGS.LABEL_OFF></option>
-														 	 	<option selected=selected value="1"><TMPL_VAR SETTINGS.LABEL_ON></option>
-														  		</select>
-														  </fieldset>
-																</td><td>
-																&nbsp;&nbsp;<font size="-1"><TMPL_VAR SETTINGS.LABEL_LINK>: <a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a></font>
-																</td></tr>
-																</table>
+														  <table border="0">
+																<tr>
+																	<td>
+																		<fieldset>
+																			<select id="sendhtml" name="sendhtml" data-role="flipswitch" disabled=disabled>
+																				<option value="0"><TMPL_VAR SETTINGS.LABEL_OFF></option>
+																				<option selected=selected value="1"><TMPL_VAR SETTINGS.LABEL_ON></option>
+																			</select>
+																		</fieldset>
+																	</td>
+																	<td>
+																		&nbsp;&nbsp;<font size="-1"><TMPL_VAR SETTINGS.LABEL_LINK>: <a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a></font>
+																	</td>
+																</tr>
+															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 														</td>
 														<td width="20%">
 															<font size="-1"><TMPL_VAR SETTINGS.HINT_HTML></font>
@@ -1126,14 +1175,14 @@
 															<label id="labeldfc"><TMPL_VAR SETTINGS.LABEL_DFC></label>
 														</td>
 														<td width="50%">
-														<div data-role="collapsible">
-														<h4><TMPL_VAR SETTINGS.LABEL_PLEASECHOOSE></h4>
-														<fieldset data-role="controlgroup">
-														<TMPL_VAR DFC>
-														</fieldset>
-														</div>
+															<div data-role="collapsible">
+																<h4><TMPL_VAR SETTINGS.LABEL_PLEASECHOOSE></h4>
+																<fieldset data-role="controlgroup">
+																	<TMPL_VAR DFC>
+																</fieldset>
+															</div>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -1145,14 +1194,14 @@
 															<label id="labelhfc"><TMPL_VAR SETTINGS.LABEL_HFC></label>
 														</td>
 														<td width="50%">
-														<div data-role="collapsible">
-														<h4><TMPL_VAR SETTINGS.LABEL_PLEASECHOOSE></h4>
-														<fieldset data-role="controlgroup">
-														<TMPL_VAR HFC>
-														</fieldset>
-														</div>
+															<div data-role="collapsible">
+																<h4><TMPL_VAR SETTINGS.LABEL_PLEASECHOOSE></h4>
+																<fieldset data-role="controlgroup">
+																	<TMPL_VAR HFC>
+																</fieldset>
+															</div>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -1193,11 +1242,11 @@
 											<div class="form-group">
 												<table class="formtable" border="0" width="100%" cellpadding="10">
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
-														<h2><TMPL_VAR SETTINGS.LABEL_CLOUDEMU></h2>
+														<td colspan=3 width="75%">
+															<h2><TMPL_VAR SETTINGS.LABEL_CLOUDEMU></h2>
 														</td>
 														<td align="right">
-														&nbsp;
+															&nbsp;
 														</td>
 													</tr>
 													<tr>
@@ -1205,23 +1254,23 @@
 															<label id="labelemu"><TMPL_VAR SETTINGS.LABEL_ENABLECLOUDEMU></label>
 														</td>
 														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td width="20%">
-															<fieldset>
-															<TMPL_VAR EMU>
-															</fieldset>
-															</td>
-															<td>
-															<a id="btntestcloudemu" href="http://<TMPL_VAR MYIP>:6066/forecast/" target="_blank" class="ui-btn ui-btn-inline ui-mini"><TMPL_VAR SETTINGS.BUTTON_TESTCLOUDEMU></a>
-															</td>
-															<td>
-															<font color="red" size="-1"><b><TMPL_VAR EMUWARNING></b></font>
-															</td>
-															</tr>
+															<table border="0" width="100%">
+																<tr>
+																	<td width="20%">
+																		<fieldset>
+																			<TMPL_VAR EMU>
+																		</fieldset>
+																	</td>
+																	<td>
+																		<a id="btntestcloudemu" href="http://<TMPL_VAR MYIP>:6066/forecast/" target="_blank" class="ui-btn ui-btn-inline ui-mini"><TMPL_VAR SETTINGS.BUTTON_TESTCLOUDEMU></a>
+																	</td>
+																	<td>
+																		<font color="red" size="-1"><b><TMPL_VAR EMUWARNING></b></font>
+																	</td>
+																</tr>
 															</table>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -1234,21 +1283,21 @@
 														</td>
 													</tr>
 													<tr>
-														<td colspan=3 width="75%" valign="middle">
-														<h2><TMPL_VAR SETTINGS.LABEL_WEBSITE></h2>
+														<td colspan=3 width="75%">
+															<h2><TMPL_VAR SETTINGS.LABEL_WEBSITE></h2>
 														</td>
 														<td align="right">
-														&nbsp;
+															&nbsp;
 														</td>
 													</tr>
 													<tr>
 														<td width="25%">
-														<label id="labelURL"><TMPL_VAR SETTINGS.LABEL_LINK></label>
+															<label id="labelURL"><TMPL_VAR SETTINGS.LABEL_LINK></label>
 														</td>
 														<td width="50%">
-														<a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a>
+															<a href="<TMPL_VAR WEBSITE>" target=_blank"><TMPL_VAR WEBSITE></a>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
@@ -1262,13 +1311,13 @@
 														<td width="50%">
 															<TMPL_VAR THEME>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
-														<a href="#" data-role="button" id="preview1" data-inline="true" data-mini="true" onClick="preview();">
-														<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
-														</a>
+															<a href="#" data-role="button" id="preview1" data-inline="true" data-mini="true" onClick="preview();">
+																<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
+															</a>
 														</td>
 													</tr>
 													<tr>
@@ -1278,13 +1327,13 @@
 														<td width="50%">
 															<TMPL_VAR ICONSET>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
-														<a href="#" data-role="button" id="preview2" data-inline="true" data-mini="true" onClick="preview();">
-														<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
-														</a>
+															<a href="#" data-role="button" id="preview2" data-inline="true" data-mini="true" onClick="preview();">
+																<font size="-1"><TMPL_VAR SETTINGS.LABEL_PREVIEW></font>
+															</a>
 														</td>
 													</tr>
 													<tr>
@@ -1294,11 +1343,11 @@
 														<td width="50%">
 															<TMPL_VAR THEMELANG>
 														</td>
-														<td width="5%" valign="middle">
+														<td width="5%">
 															&nbsp;
 														</td>
 														<td width="20%">
-																						&nbsp;
+															&nbsp;
 														</td>
 													</tr>
 													<tr>
@@ -1358,44 +1407,44 @@
 									<TMPL_VAR LOGLIST_HTML>
 </TMPL_IF>
 <TMPL_IF ERROR>
-<center>
-	<table border=0>
-	<tr>
-		<td align="center">
-		<h2><TMPL_VAR HINT_ERROR></h2>
-		<p>
-		<TMPL_VAR ERRORMESSAGE>
-		</p>
-		</td>
-	</tr>
-	<tr>
-		<td align="center">
-		<p>
-		<a id="btnok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=<TMPL_VAR FORMNO>"><TMPL_VAR SETTINGS.BUTTON_OK></a>
-		</p>
-		</td>
-	</tr>
-	</table>
-</center>
+									<center>
+										<table border="0">
+										<tr>
+											<td align="center">
+												<h2><TMPL_VAR HINT_ERROR></h2>
+												<p>
+													<TMPL_VAR ERRORMESSAGE>
+												</p>
+											</td>
+										</tr>
+										<tr>
+											<td align="center">
+												<p>
+													<a id="btnok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=<TMPL_VAR FORMNO>"><TMPL_VAR SETTINGS.BUTTON_OK></a>
+												</p>
+											</td>
+										</tr>
+										</table>
+									</center>
 </TMPL_IF>
 <TMPL_IF SAVE>
-<center>
-	<table border=0>
-	<tr>
-		<td align="center">
-		<h2><TMPL_VAR SETTINGS.HINT_OK></h2>
-		<p>
-		<TMPL_VAR SETTINGS.OK_SETTINGS_SAVED>
-		</p>
-		</td>
-	</tr>
-	<tr>
-		<td align="center">
-		<p>
-		<a id="btnok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=<TMPL_VAR FORMNO>"><TMPL_VAR SETTINGS.BUTTON_OK></a>
-		</p>
-		</td>
-	</tr>
-	</table>
-</center>
+									<center>
+										<table border="0">
+										<tr>
+											<td align="center">
+												<h2><TMPL_VAR SETTINGS.HINT_OK></h2>
+												<p>
+													<TMPL_VAR SETTINGS.OK_SETTINGS_SAVED>
+												</p>
+											</td>
+										</tr>
+										<tr>
+											<td align="center">
+												<p>
+													<a id="btnok" data-role="button" data-inline="true" data-mini="true" data-icon="check" href="./index.cgi?form=<TMPL_VAR FORMNO>"><TMPL_VAR SETTINGS.BUTTON_OK></a>
+												</p>
+											</td>
+										</tr>
+										</table>
+									</center>
 </TMPL_IF>
