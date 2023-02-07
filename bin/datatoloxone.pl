@@ -1541,10 +1541,6 @@ if ($emu) {
 
     foreach (@hfcdata) {
 
-      if ( $i >= 168 ) { last; } # Stop after 168 datasets
-
-      #chomp $_;
-
       @fields = split(/\|/,$_);
 
       $hfcdate = DateTime->new(
@@ -1554,6 +1550,12 @@ if ($emu) {
             hour      => @fields[7],
             minute    => @fields[8],
       );
+
+      if ( DateTime->compare($epochdate, $hfcdate) == 1 ) { next; } # Exclude already past forecasts
+
+      if ( $i >= 168 ) { last; } # Stop after 168 datasets
+
+      #chomp $_;
 
       # "local date;weekday;local time;temperature(C);feeledTemperature(C);windspeed(km/h);winddirection(degr);wind gust(km/h);low clouds(%);medium clouds(%);high clouds(%);precipitation(mm);probability of Precip(%);snowFraction;sea level pressure(hPa);relative humidity(%);CAPE;picto-code;radiation (W/m2);\n";
       print F $hfcdate->dmy('.') . ";\t";
