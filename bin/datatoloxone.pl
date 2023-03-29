@@ -1359,7 +1359,7 @@ LOGOK "Webpages created successfully.";
 #
 
 # Original from Loxone Testserver: (ccord changed)
-# http://weather.loxone.com:6066/forecast/?user=loxone_EExxxxxxx000F&coord=13.4,54.0768&format=1&asl=115
+# http://weather.loxone.com:6066/forecast/?user=loxone_EExxxxxxx000F&coord=13.1,54.1768&format=1&asl=115
 #        ^                  ^                          ^                  ^            ^        ^
 #        URL                Port                       MS MAC             Coord        Format   Height
 #
