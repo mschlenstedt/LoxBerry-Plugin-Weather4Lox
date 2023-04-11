@@ -260,7 +260,11 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("%02d", $t->min), "|";
 	print F "-9999|";
 	print F "$decoded_json->{current}->{clouds}|";
-	print F "-9999|";
+	if ($decoded_json->{hourly}->[0]->{pop}) {
+                print F sprintf("%.0f",$decoded_json->{hourly}->[0]->{pop} * 100), "|";
+        } else {
+                print F "0|";
+        }
 	if ($decoded_json->{current}->{snow}->{'1h'}) {
 		print F sprintf("%.2f",$decoded_json->{current}->{snow}->{'1h'} / 10), "|";
 	} else {
@@ -324,7 +328,11 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F $t->wdayname . "|";
 		print F sprintf("%.1f",$results->{temp}->{max}), "|";
 		print F sprintf("%.1f",$results->{temp}->{min}), "|";
-		print F "-9999|";
+		if ($results->{pop}) {
+                        print F sprintf("%.0f",$results->{pop} * 100), "|";
+                } else {
+                        print F "0|";
+                }
 		if ($results->{rain}) {
 			print F sprintf("%.2f",$results->{rain}), "|";
 		} else {
@@ -526,7 +534,11 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		} else {
 			print F "0|";
 		}
-		print F "-9999|";
+		if ($results->{pop}) {
+                        print F sprintf("%.0f",$results->{pop} * 100), "|";
+                } else {
+                        print F "0|";
+                }
 		# Convert Weather string into Weather Code and convert icon name
 		$weather = $results->{weather}->[0]->{id};
 		$code = "";
@@ -733,7 +745,12 @@ if ($i < 168) {
 					$newline .= "0";
 				}
 				$newline .= "|";
-				$newline .= "-9999|";
+                                if ($results->{pop}) {
+                                        $newline .= sprintf( "%.0f", $oldfields[26] + ( $step * ( (100 * $results->{pop} - $oldfields[26]) / $delta ) ) );
+                                } else {
+                                        $newline .= "0";
+                                }
+                                $newline .= "|";
 				if ($step eq "1") {
 					$newline .= $oldfields[27];
 					$newline .= "|";
