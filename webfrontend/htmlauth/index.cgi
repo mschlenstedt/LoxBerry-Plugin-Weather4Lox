@@ -532,8 +532,9 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( CRON => $cron );
 
   # Cron Forecast
-  @values = ('1', '3', '5', '10', '15', '30', '60' );
+  @values = ('0', '1', '3', '5', '10', '15', '30', '60' );
   %labels = (
+        '0' => $L{'SETTINGS.LABEL_SAME_AS_DEFAULT'},
         '1' => $L{'SETTINGS.LABEL_1MINUTE'},
         '3' => $L{'SETTINGS.LABEL_3MINUTE'},
         '5' => $L{'SETTINGS.LABEL_5MINUTE'},
