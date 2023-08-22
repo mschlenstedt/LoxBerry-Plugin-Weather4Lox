@@ -43,6 +43,8 @@ my $cron_alternate = $pcfg->param("SERVER.CRON_ALTERNATE");
 if (!$cron_alternate || $cron_alternate eq "0") {
 	$cron_alternate = $cron; # Set to default weather service if not defined or 0
 }
+my $usealternatedfc = $pcfg->param("SERVER.USEALTERNATEDFC");
+my $usealternatehfc = $pcfg->param("SERVER.USEALTERNATEHFC");
 
 # Commandline options
 my $verbose = '';
@@ -80,17 +82,21 @@ my $command_opt = '';
 LOGDEB "Calculate interval for default weather service: $timestamp_minute_round_down / $cron = " . ($timestamp_minute_round_down / $cron);
 if ( $timestamp_minute_round_down % $cron eq 0 ){
 	LOGINF "Fetch interval ($cron) for default weather service reached";
-    $command_opt .= ' --default'
+	$command_opt .= ' --default'
 } else {
 	LOGINF "Fetch interval ($cron) for default weather service NOT reached";
 }
 
-LOGDEB "Calculate interval for alternate weather service: $timestamp_minute_round_down / $cron_alternate = " . ($timestamp_minute_round_down / $cron_alternate);
-if ( $timestamp_minute_round_down % $cron_alternate eq 0 ){
-	LOGINF "Fetch interval ($cron_alternate) for alternate weather service reached";
-    $command_opt .= ' --alternate'
+if ($usealternatedfc || $usealternatehfc) {
+	LOGDEB "Calculate interval for alternate weather service: $timestamp_minute_round_down / $cron_alternate = " . ($timestamp_minute_round_down / $cron_alternate);
+	if ( $timestamp_minute_round_down % $cron_alternate eq 0 ){
+		LOGINF "Fetch interval ($cron_alternate) for alternate weather service reached";
+		$command_opt .= ' --alternate'
+	} else {
+		LOGINF "Fetch interval ($cron_alternate) for alternate weather service NOT reached";
+	}
 } else {
-	LOGINF "Fetch interval ($cron_alternate) for alternate weather service NOT reached";
+	LOGDEB "Alternate Weather services are disabled. Skipping.";
 }
 
 if ( $command_opt ne "" ){
