@@ -74,20 +74,20 @@ my $timestamp_minute_round_down = int($timestamp / 60);
 
 my $command_opt = '';
 
-LOGDEB "$timestamp_minute_round_down / $cron = " . ($timestamp_minute_round_down / $cron);
+LOGDEB "Calculate interval for default weather service: $timestamp_minute_round_down / $cron = " . ($timestamp_minute_round_down / $cron);
 if ( $timestamp_minute_round_down % $cron eq 0 ){
-	LOGINF "Fetch interval ($cron) for weather data reached";
+	LOGINF "Fetch interval ($cron) for default weather service reached";
     $command_opt .= ' --default'
 } else {
-	LOGINF "Fetch interval ($cron) for weather data NOT reached";
+	LOGINF "Fetch interval ($cron) for default weather service NOT reached";
 }
 
-LOGDEB "$timestamp_minute_round_down / $cron_alternate = " . ($timestamp_minute_round_down / $cron_alternate);
+LOGDEB "Calculate interval for alternate weather service: $timestamp_minute_round_down / $cron_alternate = " . ($timestamp_minute_round_down / $cron_alternate);
 if ( $timestamp_minute_round_down % $cron_alternate eq 0 ){
-	LOGINF "Fetch interval ($cron_alternate) for alternate weather data reached";
+	LOGINF "Fetch interval ($cron_alternate) for alternate weather service reached";
     $command_opt .= ' --alternate'
 } else {
-	LOGINF "Fetch interval ($cron_alternate) for alternate weather data NOT reached";
+	LOGINF "Fetch interval ($cron_alternate) for alternate weather service NOT reached";
 }
 
 if ( $command_opt ne "" ){
