@@ -40,6 +40,9 @@ my $version = LoxBerry::System::pluginversion();
 my $pcfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $cron = $pcfg->param("SERVER.CRON");
 my $cron_alternate = $pcfg->param("SERVER.CRON_ALTERNATE");
+if (!$cron_alternate || $cron_alternate eq "0") {
+	$cron_alternate = $cron; # Set to default weather service if not defined or 0
+}
 
 # Commandline options
 my $verbose = '';
