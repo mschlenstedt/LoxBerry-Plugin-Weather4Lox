@@ -49,7 +49,6 @@ my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
 $cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data");
 $cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
-$cfg->param("DARKSKY.URL", "https://api.darksky.net");
 $cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/current");
 $cfg->param("FOSHK.URL", "observations/current/json/units=m");
 $cfg->param("WEATHERFLOW.URL", "https://swd.weatherflow.com/swd/rest");
@@ -85,29 +84,12 @@ if ($R::saveformdata1) {
   	$template->param( FORMNO => '1' );
 	$R::wucoordlat =~ tr/,/./;
 	$R::wucoordlong =~ tr/,/./;
-	$R::darkskycoordlat =~ tr/,/./;
-	$R::darkskycoordlong =~ tr/,/./;
 	$R::weatherbitcoordlat =~ tr/,/./;
 	$R::weatherbitcoordlong =~ tr/,/./;
 	$R::openweathercoordlat =~ tr/,/./;
 	$R::openweathercoordlong =~ tr/,/./;
 	$R::visualcrossingcoordlat =~ tr/,/./;
 	$R::visualcrossingcoordlong =~ tr/,/./;
-
-	# Check for Station : DARKSKY
-	if ($R::weatherservice eq "darksky") {
-		our $url = $cfg->param("DARKSKY.URL");
-		our $querystation = $R::darkskycoordlat . "," . $R::darkskycoordlong;
-		# 1. attempt to query Darksky
-		&darkskyquery;
-		$found = 0;
-		if ( !$error && $decoded_json->{latitude} ) {
-			$found = 1;
-		}
-		if ( !$error && !$found ) {
-			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
-		}
-	}
 
 	# Check for Station : WEATHERBIT
 	if ($R::weatherservice eq "weatherbit") {
@@ -193,13 +175,6 @@ if ($R::saveformdata1) {
 	$cfg->param("WUNDERGROUND.COORDLAT", "$R::wucoordlat");
 	$cfg->param("WUNDERGROUND.COORDLONG", "$R::wucoordlong");
 	$cfg->param("WUNDERGROUND.LANG", "$R::wulang");
-
-	$cfg->param("DARKSKY.APIKEY", "$R::darkskyapikey");
-	$cfg->param("DARKSKY.COORDLAT", "$R::darkskycoordlat");
-	$cfg->param("DARKSKY.COORDLONG", "$R::darkskycoordlong");
-	$cfg->param("DARKSKY.LANG", "$R::darkskylang");
-	$cfg->param("DARKSKY.STATION", "$R::darkskycity");
-	$cfg->param("DARKSKY.COUNTRY", "$R::darkskycountry");
 
 	$cfg->param("WEATHERBIT.APIKEY", "$R::weatherbitapikey");
 	$cfg->param("WEATHERBIT.COORDLAT", "$R::weatherbitcoordlat");
@@ -366,13 +341,12 @@ if ($R::form eq "1" || !$R::form) {
   my %labels;
 
   # Weather Service
-  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', 'darksky',  );
+  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', );
   %labels = (
         'openweather' => 'OpenWeatherMap',
         'visualcrossing' => 'Visual Crossing',
         'weatherbit' => 'Weatherbit',
         'weatherflow' => 'Weatherflow',
-        'darksky' => 'Dark Sky',
     );
   my $wservice = $cgi->popup_menu(
         -name    => 'weatherservice',
@@ -384,13 +358,12 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( WEATHERSERVICE => $wservice );
 
   # DFC Weather Service
-  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', 'darksky',  );
+  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', );
   %labels = (
         'openweather' => 'OpenWeatherMap',
         'visualcrossing' => 'Visual Crossing',
         'weatherbit' => 'Weatherbit',
         'weatherflow' => 'Weatherflow',
-        'darksky' => 'Dark Sky',
     );
   my $wservicedfc = $cgi->popup_menu(
         -name    => 'weatherservicedfc',
@@ -417,13 +390,12 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( USEALTERNATEDFC => $usealternatedfc );
 
   # HFC Weather Service
-  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', 'darksky',  );
+  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', );
   %labels = (
         'openweather' => 'OpenWeatherMap',
         'visualcrossing' => 'Visual Crossing',
         'weatherbit' => 'Weatherbit',
         'weatherflow' => 'Weatherflow',
-        'darksky' => 'Dark Sky',
     );
   my $wservicehfc = $cgi->popup_menu(
         -name    => 'weatherservicehfc',
@@ -578,60 +550,6 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.CRON_ALTERNATE'),
     );
   $template->param( CRON_ALTERNATE => $cron_alternate );
-
-  # DarkSky Language
-  @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'ja', 'ka', 'ko', 'kw', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tet', 'tr', 'uk', 'x-pig-latin', 'zh', 'zh-tw');
-
-  %labels = (
-	'ar' => 'Arabic',
-	'az' => 'Azerbaijani',
-	'be' => 'Belarusian',
-	'bg' => 'Bulgarian',
-	'bs' => 'Bosnian',
-	'ca' => 'Catalan',
-	'cs' => 'Czech',
-	'da' => 'Danish',
-	'de' => 'German',
-	'el' => 'Greek',
-	'en' => 'English',
-	'es' => 'Spanish',
-	'et' => 'Estonian',
-	'fi' => 'Finnish',
-	'fr' => 'French',
-	'hr' => 'Croatian',
-	'hu' => 'Hungarian',
-	'id' => 'Indonesian',
-	'is' => 'Icelandic',
-	'it' => 'Italian',
-	'ja' => 'Japanese',
-	'ka' => 'Georgian',
-	'ko' => 'Korean',
-	'kw' => 'Cornish',
-	'nb' => 'Norwegian Bokmål',
-	'nl' => 'Dutch',
-	'pl' => 'Polish',
-	'pt' => 'Portuguese',
-	'ro' => 'Romanian',
-	'ru' => 'Russian',
-	'sk' => 'Slovak',
-	'sl' => 'Slovenian',
-	'sr' => 'Serbian',
-	'sv' => 'Swedish',
-	'tet' => 'Tetum',
-	'tr' => 'Turkish',
-	'uk' => 'Ukrainian',
-	'x-pig-latin' => 'Igpay Atinlay',
-	'zh' => 'simplified Chinese',
-	'zh-tw' => 'traditional Chinese',
-    );
-  my $darkskylang = $cgi->popup_menu(
-        -name    => 'darkskylang',
-        -id      => 'darkskylang',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('DARKSKY.LANG'),
-    );
-  $template->param( DARKSKYLANG => $darkskylang );
 
   # Weatherbit Language
   @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'kw', 'lt', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tr', 'uk', 'zh', 'zh-tw');
@@ -1137,39 +1055,6 @@ sub wuquery
 		if (!$error) {
 			our $decoded_json = decode_json( $json );
 		}
-	}
-	return();
-
-}
-
-#####################################################
-# Query Dark Sky
-#####################################################
-
-sub darkskyquery
-{
-
-        # Get data from DarkSky Server (API request) for testing API Key
-        my $query = "$url\/forecast\/$R::darkskyapikey\/$querystation";
-        my $ua = new LWP::UserAgent;
-        my $res = $ua->get($query);
-        my $json = $res->decoded_content();
-
-        # Check status of request
-        my $urlstatus = $res->status_line;
-        my $urlstatuscode = substr($urlstatus,0,3);
-
-	if ($urlstatuscode ne "200" && $urlstatuscode ne "403" ) {
-	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-	}
-
-	if ($urlstatuscode eq "403" ) {
-	        $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-	}
-
-        # Decode JSON response from server
-	if (!$error) {
-	        our $decoded_json = decode_json( $json );
 	}
 	return();
 
