@@ -248,9 +248,16 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$icon|";
 	print F "$code|";
 	print F "$decoded_json->{current}->{weather}->[0]->{description}|";
+	my $moonphase = $decoded_json->{daily}[0]->{moon_phase};
+	my $moonpercent = 0;
+	if ($moonphase le "0.5") {
+		$moonpercent = $moonphase * 2 * 100;
+	} else {
+		$moonpercent = (1 - $moonphase) * 2 * 100;
+	}
+	print F "$moonpercent|";
 	print F "-9999|";
-	print F "-9999|";
-	print F "-9999|";
+	print F "$moonphase|";
 	print F "-9999|";
 	$t = localtime($decoded_json->{current}->{sunrise});
 	print F sprintf("%02d", $t->hour), "|";
