@@ -285,11 +285,11 @@ $value = @fields[31];
 
 $name = "cur_moon_ph";
 $value = @fields[32];
-#&send;
+&send;
 
 $name = "cur_moon_h";
 $value = @fields[33];
-#&send;
+&send;
 
 # Create Sunset/rise Date in Loxone Epoch Format (1.1.2009)
 # Sunrise
