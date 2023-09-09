@@ -112,7 +112,6 @@ my $code;
 my $icon;
 my $wdir;
 my $wdirdes;
-my $moonphase;
 my @filecontent;
 my $i;
 my $currentepoche = 0;
@@ -215,15 +214,16 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$code|";
 	print F "$decoded_json->{currentConditions}->{conditions}|";
 	# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
-	$moonphase = $decoded_json->{currentConditions}->{moonphase};
+	my $moonphase = $decoded_json->{currentConditions}->{moonphase};
+	my $moonpercent = 0;
 	if ($moonphase le "0.5") {
-		$moonphase = $moonphase * 2 * 100;
+		$moonpercent = $moonphase * 2 * 100;
 	} else {
-		$moonphase = (1 - $moonphase) * 2 * 100;
+		$moonpercent = (1 - $moonphase) * 2 * 100;
 	}
-	print F sprintf("%.0f","$moonphase"),"|";
+	print F "$moonpercent|";
 	print F "-9999|";
-	print F sprintf("%.0f",$decoded_json->{currentConditions}->{moonphase}*100), "|";
+	print F sprintf("%.0f",$moonphase*100), "|";
 	print F "-9999|";
 	$t = localtime($decoded_json->{currentConditions}->{sunriseEpoch});
 	print F sprintf("%02d", $t->hour), "|";

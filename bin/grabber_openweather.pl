@@ -257,7 +257,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	}
 	print F "$moonpercent|";
 	print F "-9999|";
-	print F "$moonphase|";
+	print F sprintf("%.0f",$moonphase*100), "|";
 	print F "-9999|";
 	$t = localtime($decoded_json->{current}->{sunrise});
 	print F sprintf("%02d", $t->hour), "|";
