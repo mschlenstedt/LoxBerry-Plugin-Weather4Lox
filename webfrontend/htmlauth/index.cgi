@@ -48,7 +48,6 @@ my $version = LoxBerry::System::pluginversion();
 my $cfg = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 
 $cfg->param("OPENWEATHER.URL", "https://api.openweathermap.org/data");
-$cfg->param("WEATHERBIT.URL", "http://api.weatherbit.io/v2.0");
 $cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/current");
 $cfg->param("FOSHK.URL", "observations/current/json/units=m");
 $cfg->param("WEATHERFLOW.URL", "https://swd.weatherflow.com/swd/rest");
@@ -84,27 +83,10 @@ if ($R::saveformdata1) {
   	$template->param( FORMNO => '1' );
 	$R::wucoordlat =~ tr/,/./;
 	$R::wucoordlong =~ tr/,/./;
-	$R::weatherbitcoordlat =~ tr/,/./;
-	$R::weatherbitcoordlong =~ tr/,/./;
 	$R::openweathercoordlat =~ tr/,/./;
 	$R::openweathercoordlong =~ tr/,/./;
 	$R::visualcrossingcoordlat =~ tr/,/./;
 	$R::visualcrossingcoordlong =~ tr/,/./;
-
-	# Check for Station : WEATHERBIT
-	if ($R::weatherservice eq "weatherbit") {
-		our $url = $cfg->param("WEATHERBIT.URL");
-		our $querystation = "lat=" . $R::weatherbitcoordlat . "&lon=" . $R::weatherbitcoordlong;
-		# 1. attempt to query Weatherbit
-		&weatherbitquery;
-		$found = 0;
-		if ( !$error && $decoded_json->{count} ) {
-			$found = 1;
-		}
-		if ( !$error && !$found ) {
-			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
-		}
-	}
 
 	# Check for Station : OPENWEATHER
 	if ($R::weatherservice eq "openweather") {
@@ -165,7 +147,6 @@ if ($R::saveformdata1) {
 		}
 	}
 
-
 	# OK - now installing...
 
 	# Write configuration file(s)
@@ -176,13 +157,6 @@ if ($R::saveformdata1) {
 	$cfg->param("WUNDERGROUND.COORDLONG", "$R::wucoordlong");
 	$cfg->param("WUNDERGROUND.LANG", "$R::wulang");
 
-	$cfg->param("WEATHERBIT.APIKEY", "$R::weatherbitapikey");
-	$cfg->param("WEATHERBIT.COORDLAT", "$R::weatherbitcoordlat");
-	$cfg->param("WEATHERBIT.COORDLONG", "$R::weatherbitcoordlong");
-	$cfg->param("WEATHERBIT.LANG", "$R::weatherbitlang");
-	$cfg->param("WEATHERBIT.COUNTRY", "$R::weatherbitcountry");
-	$cfg->param("WEATHERBIT.FILLMISSINGDATA", "$R::weatherbitfillmissingdata");
-
 	$cfg->param("OPENWEATHER.APIKEY", "$R::openweatherapikey");
 	$cfg->param("OPENWEATHER.COORDLAT", "$R::openweathercoordlat");
 	$cfg->param("OPENWEATHER.COORDLONG", "$R::openweathercoordlong");
@@ -191,8 +165,6 @@ if ($R::saveformdata1) {
 	$cfg->param("OPENWEATHER.COUNTRY", "$R::openweathercountry");
 
 	$cfg->param("WEATHERFLOW.APIKEY", "$R::weatherflowapikey");
-	#$cfg->param("WEATHERFLOW.COORDLAT", "$R::weatherflowcoordlat");
-	#$cfg->param("WEATHERFLOW.COORDLONG", "$R::weatherflowcoordlong");
 	$cfg->param("WEATHERFLOW.LANG", "$R::weatherflowlang");
 	$cfg->param("WEATHERFLOW.CITY", "$R::weatherflowcity");
 	$cfg->param("WEATHERFLOW.COUNTRY", "$R::weatherflowcountry");
@@ -327,9 +299,7 @@ $navbar{3}{Name} = "$L{'SETTINGS.LABEL_CLOUDEMU'} / $L{'SETTINGS.LABEL_WEBSITE'}
 $navbar{3}{URL} = 'index.cgi?form=3';
 
 $navbar{99}{Name} = "$L{'SETTINGS.LABEL_LOG'}";
-# $navbar{99}{URL} = LoxBerry::Web::loglist_url();
 $navbar{99}{URL} = 'index.cgi?form=99';
-# $navbar{99}{target} = '_blank';
 
 # Menu: Server
 if ($R::form eq "1" || !$R::form) {
@@ -341,11 +311,10 @@ if ($R::form eq "1" || !$R::form) {
   my %labels;
 
   # Weather Service
-  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', );
+  @values = ( 'openweather', 'visualcrossing', 'weatherflow', );
   %labels = (
         'openweather' => 'OpenWeatherMap',
         'visualcrossing' => 'Visual Crossing',
-        'weatherbit' => 'Weatherbit',
         'weatherflow' => 'Weatherflow',
     );
   my $wservice = $cgi->popup_menu(
@@ -358,11 +327,10 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( WEATHERSERVICE => $wservice );
 
   # DFC Weather Service
-  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', );
+  @values = ( 'openweather', 'visualcrossing', 'weatherflow', );
   %labels = (
         'openweather' => 'OpenWeatherMap',
         'visualcrossing' => 'Visual Crossing',
-        'weatherbit' => 'Weatherbit',
         'weatherflow' => 'Weatherflow',
     );
   my $wservicedfc = $cgi->popup_menu(
@@ -390,11 +358,10 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( USEALTERNATEDFC => $usealternatedfc );
 
   # HFC Weather Service
-  @values = ( 'openweather', 'visualcrossing', 'weatherbit', 'weatherflow', );
+  @values = ( 'openweather', 'visualcrossing', 'weatherflow', );
   %labels = (
         'openweather' => 'OpenWeatherMap',
         'visualcrossing' => 'Visual Crossing',
-        'weatherbit' => 'Weatherbit',
         'weatherflow' => 'Weatherflow',
     );
   my $wservicehfc = $cgi->popup_menu(
@@ -551,76 +518,6 @@ if ($R::form eq "1" || !$R::form) {
 	-default => $cfg->param('SERVER.CRON_ALTERNATE'),
     );
   $template->param( CRON_ALTERNATE => $cron_alternate );
-
-  # Weatherbit Language
-  @values = ('ar', 'az', 'be', 'bg', 'bs', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'id', 'is', 'it', 'kw', 'lt', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'tr', 'uk', 'zh', 'zh-tw');
-
-  %labels = (
-	'ar' => 'Arabic',
-	'az' => 'Azerbaijani',
-	'be' => 'Belarusian',
-	'bg' => 'Bulgarian',
-	'bs' => 'Bosnian',
-	'ca' => 'Catalan',
-	'cz' => 'Czech',
-	'da' => 'Danish',
-	'de' => 'German',
-	'el' => 'Greek',
-	'en' => 'English',
-	'es' => 'Spanish',
-	'et' => 'Estonian',
-	'fi' => 'Finnish',
-	'fr' => 'French',
-	'hr' => 'Croatian',
-	'hu' => 'Hungarian',
-	'id' => 'Indonesian',
-	'is' => 'Icelandic',
-	'it' => 'Italian',
-#	'ja' => 'Japanese',
-#	'ka' => 'Georgian',
-#	'ko' => 'Korean',
-	'kw' => 'Cornish',
-	'lt' => 'Lithuanian',
-	'nb' => 'Norwegian Bokmål',
-	'nl' => 'Dutch',
-	'pl' => 'Polish',
-	'pt' => 'Portuguese',
-	'ro' => 'Romanian',
-	'ru' => 'Russian',
-	'sk' => 'Slovak',
-	'sl' => 'Slovenian',
-	'sr' => 'Serbian',
-	'sv' => 'Swedish',
-#	'tet' => 'Tetum',
-	'tr' => 'Turkish',
-	'uk' => 'Ukrainian',
-#	'x-pig-latin' => 'Igpay Atinlay',
-	'zh' => 'simplified Chinese',
-	'zh-tw' => 'traditional Chinese',
-    );
-  my $weatherbitlang = $cgi->popup_menu(
-        -name    => 'weatherbitlang',
-        -id      => 'weatherbitlang',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('WEATHERBIT.LANG'),
-    );
-  $template->param( WEATHERBITLANG => $weatherbitlang );
-
-  # WeatherBit: Fill missing data
-  @values = ('0', '1' );
-  %labels = (
-        '0' => $L{'SETTINGS.LABEL_OFF'},
-        '1' => $L{'SETTINGS.LABEL_ON'},
-    );
-  my $weatherbitfillmissingdata = $cgi->popup_menu(
-        -name    => 'weatherbitfillmissingdata',
-        -id      => 'weatherbitfillmissingdata',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('WEATHERBIT.FILLMISSINGDATA'),
-    );
-  $template->param( WEATHERBITFILLMISSINGDATA => $weatherbitfillmissingdata );
 
   # OPenweather Language
   @values = ('af', 'ar', 'az', 'bg', 'ca', 'cz', 'da', 'de', 'el', 'en', 'es', 'eu', 'fa', 'fi', 'fr', 'gl', 'he', 'hi', 'hr', 'hu', 'id', 'it', 'ja', 'kr', 'la', 'lt', 'mk', 'no', 'nl', 'pl', 'pt', 'pt_br', 'ro', 'ru', 'se', 'sk', 'sl', 'sr', 'th', 'tr', 'uk', 'vi', 'zh_cn', 'zh_tw', 'zu');
@@ -1056,43 +953,6 @@ sub wuquery
 		if (!$error) {
 			our $decoded_json = decode_json( $json );
 		}
-	}
-	return();
-
-}
-
-#####################################################
-# Query Weatherbit
-#####################################################
-
-sub weatherbitquery
-{
-
-        # Get data from Weatherbit Server (API request) for testing API Key
-        my $query = "$url\/current?key=$R::weatherbitapikey&$querystation";
-        my $ua = new LWP::UserAgent;
-        my $res = $ua->get($query);
-        my $json = $res->decoded_content();
-
-        # Check status of request
-        my $urlstatus = $res->status_line;
-        my $urlstatuscode = substr($urlstatus,0,3);
-
-	if ($urlstatuscode ne "200" && $urlstatuscode ne "403" ) {
-	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-	}
-
-	if ($urlstatuscode eq "403" ) {
-	        $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
-	}
-
-	if ( $decoded_json->{error} ) {
-	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode" . "<br><b>ERROR:</b> $decoded_json->{error}";
-	}
-
-        # Decode JSON response from server
-	if (!$error) {
-        	our $decoded_json = decode_json( $json );
 	}
 	return();
 
