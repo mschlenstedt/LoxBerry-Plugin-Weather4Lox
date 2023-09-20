@@ -11,5 +11,35 @@ service dnsmasq restart > /dev/null 2>&1
 echo "<INFO> Un-Installing Cronjob"
 rm $LBHOMEDIR/system/cron/cron.hourly/99-weather4lox_cronjob > /dev/null 2>&1
 
+### TEMPORARY workaround since cronjobs are not deleted by LoxBerry V3
+if [ -e $LBHOMEDIR/system/cron/cron.01min/weather4lox ]; then
+        echo "<INFO> Cronjob for every minute was removed"
+        rm $LBHOMEDIR/system/cron/cron.01min/weather4lox > /dev/null 2>&1
+fi
+if [ -e $LBHOMEDIR/system/cron/cron.03min/weather4lox ]; then
+        echo "<INFO> Cronjob for every 3 minutes was removed"
+        rm $LBHOMEDIR/system/cron/cron.03min/weather4lox > /dev/null 2>&1
+fi
+if [ -e $LBHOMEDIR/system/cron/cron.05min/weather4lox ]; then
+        echo "<INFO> Cronjob for every 5 minutes was removed"
+        rm $LBHOMEDIR/system/cron/cron.05min/weather4lox > /dev/null 2>&1
+fi
+if [ -e $LBHOMEDIR/system/cron/cron.10min/weather4lox ]; then
+        echo "<INFO> Cronjob for every 10 minutes was removed"
+        rm $LBHOMEDIR/system/cron/cron.10min/weather4lox > /dev/null 2>&1
+fi
+if [ -e $LBHOMEDIR/system/cron/cron.15min/weather4lox ]; then
+        echo "<INFO> Cronjob for every 15 minutes was removed"
+        rm $LBHOMEDIR/system/cron/cron.15min/weather4lox > /dev/null 2>&1
+fi
+if [ -e $LBHOMEDIR/system/cron/cron.30min/weather4lox ]; then
+        echo "<INFO> Cronjob for every 30 minutes was removed"
+        rm $LBHOMEDIR/system/cron/cron.30min/weather4lox > /dev/null 2>&1
+fi
+if [ -e $LBHOMEDIR/system/cron/cron.hourly/weather4lox ]; then
+        echo "<INFO> Cronjob for every hour was removed"
+        rm $LBHOMEDIR/system/cron/cron.hourly/weather4lox > /dev/null 2>&1
+fi
+
 # Exit with Status 0
 exit 0
