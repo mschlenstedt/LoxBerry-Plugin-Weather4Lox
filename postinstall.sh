@@ -77,5 +77,35 @@ ln -s $LBPLOG/REPLACELBPPLUGINDIR/webpage.hfc.html $LBHOMEDIR/webfrontend/html/p
 ln -s $LBPLOG/REPLACELBPPLUGINDIR/weatherdata.html $LBHOMEDIR/webfrontend/html/plugins/REPLACELBPPLUGINDIR/weatherdata.html > /dev/null 2>&1
 ln -s $LBPLOG/REPLACELBPPLUGINDIR/index.txt $LBHOMEDIR/webfrontend/html/plugins/REPLACELBPPLUGINDIR/emu/forecast/index.txt > /dev/null 2>&1
 
+### TEMPORARY workaround since old cronjobs are not deleted by LoxBerry V3
+# if [ -e $ARGV5/system/cron/cron.01min/$ARGV3 ]; then
+#         echo "<INFO> Old cronjob for every minute was removed"
+#         rm $ARGV5/system/cron/cron.01min/$ARGV3
+# fi
+if [ -e $ARGV5/system/cron/cron.03min/$ARGV3 ]; then
+        echo "<INFO> Old cronjob for every 3 minutes was removed"
+        rm $ARGV5/system/cron/cron.03min/$ARGV3 > /dev/null 2>&1
+fi
+if [ -e $ARGV5/system/cron/cron.05min/$ARGV3 ]; then
+        echo "<INFO> Old cronjob for every 5 minutes was removed"
+        rm $ARGV5/system/cron/cron.05min/$ARGV3 > /dev/null 2>&1
+fi
+if [ -e $ARGV5/system/cron/cron.10min/$ARGV3 ]; then
+        echo "<INFO> Old cronjob for every 10 minutes was removed"
+        rm $ARGV5/system/cron/cron.10min/$ARGV3 > /dev/null 2>&1
+fi
+if [ -e $ARGV5/system/cron/cron.15min/$ARGV3 ]; then
+        echo "<INFO> Old cronjob for every 15 minutes was removed"
+        rm $ARGV5/system/cron/cron.15min/$ARGV3 > /dev/null 2>&1
+fi
+if [ -e $ARGV5/system/cron/cron.30min/$ARGV3 ]; then
+        echo "<INFO> Old cronjob for every 30 minutes was removed"
+        rm $ARGV5/system/cron/cron.30min/$ARGV3 > /dev/null 2>&1
+fi
+if [ -e $ARGV5/system/cron/cron.hourly/$ARGV3 ]; then
+        echo "<INFO> Old cronjob for every hour was removed"
+        rm $ARGV5/system/cron/cron.hourly/$ARGV3 > /dev/null 2>&1
+fi
+
 # Exit with Status 0
 exit 0
