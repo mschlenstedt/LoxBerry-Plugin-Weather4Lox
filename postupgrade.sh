@@ -19,11 +19,8 @@ cp -p -v -r /tmp/$ARGV1\_upgrade/themes/* $ARGV5/templates/plugins/$ARGV3/themes
 echo "<INFO> Remove temporary folders"
 rm -r /tmp/$ARGV1\_upgrade
 
-# Read config
-. $LBHOMEDIR/libs/bashlib/iniparser.sh
-iniparser $ARGV5/config/plugins/$ARGV3/weather4lox.cfg "SERVER"
-
 echo "<INFO> Recreate cronjob for fetching data from Weather Services"
+rm $ARGV5/system/cron/cron.01min/$ARGV3
 ln -s $ARGV5/bin/plugins/$ARGV3/cronjob.pl $ARGV5/system/cron/cron.01min/$ARGV3
 
 if [ $SERVEREMU -eq 1 ]; then
