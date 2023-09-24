@@ -23,6 +23,10 @@ echo "<INFO> Recreate cronjob for fetching data from Weather Services"
 rm $ARGV5/system/cron/cron.01min/$ARGV3
 ln -s $ARGV5/bin/plugins/$ARGV3/cronjob.pl $ARGV5/system/cron/cron.01min/$ARGV3
 
+# Read config
+. $LBHOMEDIR/libs/bashlib/iniparser.sh
+iniparser $ARGV5/config/plugins/$ARGV3/weather4lox.cfg "SERVER"
+
 if [ $SERVEREMU -eq 1 ]; then
 	echo "<INFO> Enabling Cloud Weather Emulator"
         $ARGV5/bin/plugins/$ARGV3/cloudemu enable > /dev/null 2>&1
