@@ -93,12 +93,12 @@ if( !$cronjob || ( $cronjob && $default ) ){
 	}
 
 	if (-e "$lbpbindir/grabber_$service.pl") {
-	LOGINF "Starting Grabber grabber_$service.pl $service_opt $verbose_opt";
-	$log->close;
-	system ("$lbpbindir/grabber_$service.pl $service_opt $verbose_opt");
+		LOGINF "Starting Grabber grabber_$service.pl $service_opt $verbose_opt";
+		$log->close;
+		system ("$lbpbindir/grabber_$service.pl $service_opt $verbose_opt");
 	} else {
-	LOGCRIT "Cannot find grabber script for service $service.";
-	exit (1);
+		LOGCRIT "Cannot find grabber script for service $service.";
+		exit (1);
 	}
 	$log->open;
 }
@@ -139,38 +139,38 @@ if( !$cronjob || ( $cronjob && $alternate ) ){
 		}
 	}
 	$log->open;
+}
 
-	# Grab some data from Wunderground
-	if ( $pcfg->param("SERVER.WUGRABBER") ) {
-		LOGINF "Starting Grabber grabber_wu.pl";
-		$log->close;
-		system ("$lbpbindir/grabber_wu.pl $verbose_opt");
-		$log->open;
-	}
+# Grab some data from Wunderground
+if ( $pcfg->param("SERVER.WUGRABBER") ) {
+	LOGINF "Starting Grabber grabber_wu.pl";
+	$log->close;
+	system ("$lbpbindir/grabber_wu.pl $verbose_opt");
+	$log->open;
+}
 
-	# Grab some data from FOSHKplugin
-	if ( $pcfg->param("SERVER.FOSHKGRABBER") ) {
-		LOGINF "Starting Grabber grabber_foshk.pl";
-		$log->close;
-		system ("$lbpbindir/grabber_foshk.pl $verbose_opt");
-		$log->open;
-	}
+# Grab some data from FOSHKplugin
+if ( $pcfg->param("SERVER.FOSHKGRABBER") ) {
+	LOGINF "Starting Grabber grabber_foshk.pl";
+	$log->close;
+	system ("$lbpbindir/grabber_foshk.pl $verbose_opt");
+	$log->open;
+}
 
-	# Grab some data from PWSCatchUpload
-	if ( $pcfg->param("SERVER.PWSCATCHUPLOADGRABBER") ) {
-		LOGINF "Starting Grabber grabber_pwscatchupload.pl";
-		$log->close;
-		system ("$lbpbindir/grabber_pwscatchupload.pl $verbose_opt");
-		$log->open;
-	}
+# Grab some data from PWSCatchUpload
+if ( $pcfg->param("SERVER.PWSCATCHUPLOADGRABBER") ) {
+	LOGINF "Starting Grabber grabber_pwscatchupload.pl";
+	$log->close;
+	system ("$lbpbindir/grabber_pwscatchupload.pl $verbose_opt");
+	$log->open;
+}
 
-	# Grab some data from Loxone Miniserver
-	if ( $pcfg->param("SERVER.LOXGRABBER") ) {
-		LOGINF "Starting Grabber grabber_loxone.pl";
-		$log->close;
-		system ("$lbpbindir/grabber_loxone.pl $verbose_opt");
-		$log->open;
-	}
+# Grab some data from Loxone Miniserver
+if ( $pcfg->param("SERVER.LOXGRABBER") ) {
+	LOGINF "Starting Grabber grabber_loxone.pl";
+	$log->close;
+	system ("$lbpbindir/grabber_loxone.pl $verbose_opt");
+	$log->open;
 }
 
 # Data to Loxone
