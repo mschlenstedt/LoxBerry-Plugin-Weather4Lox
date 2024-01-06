@@ -219,7 +219,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	if ($weather eq "531") { $code = "12"; $icon = "rain" };
 	if ($weather eq "600") { $code = "20"; $icon = "snow" };
 	if ($weather eq "601") { $code = "21"; $icon = "snow" };
-	if ($weather eq "602") { $code = "22"; $icon = "snow" };
+	if ($weather eq "602") { $code = "21"; $icon = "snow" };
 	if ($weather eq "611") { $code = "26"; $icon = "sleet" };
 	if ($weather eq "612") { $code = "28"; $icon = "sleet" };
 	if ($weather eq "613") { $code = "29"; $icon = "sleet" };
