@@ -22,6 +22,7 @@
 ##########################################################################
 
 use LoxBerry::System;
+use LoxBerry::IO;
 use LoxBerry::Log;
 use Getopt::Long;
 use IO::Socket; # For sending UDP packages
@@ -1742,7 +1743,7 @@ sub send {
 	}
 
 	if ($sendmqtt) {
-		LOGINF "Publishing " . $topic . "/" . $name . " " $value;
+		LOGINF "Publishing " . $topic . "/" . $name . " " . $value;
 		$mqtt->retain($topic . "/" . $name, $value);
 	};
 
@@ -1786,20 +1787,15 @@ sub mqttconnect
 
 	# Update Plugin Status
 	$topic = "weather4lox" if !$topic;; # Use standard if not defined
-	LOGINF "Publishing " . $topic . "/plugin/lastupdate" . " " time();
-	$mqtt->retain($topic . "/plugin/lastupdate", time());
+	LOGINF "Publishing " . $topic . "/plugin/lastupdate_unix" . " " . $datenow;
+	$mqtt->retain($topic . "/plugin/lastupdate_unix", $datenow);
 
 	return();
 
 };
 
 
-
-
-
-
 exit;
-
 
 END
 {
