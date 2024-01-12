@@ -27,6 +27,7 @@ use Getopt::Long;
 use IO::Socket; # For sending UDP packages
 use DateTime;
 use Time::HiRes;
+use Net::MQTT::Simple;
 
 ##########################################################################
 # Read settings
@@ -44,6 +45,9 @@ our $metric           = $pcfg->param("SERVER.METRIC");
 our $emu              = $pcfg->param("SERVER.EMU");
 our $stdtheme         = $pcfg->param("WEB.THEME");
 our $stdiconset       = $pcfg->param("WEB.ICONSET");
+our $topic            = $pcfg->param("SERVER.TOPIC");
+our $sendmqtt         = 0;
+our $mqtt;
 
 # Language
 our $lang = lblanguage();
@@ -99,6 +103,9 @@ my $dateref = DateTime->new(
 # UDP Queue Limits
 our $sendqueue = 0;
 our $sendqueuelimit = 50;
+
+# MQTT
+&mqttconnect();
 
 #
 # Print out current conditions
@@ -265,7 +272,7 @@ if (!$metric) {$value = @fields[26]*0.0393700787} else {$value = @fields[26]};
 
 $name = "cur_we_icon";
 $value = @fields[27];
-#&send;
+&send;
 
 $name = "cur_we_code";
 $value = @fields[28];
@@ -273,7 +280,7 @@ $value = @fields[28];
 
 $name = "cur_we_des";
 $value = @fields[29];
-#&send;
+&send;
 
 $name = "cur_moon_p";
 $value = @fields[30];
@@ -408,11 +415,11 @@ foreach (@dfcdata){
 
   $name = "dfc$per\_monthn";
   $value = @fields[4];
-#  &send;
+  &send;
 
   $name = "dfc$per\_monthn_sh";
   $value = @fields[5];
-#  &send;
+  &send;
 
   $name = "dfc$per\_year";
   $value = @fields[6];
@@ -428,11 +435,11 @@ foreach (@dfcdata){
 
   $name = "dfc$per\_wday";
   $value = @fields[9];
-#  &send;
+  &send;
 
   $name = "dfc$per\_wday_sh";
   $value = @fields[10];
-#  &send;
+  &send;
 
   $name = "dfc$per\_tt_h";
   if (!$metric) {$value = @fields[11]*1.8+32} else {$value = @fields[11];}
@@ -460,7 +467,7 @@ foreach (@dfcdata){
 
   $name = "dfc$per\_w_dirdes_h";
   $value = @fields[17];
-#  &send;
+  &send;
 
   $name = "dfc$per\_w_dir_h";
   $value = @fields[18];
@@ -472,7 +479,7 @@ foreach (@dfcdata){
 
   $name = "dfc$per\_w_dirdes_a";
   $value = @fields[20];
-#  &send;
+  &send;
 
   $name = "dfc$per\_w_dir_a";
   $value = @fields[21];
@@ -492,7 +499,7 @@ foreach (@dfcdata){
 
   $name = "dfc$per\_we_icon";
   $value = @fields[25];
-#  &send;
+  &send;
 
   $name = "dfc$per\_we_code";
   $value = @fields[26];
@@ -500,7 +507,7 @@ foreach (@dfcdata){
 
   $name = "dfc$per\_we_des";
   $value = @fields[27];
-#  &send;
+  &send;
 
   $name = "dfc$per\_ozone";
   $value = @fields[28];
@@ -619,11 +626,11 @@ foreach (@hfcdata){
 
   $name = "hfc$per\_monthn";
   $value = @fields[4];
-#  &send;
+  &send;
 
   $name = "hfc$per\_monthn_sh";
   $value = @fields[5];
-#  &send;
+  &send;
 
   $name = "hfc$per\_year";
   $value = @fields[6];
@@ -639,11 +646,11 @@ foreach (@hfcdata){
 
   $name = "hfc$per\_wday";
   $value = @fields[9];
-#  &send;
+  &send;
 
   $name = "hfc$per\_wday_sh";
   $value = @fields[10];
-#  &send;
+  &send;
 
   $name = "hfc$per\_tt";
   if (!$metric) {$value = @fields[11]*1.8+32} else {$value = @fields[11];}
@@ -663,7 +670,7 @@ foreach (@hfcdata){
 
   $name = "hfc$per\_w_dirdes";
   $value = @fields[15];
-#  &send;
+  &send;
 
   $name = "hfc$per\_w_dir";
   $value = @fields[16];
@@ -691,7 +698,7 @@ foreach (@hfcdata){
 
   $name = "hfc$per\_sky\_des";
   $value = @fields[22];
-#  &send;
+  &send;
 
   $name = "hfc$per\_uvi";
   $value = @fields[23];
@@ -715,12 +722,12 @@ foreach (@hfcdata){
 
   $name = "hfc$per\_we_icon";
   $value = @fields[28];
-#  &send;
+  &send;
 
 
   $name = "hfc$per\_we_des";
   $value = @fields[29];
-#  &send;
+  &send;
 
   $name = "hfc$per\_ozone";
   $value = @fields[30];
@@ -1733,9 +1740,63 @@ sub send {
 			$tmpudp = "";
 		}
 	}
+
+	if ($sendmqtt) {
+		LOGINF "Publishing " . $topic . "/" . $name . " " $value;
+		$mqtt->retain($topic . "/" . $name, $value);
+	};
+
 	return();
 
 }
+
+sub mqttconnect
+{
+
+	$ENV{MQTT_SIMPLE_ALLOW_INSECURE_LOGIN} = 1;
+
+	# From LoxBerry 3.0 on, we have MQTT onboard
+	my $mqttcred = LoxBerry::IO::mqtt_connectiondetails();
+	my $mqtt_username = $mqttcred->{brokeruser};
+	my $mqtt_password = $mqttcred->{brokerpass};
+	my $mqttbroker = $mqttcred->{brokerhost};
+	my $mqttport = $mqttcred->{brokerport};
+	
+	if (!$mqttbroker || !$mqttport) {
+		return();
+	} else {
+		$sendmqtt = 1;
+	}
+	
+	# Connect
+	eval {
+		LOGINF "Connecting to MQTT Broker";
+		$mqtt = Net::MQTT::Simple->new($mqttbroker . ":" . $mqttport);
+		if( $mqtt_username and $mqtt_password ) {
+			LOGDEB "MQTT Login with Username and Password: Sending $mqtt_username $mqtt_password";
+			$mqtt->login($mqtt_username, $mqtt_password);
+		}
+	};
+	if ($@ || !$mqtt) {
+		my $error = $@ || 'Unknown failure';
+        	LOGERR "An error occurred - $error";
+		$sendmqtt = 0;
+		return();
+	};
+
+	# Update Plugin Status
+	LOGINF "Publishing " . $topic . "/plugin/lastupdate" . " " time();
+	$mqtt->retain($topic . "/plugin/lastupdate", time());
+
+	return();
+
+};
+
+
+
+
+
+
 exit;
 
 
