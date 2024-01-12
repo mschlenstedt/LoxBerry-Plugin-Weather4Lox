@@ -250,6 +250,7 @@ if ($R::saveformdata2) {
 	$cfg->param("SERVER.SENDUDP", "$R::sendudp");
 	$cfg->param("SERVER.UDPPORT", "$R::udpport");
 	$cfg->param("SERVER.MSNO", "$R::msno");
+	$cfg->param("SERVER.TOPIC", "$R::mqtttopic");
 
 	$cfg->save();
 
