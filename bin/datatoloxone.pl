@@ -87,7 +87,9 @@ my $i;
 # Clear HTML database
 open(F,">$lbplogdir/weatherdata.html");
   flock(F,2);
-  print F "";
+  binmode F, ':encoding(UTF-8)';
+  print F "<!DOCTYPE HTML>\n<html>\n<head>\n";
+  print F "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>\n</head>\n<body>";
   flock(F,8);
 close(F);
 
@@ -149,19 +151,19 @@ $value = @fields[0] - $dateref->epoch() + (@fields[4] / 100 * 3600);
 
 $name = "cur_date_des";
 $value = @fields[1];
-#&send;
+&send;
 
 $name = "cur_date_tz_des_sh";
 $value = @fields[2];
-#&send;
+&send;
 
 $name = "cur_date_tz_des";
 $value = @fields[3];
-#&send;
+&send;
 
 $name = "cur_date_tz";
 $value = @fields[4];
-#&send;
+&send;
 
 $name = "cur_day";
 $value = $epochdate->day;
@@ -185,15 +187,15 @@ $value = $epochdate->minute;
 
 $name = "cur_loc_n";
 $value = @fields[5];
-#&send;
+&send;
 
 $name = "cur_loc_c";
 $value = @fields[6];
-#&send;
+&send;
 
 $name = "cur_loc_ccode";
 $value = @fields[7];
-#&send;
+&send;
 
 $name = "cur_loc_lat";
 $value = @fields[8];
@@ -221,7 +223,7 @@ $value = @fields[13];
 
 $name = "cur_w_dirdes";
 $value = @fields[14];
-#&send;
+&send;
 
 $name = "cur_w_dir";
 $value = @fields[15];
@@ -1039,6 +1041,13 @@ $value = $tmpsnow48;
 $udp = 1; # Really send now in one run
 &send;
 
+# Close HTML database
+open(F,">>$lbplogdir/weatherdata.html");
+  flock(F,2);
+  binmode F, ':encoding(UTF-8)';
+  print F "</body>\n</html>";
+  flock(F,8);
+close(F);
 
 #
 # Create Webpages
@@ -1712,7 +1721,10 @@ sub send {
 	# Create HTML webpage
 	LOGINF "Adding value to weatherdata.html. Value:$name\@$value";
 	open(F,">>$lbplogdir/weatherdata.html");
-		print F "$name\@$value<br>\n";
+  	flock(F,2);
+		binmode F, ':encoding(UTF-8)';
+		print F "$name\@" . Encode::decode("UTF-8", $value) . "<br>\n";
+  	flock(F,8);
 	close(F);
 
 	# Send by UDP
