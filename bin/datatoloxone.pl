@@ -1419,7 +1419,7 @@ if ($emu) {
     print F ";\t";
     printf ( F "%1d", 0);
     print F ";\t";
-    printf ( F "%1d", @fields[26]);
+    printf ( F "%1.1f", @fields[26]);
     print F ";\t";
     printf ( F "%1d", 0);
     print F ";\t";
@@ -1578,7 +1578,7 @@ if ($emu) {
       print F ";\t";
       printf ( F "%1d", @fields[21]);
       print F ";\t";
-      printf ( F "%1d", @fields[24]);
+      printf ( F "%1.1f", @fields[24]);
       print F ";\t";
       printf ( F "%1d", @fields[26]);
       print F ";\t";
