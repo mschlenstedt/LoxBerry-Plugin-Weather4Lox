@@ -1761,7 +1761,7 @@ sub mqttconnect
 	my $mqtt_password = $mqttcred->{brokerpass};
 	my $mqttbroker = $mqttcred->{brokerhost};
 	my $mqttport = $mqttcred->{brokerport};
-	
+
 	if (!$mqttbroker || !$mqttport) {
 		return();
 	} else {
@@ -1785,6 +1785,7 @@ sub mqttconnect
 	};
 
 	# Update Plugin Status
+	$topic = "weather4lox" if !$topic;; # Use standard if not defined
 	LOGINF "Publishing " . $topic . "/plugin/lastupdate" . " " time();
 	$mqtt->retain($topic . "/plugin/lastupdate", time());
 
