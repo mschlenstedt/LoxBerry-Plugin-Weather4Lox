@@ -244,11 +244,6 @@
 														</td>
 													</tr>
 													<tr>
-														<td colspan=4>
-														&nbsp;
-														</td>
-													</tr>
-													<tr>
 														<td colspan=3 width="75%">
 															<h2><TMPL_VAR SETTINGS.LABEL_VISUALCROSSING_SETTINGS></h2>
 														</td>
@@ -351,7 +346,7 @@
 													</tr>
 													<tr>
 														<td colspan=4>
-														&nbsp;
+														<hr>
 														</td>
 													</tr>
 													<tr>
@@ -457,7 +452,54 @@
 													</tr>
 													<tr>
 														<td colspan=4>
-														&nbsp;
+														<hr>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=3 width="75%">
+															<h2><TMPL_VAR SETTINGS.LABEL_WTTRIN_SETTINGS></h2>
+														</td>
+														<td align="right">
+															<a href="https://wettr.in/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/wttrin.png"></a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwttrinlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+														</td>
+														<td width="50%">
+															<TMPL_VAR WTTRINLANG>
+														</td>
+														<td width="5%">
+															&nbsp;
+														</td>
+														<td width="20%">
+															&nbsp;
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwttrinstationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="70%"><input id="wttrinstationid" name="wttrinstationid" type="text" class="textfield" value="<TMPL_VAR WTTRIN.STATIONID>"></td>
+															<td width="15%"><a id="testwttrin" data-role="button" data-mini="true" href="javascript:testwttrin()"><TMPL_VAR SETTINGS.BUTTON_TESTWTTRIN></a></td>
+															<td width="15%"><a id="helpwttrin" data-role="button" data-mini="true" href="https://wttr.in/:help" target="_blank"><TMPL_VAR SETTINGS.BUTTON_HELPWTTRIN></a></td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_WTTRINSTATIONID></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														<hr>
 														</td>
 													</tr>
 													<tr>
@@ -595,19 +637,13 @@
 									$('select[name=weatherservice]').attr('data-mini','true');
 									$('select[name=weatherservicedfc]').attr('data-mini','true');
 									$('select[name=weatherservicehfc]').attr('data-mini','true');
-									//$('select[name=wulang]').attr('data-mini','true');
-									$('select[name=darkskylang]').attr('data-mini','true');
-									$('select[name=weatherbitlang]').attr('data-mini','true');
-									$('select[name=weatherbitfillmissingdata]').attr('data-role','flipswitch');
 									$('select[name=openweatherlang]').attr('data-mini','true');
 									$('select[name=weatherflowlang]').attr('data-mini','true');
-									//$('select[name=wulang]').attr('data-native-menu','false');
+									$('select[name=visualcrossinglang]').attr('data-mini','true');
+									$('select[name=wttrinlang]').attr('data-mini','true');
 									$('select[name=metric]').attr('data-mini','true');
-									//$('select[name=metric]').attr('data-native-menu','false');
 									$('select[name=cron]').attr('data-mini','true');
 									$('select[name=cron_alternate]').attr('data-mini','true');
-									//$('select[name=cron]').attr('data-native-menu','false');
-									//$('select[name=cron_alternate]').attr('data-native-menu','false');
 
 									// Get Data
 									$( document ).on( 'change', '#getdata', function ( e ) {
@@ -622,7 +658,7 @@
 										}
 									});
 
-									// Get Data
+									// Get Data Forecast
 									$( document ).on( 'change', '#getdata_forecast', function ( e ) {
 										if ( $( "select[name=getdata_forecast]" ).val()  === "1" ) {
 											//alert("An!");
@@ -695,9 +731,11 @@
 									function disable() {
 										if ( $( "select[name=usealternatedfc]" ).val()  === "0" ) {
 											$('#weatherservicedfc').addClass('ui-disabled');
+											$('#weatherservicedfc').selectmenu('refresh');
 										}
 										if ( $( "select[name=usealternatehfc]" ).val()  === "0" ) {
 											$('#weatherservicehfc').addClass('ui-disabled');
+											$('#weatherservicehfc').selectmenu('refresh');
 										}
 										if ( $( "select[name=getdata]" ).val()  === "0" ) {
 											$('#cron').addClass('ui-disabled');
@@ -720,6 +758,7 @@
 									function fetchweather()
 									{
 
+										$('#fetch').addClass('ui-disabled');
 										$("#fetchstate").attr("style", "color:blue").html("<TMPL_VAR SETTINGS.HINT_FETCHWAIT>");
 										$.ajax( {
 												type: 'POST',
@@ -737,9 +776,16 @@
 											$("#fetchstate").attr("style", "color:red").html("<TMPL_VAR SETTINGS.HINT_FETCHFAILED>");
 										})
 										.always(function(resp) {
+										$('#fetch').removeClass('ui-disabled');
 											console.log( "fetch", "finished", resp );
 										});
 
+									}
+
+									// Test Link for wtt.in
+									function testwttrin() {
+										var url = 'https://wttr.in/' + $('#wttrinstationid').val();
+										window.open(url, 'NewWindow');
 									}
 
 									</script>

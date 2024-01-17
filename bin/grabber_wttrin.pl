@@ -17,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#use strict;
-#use warnings;
+use strict;
+use warnings;
 
 ##########################################################################
 # Modules
@@ -32,7 +32,7 @@ use File::Copy;
 use Getopt::Long;
 use Time::Piece;
 use Math::Function::Interpolator;
-use Data::Dumper;
+#use Data::Dumper;
 
 ##########################################################################
 # Read Settings
@@ -143,9 +143,9 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	my $tz_offset = qx(date +%z);
 	chomp ($tz_offset);
 	print F "$tz_offset|";
-	$city = Encode::decode("UTF-8", $decoded_json->{nearest_area}[0]->{areaName}[0]->{value});
+	my $city = Encode::decode("UTF-8", $decoded_json->{nearest_area}[0]->{areaName}[0]->{value});
 	print F "$city|";
-	$country = Encode::decode("UTF-8", $decoded_json->{nearest_area}[0]->{country}[0]->{value});
+	my $country = Encode::decode("UTF-8", $decoded_json->{nearest_area}[0]->{country}[0]->{value});
 	print F "$country|";
 	print F "-9999|";
 	print F "$decoded_json->{nearest_area}[0]->{latitude}|";
@@ -473,12 +473,12 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		if (!$code) { $code = "1" };
 		print F "$icon|";
 		print F "$code|";
-		$wdes = "";
+		my $wdes = "";
 		$wdes = $results->{hourly}[4]->{'lang_' . $lang}[0]{value};
 		$wdes = $results->{hourly}[4]->{weatherDesc}[0]{value} if !$wdes;
 		print F "$wdes|";
 		my $moonphasen = "";
-		$moonphase = lc( $results->{astronomy}[0]{moon_phase} );
+		my $moonphase = lc( $results->{astronomy}[0]{moon_phase} );
 		if ( $moonphase eq "new moon" ) {
 			$moonphasen = 0;
 		} elsif ( $moonphase eq "waxing crescent" ) {

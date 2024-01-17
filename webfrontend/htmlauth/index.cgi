@@ -52,6 +52,7 @@ $cfg->param("WUNDERGROUND.URL", "https://api.weather.com/v2/pws/observations/cur
 $cfg->param("FOSHK.URL", "observations/current/json/units=m");
 $cfg->param("WEATHERFLOW.URL", "https://swd.weatherflow.com/swd/rest");
 $cfg->param("VISUALCROSSING.URL", "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline");
+$cfg->param("WTTRIN.URL", "https://wttr.in");
 
 $cfg->save();
 
@@ -133,6 +134,21 @@ if ($R::saveformdata1) {
 		}
 	}
 
+	# Check for Station : WTTRIN
+	if ($R::weatherservice eq "wttrin") {
+		our $url = $cfg->param("WTTRIN.URL");
+		our $querystation = $R::wttrinstationid;
+		# 1. attempt to query wttr.in
+		&wttrinquery;
+		$found = 0;
+		if ( !$error && $decoded_json->{current_condition}[0]->{weatherCode} ) {
+			$found = 1;
+		}
+		if ( !$error && !$found ) {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
+		}
+	}
+
 	# Check for Station : WUNDERGROUND
 	if ($R::wugrabber) {
 		our $url = $cfg->param("WUNDERGROUND.URL");
@@ -176,6 +192,9 @@ if ($R::saveformdata1) {
 	$cfg->param("VISUALCROSSING.LANG", "$R::visualcrossinglang");
 	$cfg->param("VISUALCROSSING.STATION", "$R::visualcrossingcity");
 	$cfg->param("VISUALCROSSING.COUNTRY", "$R::visualcrossingcountry");
+
+	$cfg->param("WTTRIN.LANG", "$R::wttrinlang");
+	$cfg->param("WTTRIN.STATIONID", "$R::wttrinstationid");
 
 	$cfg->param("FOSHK.SERVER", "$R::foshkserver");
 	$cfg->param("FOSHK.PORT", "$R::foshkport");
@@ -312,10 +331,11 @@ if ($R::form eq "1" || !$R::form) {
   my %labels;
 
   # Weather Service
-  @values = ( 'openweather', 'visualcrossing', 'weatherflow', );
+  @values = ( 'visualcrossing', 'openweather', 'wttrin', 'weatherflow', );
   %labels = (
-        'openweather' => 'OpenWeatherMap',
         'visualcrossing' => 'Visual Crossing',
+        'openweather' => 'OpenWeatherMap',
+        'wttrin' => 'wttr.in',
         'weatherflow' => 'Weatherflow',
     );
   my $wservice = $cgi->popup_menu(
@@ -328,10 +348,11 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( WEATHERSERVICE => $wservice );
 
   # DFC Weather Service
-  @values = ( 'openweather', 'visualcrossing', 'weatherflow', );
+  @values = ( 'visualcrossing', 'openweather', 'wttrin', 'weatherflow', );
   %labels = (
-        'openweather' => 'OpenWeatherMap',
         'visualcrossing' => 'Visual Crossing',
+        'openweather' => 'OpenWeatherMap',
+        'wttrin' => 'wttr.in',
         'weatherflow' => 'Weatherflow',
     );
   my $wservicedfc = $cgi->popup_menu(
@@ -359,10 +380,11 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( USEALTERNATEDFC => $usealternatedfc );
 
   # HFC Weather Service
-  @values = ( 'openweather', 'visualcrossing', 'weatherflow', );
+  @values = ( 'visualcrossing', 'openweather', 'wttrin', 'weatherflow', );
   %labels = (
-        'openweather' => 'OpenWeatherMap',
         'visualcrossing' => 'Visual Crossing',
+        'openweather' => 'OpenWeatherMap',
+        'wttrin' => 'wttr.in',
         'weatherflow' => 'Weatherflow',
     );
   my $wservicehfc = $cgi->popup_menu(
@@ -623,117 +645,53 @@ if ($R::form eq "1" || !$R::form) {
     );
   $template->param( VISUALCROSSINGLANG => $visualcrossinglang );
 
-  # Statiotyp
-  @values = ('statid', 'coord', 'autoip');
-  %labels = (
-        'statid' => $L{'SETTINGS.LABEL_STATIONID'},
-        'coord' => $L{'SETTINGS.LABEL_COORDINATES'},
-        'autoip' => $L{'SETTINGS.LABEL_IPADDRESS'},
-    );
-  my $stationtyp = $cgi->radio_group(
-        -name    => 'wustationtyp',
-        -id      => 'wustationtyp',
-        -values  => \@values,
-	-labels  => \%labels,
-	-default => $cfg->param('WUNDERGROUND.STATIONTYP'),
-	-onClick => "disable()",
-    );
-  $template->param( WUSTATIONTYP => $stationtyp );
+  # wttr.in Language
+  @values = ('af', 'am', 'ar', 'be', 'bn', 'ca', 'da', 'de', 'el', 'en', 'et', 'fa', 'fr', 'gl', 'hi', 'hu', 'ia', 'id', 'it', 'lt', 'mg', 'nb', 'nl', 'oc', 'pl', 'pt-br', 'ro', 'ru', 'ta', 'th', 'tr', 'uk', 'vi', 'zh-cn', 'zh-tw');
 
-  # WU Language
-  @values = ('AF', 'AL', 'AR', 'HY', 'AZ', 'EU', 'BY', 'BU', 'LI', 'MY', 'CA', 'CN', 'TW', 'CR', 'CZ', 'DK', 'DV', 'NL', 'EN', 'EO', 'ET', 'FA', 'FI', 'FR', 'FC', 'GZ', 'DL', 'KA', 'GR', 'GU', 'HT', 'IL', 'HI', 'HU', 'IS', 'IO', 'ID', 'IR', 'IT', 'JP', 'JW', 'KM', 'KR', 'KU', 'LA', 'LV', 'LT', 'ND', 'MK', 'MT', 'GM', 'MI', 'MR', 'MN', 'NO', 'OC', 'PS', 'GN', 'PL', 'BR', 'PA', 'RO', 'RU', 'SR', 'SK', 'SL', 'SP', 'SI', 'SW', 'CH', 'TL', 'TT', 'TH', 'TR', 'TK', 'UA', 'UZ', 'VU', 'CY', 'SN', 'JI', 'YI');
   %labels = (
-	'AF' => 'Afrikaans',
-	'AL' => 'Albanian',
-	'AR' => 'Arabic',
-	'HY' => 'Armenian',
-	'AZ' => 'Azerbaijani',
-	'EU' => 'Basque',
-	'BY' => 'Belarusian',
-	'BU' => 'Bulgarian',
-	'LI' => 'British English',
-	'MY' => 'Burmese',
-	'CA' => 'Catalan',
-	'CN' => 'Chinese - Simplified',
-	'TW' => 'Chinese - Traditional',
-	'CR' => 'Croatian',
-	'CZ' => 'Czech',
-	'DK' => 'Danish',
-	'DV' => 'Dhivehi',
-	'NL' => 'Dutch',
-	'EN' => 'English',
-	'EO' => 'Esperanto',
-	'ET' => 'Estonian',
-	'FA' => 'Farsi',
-	'FI' => 'Finnish',
-	'FR' => 'French',
-	'FC' => 'French Canadian',
-	'GZ' => 'Galician',
-	'DL' => 'German',
-	'KA' => 'Georgian',
-	'GR' => 'Greek',
-	'GU' => 'Gujarati',
-	'HT' => 'Haitian Creole',
-	'IL' => 'Hebrew',
-	'HI' => 'Hindi',
-	'HU' => 'Hungarian',
-	'IS' => 'Icelandic',
-	'IO' => 'Ido',
-	'ID' => 'Indonesian',
-	'IR' => 'Irish Gaelic',
-	'IT' => 'Italian',
-	'JP' => 'Japanese',
-	'JW' => 'Javanese',
-	'KM' => 'Khmer',
-	'KR' => 'Korean',
-	'KU' => 'Kurdish',
-	'LA' => 'Latin',
-	'LV' => 'Latvian',
-	'LT' => 'Lithuanian',
-	'ND' => 'Low German',
-	'MK' => 'Macedonian',
-	'MT' => 'Maltese',
-	'GM' => 'Mandinka',
-	'MI' => 'Maori',
-	'MR' => 'Marathi',
-	'MN' => 'Mongolian',
-	'NO' => 'Norwegian',
-	'OC' => 'Occitan',
-	'PS' => 'Pashto',
-	'GN' => 'Plautdietsch',
-	'PL' => 'Polish',
-	'BR' => 'Portuguese',
-	'PA' => 'Punjabi',
-	'RO' => 'Romanian',
-	'RU' => 'Russian',
-	'SR' => 'Serbian',
-	'SK' => 'Slovak',
-	'SL' => 'Slovenian',
-	'SP' => 'Spanish',
-	'SI' => 'Swahili',
-	'SW' => 'Swedish',
-	'CH' => 'Swiss',
-	'TL' => 'Tagalog',
-	'TT' => 'Tatarish',
-	'TH' => 'Thai',
-	'TR' => 'Turkish',
-	'TK' => 'Turkmen',
-	'UA' => 'Ukrainian',
-	'UZ' => 'Uzbek',
-	'VU' => 'Vietnamese',
-	'CY' => 'Welsh',
-	'SN' => 'Wolof',
-	'JI' => 'Yiddish - transliterated',
-	'YI' => 'Yiddish - unicode',
+	'af' => 'Africaans',
+	'am' => 'Amharic',
+	'ar' => 'Arabic',
+	'be' => 'Belarusian',
+	'bn' => 'Bengali',
+	'ca' => 'Catalan',
+	'da' => 'Danish',
+	'de' => 'German',
+	'el' => 'Greek',
+	'en' => 'English',
+	'et' => 'Estonian',
+	'fa' => 'Persian (Farsi)',
+	'fr' => 'French',
+	'gl' => 'Galician',
+	'hi' => 'Hindi',
+	'ia' => 'Interlingua',
+	'id' => 'Indonesian',
+	'it' => 'Italian',
+	'lt' => 'Lithuanian',
+	'mg' => 'Malagasy',
+	'nb' => 'Norwegian Bokmal',
+	'nl' => 'Dutch',
+	'oc' => 'Occitan',
+	'pl' => 'Polish',
+	'pt-br' => 'Portuguese Brasil',
+	'ro' => 'Romanian',
+	'ru' => 'Russian',
+	'ta' => 'Tamil',
+	'th' => 'Thai',
+	'tr' => 'Turkish',
+	'uk' => 'Ukrainian',
+	'vi' => 'Vietnamese',
+	'zh-cn' => 'simplified Chinese',
+	'zh-tw' => 'traditional Chinese',
     );
-  my $wulang = $cgi->popup_menu(
-        -name    => 'wulang',
-        -id      => 'wulang',
+  my $wttrinweatherlang = $cgi->popup_menu(
+        -name    => 'wttrinlang',
+        -id      => 'wttrinlang',
         -values  => \@values,
 	-labels  => \%labels,
-	-default => $cfg->param('WUNDERGROUND.LANG'),
+	-default => $cfg->param('WTTRIN.LANG'),
     );
-  $template->param( WULANG => $wulang );
+  $template->param( WTTRINLANG => $wttrinweatherlang );
 
 
 # Menu: Miniserver
@@ -1052,6 +1010,39 @@ sub visualcrossingquery
 
 	if ($urlstatuscode eq "401" ) {
 	        $error = $L{'SETTINGS.ERR_API_KEY'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+	}
+
+        # Decode JSON response from server
+	if (!$error) {
+        	our $decoded_json = decode_json( $json );
+	}
+	return();
+
+}
+
+#####################################################
+# Query Wttr.in
+#####################################################
+
+sub wttrinquery
+{
+
+        # Get data from wttrin Server (API request) for testing API Key
+	my $query = "$url/$querystation?format=j1";
+        my $ua = new LWP::UserAgent;
+        my $res = $ua->get($query);
+        my $json = $res->decoded_content();
+
+        # Check status of request
+        my $urlstatus = $res->status_line;
+        my $urlstatuscode = substr($urlstatus,0,3);
+
+	if ($urlstatuscode ne "200" ) {
+	        $error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+	}
+
+	if ($urlstatuscode eq "440" ) {
+	        $error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
 	}
 
         # Decode JSON response from server
