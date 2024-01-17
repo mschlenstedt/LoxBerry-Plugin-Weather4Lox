@@ -218,7 +218,7 @@ LOGDEB "New line: $newline";
 # Write patched file
 eval {
 	open(my $fh, ">$currentnametmp");
-	#binmode $fh, ':encoding(UTF-8)';
+	binmode $fh, ':encoding(UTF-8)';
 	print $fh $newline;
 	close $fh;
 }
