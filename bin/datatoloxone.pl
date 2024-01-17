@@ -1755,8 +1755,15 @@ sub send {
 	}
 
 	if ($sendmqtt) {
-		LOGINF "Publishing " . $topic . "/" . $name . " " . $value;
-		$mqtt->retain($topic . "/" . $name, $value);
+		eval {
+			$name =~ s/\+/\_\_/g;
+			LOGINF "Publishing " . $topic . "/" . $name . " " . $value;
+			$mqtt->retain($topic . "/" . $name, $value);
+		};
+		if ($@) {
+			my $error = $@ || 'Unknown failure';
+			LOGERR "An error occurred - $error";
+		};
 	};
 
 	return();
@@ -1792,7 +1799,7 @@ sub mqttconnect
 	};
 	if ($@ || !$mqtt) {
 		my $error = $@ || 'Unknown failure';
-        	LOGERR "An error occurred - $error";
+		LOGERR "An error occurred - $error";
 		$sendmqtt = 0;
 		return();
 	};
@@ -1806,8 +1813,6 @@ sub mqttconnect
 
 };
 
-
-exit;
 
 END
 {
