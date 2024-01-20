@@ -213,7 +213,6 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$icon|";
 	print F "$code|";
 	print F  Encode::decode("UTF-8", $decoded_json->{currentConditions}->{conditions}) . "|";
-	print F "$decoded_json->{currentConditions}->{conditions}|";
 	# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
 	my $moonphase = $decoded_json->{currentConditions}->{moonphase};
 	my $moonpercent = 0;
