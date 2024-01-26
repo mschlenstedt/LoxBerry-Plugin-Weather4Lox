@@ -219,7 +219,7 @@ LOGDEB "New line: $newline";
 eval {
 	open(my $fh, ">$currentnametmp");
 	binmode $fh, ':encoding(UTF-8)';
-	print $fh $newline;
+ 	print $fh Encode::decode("UTF-8", $newline);
 	close $fh;
 }
 or do {
