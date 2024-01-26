@@ -148,6 +148,7 @@ if (defined($wdir) and $wdir ne "-9999") {
 	if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
 	if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
 	if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
+	$wdirdes = Encode::decode("UTF-8", $wdirdes);
 	$lox_response{cur_w_dirdes} = $wdirdes;
 }
 
@@ -169,8 +170,8 @@ LOGDEB "New line: $newline";
 # Write patched file
 eval {
 	open(my $fh, ">$currentnametmp");
-	#binmode $fh, ':encoding(UTF-8)';
-	print $fh $newline;
+	binmode $fh, ':encoding(UTF-8)';
+	print $fh Encode::decode("UTF-8", $newline);
 	close $fh;
 }
 or do {
