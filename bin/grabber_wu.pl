@@ -167,16 +167,16 @@ $wu_response{cur_w_dir}	= $decoded_json->{observations}->[0]->{winddir} if ($dec
 my $wdir = $wu_response{cur_w_dir};
 my $wdirdes;
 if ($wu_response{cur_w_dir} ne "-9999") {
-	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
-	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}) }; # NorthEast
-	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'}) }; # East
-	if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}) }; # SouthEast
-	if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'}) }; # South
-	if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}) }; # SouthWest
-	if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'}) }; # West
-	if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}) }; # NorthWest
-	if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'}) }; # North
-	$wdirdes = Encode::decode("UTF-8", $wdirdes);
+	if ( $wdir >= 0 && $wdir <= 22 ) { $wdirdes =  $L{'GRABBER.LABEL_N'} }; # North
+	if ( $wdir > 22 && $wdir <= 68 ) { $wdirdes =  $L{'GRABBER.LABEL_NE'} }; # NorthEast
+	if ( $wdir > 68 && $wdir <= 112 ) { $wdirdes = $L{'GRABBER.LABEL_E'} }; # East
+	if ( $wdir > 112 && $wdir <= 158 ) { $wdirdes = $L{'GRABBER.LABEL_SE'} }; # SouthEast
+	if ( $wdir > 158 && $wdir <= 202 ) { $wdirdes = $L{'GRABBER.LABEL_S'} }; # South
+	if ( $wdir > 202 && $wdir <= 248 ) { $wdirdes = $L{'GRABBER.LABEL_SW'} }; # SouthWest
+	if ( $wdir > 248 && $wdir <= 292 ) { $wdirdes = $L{'GRABBER.LABEL_W'} }; # West
+	if ( $wdir > 292 && $wdir <= 338 ) { $wdirdes = $L{'GRABBER.LABEL_NW'} }; # NorthWest
+	if ( $wdir > 338 && $wdir <= 360 ) { $wdirdes = $L{'GRABBER.LABEL_N'} }; # North
+	$wdirdes = $wdirdes;
 	$wu_response{cur_w_dirdes} = $wdirdes;
 }
 $wu_response{cur_w_sp} = $decoded_json->{observations}->[0]->{metric}->{windSpeed} if ($decoded_json->{observations}->[0]->{metric}->{windSpeed} ne "-9999");
