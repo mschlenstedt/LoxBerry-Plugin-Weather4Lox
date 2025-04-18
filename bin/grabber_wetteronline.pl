@@ -27,15 +27,19 @@ use warnings;
 use LoxBerry::System;
 use LoxBerry::Log;
 use LWP::UserAgent;
-use JSON qw( decode_json );
+use JSON::PP;
+#use JSON qw( decode_json );
 use File::Copy;
 use Getopt::Long;
 use Time::Piece;
 use HTTP::Request;
 use DateTime;
-use DateTime::TimeZone;
-use DateTime::Format::ISO8601;
+#use DateTime::TimeZone;
+#use DateTime::Format::ISO8601;
 use Astro::MoonPhase;
+use utf8;
+use Encode qw(encode_utf8);
+use HTML::Entities;
 
 ##########################################################################
 # Read Settings
@@ -47,11 +51,19 @@ my $version = LoxBerry::System::pluginversion();
 my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $city             = $pcfg->param("WETTERONLINE.STATION");
 my $apikey           = $pcfg->param("WETTERONLINE.APIKEY");
-my $timezone         = $pcfg->param("WETTERONLINE.TIMEZONE");
+my $timezone         = qx(cat /etc/timezone);
 my $useragent        = $pcfg->param("WETTERONLINE.USERAGENT");
 my $urlCurrent_raw   = $pcfg->param("WETTERONLINE.URL-CURRENT");
 my $urlDaily_raw     = $pcfg->param("WETTERONLINE.URL-DAILY");
 my $urlHourly_raw    = $pcfg->param("WETTERONLINE.URL-HOURLY");
+chomp ($timezone);
+
+my $error = 0;
+
+my $json = JSON::PP->new->relaxed;
+$json = $json->utf8(1);
+$json = $json->relaxed(1);
+$json = $json->allow_barekey(1);
 
 # Read language phrases
 my %L = LoxBerry::System::readlanguage("language.ini");
@@ -87,6 +99,7 @@ LOGDEB "This is $0 Version $version";
 # Get data from wetteronline.de (HTTP Body request) for current conditions
 sub getUrl {
     my ($myUrl, $useragent) = @_;
+    LOGDEB("URL: " . $myUrl);
     
     my $ua = LWP::UserAgent->new;
     my $request = HTTP::Request->new(GET => $myUrl);
@@ -121,35 +134,47 @@ sub findGid {
 LOGINF "Fetching current data for location $city";
 my $urlCurrent  = "$urlCurrent_raw$city";
 my $body = getUrl($urlCurrent, $useragent);
-	my $currentCondMatch;
-	if ($body =~ /WO\.metadata\.p_city_weather\.nowcastBarMetadata = (\{.+\})$/m) {
-		$currentCondMatch = $1;
-	}
-	my $firstHourlyMatch;
-	if ($body =~ /hourlyForecastElements\.push\((\{[^}]+\})/ms) {
-		$firstHourlyMatch = $1;
-	}
-	my $geodataMatch;
-	if ($body =~ /WO\.geo = (\{(?:[^{}]*|(?1))*\});/s) {
-		$geodataMatch = $1;
-	}
-my $decodedBodyCurrent = decode_json($currentCondMatch);
-my $decodedBodyFirstHourly = decode_json($firstHourlyMatch);
-my $decodedGeodata = decode_json($geodataMatch);
+my $currentCondMatch;
+if ($body =~ /WO\.metadata\.p_city_weather\.nowcastBarMetadata = (\{.+\})$/m) {
+	$currentCondMatch = $1;
+}
+my $firstHourlyMatch;
+if ($body =~ /hourlyForecastElements\.push\((\{[^}]+\})/ms) {
+	$firstHourlyMatch = $1;
+}
+my $geodataMatch;
+if ($body =~ /WO\.geo = (\{(?:[^{}]*|(?1))*\});/s) {
+	$geodataMatch = $1;
+}
+my $decodedBodyCurrent;
+my $decodedBodyFirstHourly;
+my $decodedGeodata;
+$currentCondMatch = decode_entities($currentCondMatch);
+$firstHourlyMatch = decode_entities($firstHourlyMatch);
+$geodataMatch = decode_entities($geodataMatch);
+$currentCondMatch = encode_utf8($currentCondMatch);
+$firstHourlyMatch = encode_utf8($firstHourlyMatch);
+$geodataMatch = encode_utf8($geodataMatch);
+$decodedBodyCurrent = $json->decode($currentCondMatch);
+$decodedBodyFirstHourly = $json->decode($firstHourlyMatch);
+$decodedGeodata = $json->decode($geodataMatch);
 
 # Getting daily data and decoding to perl format
 LOGINF "Fetching daily data for location $city";
-my $urlDaily = "$urlDaily_raw$apikey&location_id=$gid&timezone=$timezone";
 my $gid = findGid($city, $body);
+my $urlDaily = "$urlDaily_raw$apikey&location_id=$gid&timezone=$timezone";
 my $dailyData = getUrl($urlDaily, $useragent);
-my $decodedDaily = decode_json($dailyData);
+my $decodedDaily;
+$dailyData = encode_utf8($dailyData);
+$decodedDaily = $json->decode($dailyData);
 
 # Getting hourly data and decoding to perl format
 LOGINF "Fetching hourly data for location $city";
 my $urlHourly = "$urlHourly_raw$apikey&location_id=$gid&timezone=$timezone";
 my $hourlyData = getUrl($urlHourly, $useragent);
-my $decodedHourly = decode_json($hourlyData);
-
+my $decodedHourly;
+$hourlyData = encode_utf8($hourlyData);
+$decodedHourly = $json->decode($hourlyData);
 
 my $t;
 my $weather;
@@ -169,12 +194,11 @@ if ( $current ) { # Start current
 # Write location data into database
 $t = DateTime->from_epoch(
 	 epoch     => $decodedBodyCurrent->{hourly}->{currentTime},
-     time_zone => $timezone,
+         time_zone => $timezone,
 );
 LOGINF "Saving new Data for Timestamp $t to database.";
 
 # Saving new current data...
-$error = 0;
 open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
   flock(F,2);
 	if ($error) {
@@ -213,12 +237,8 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$location|";
 	
 	# cur_loc_c
-	my $country;
-	my $country_path = $decodedGeodata->{path};
-	if ($country_path =~ /.*?\\.*?\\.*?;(.*?);/) {
-		$country = $1;
-	}
-	print F "$country|";
+	my @locs = split(/;/, $decodedGeodata->{path});
+	print F "$locs[5]|";
 	
 	# cur_loc_ccode
 	my $iso_code = $decodedGeodata->{location_info}->{geoObject}->{"iso-3166-1"};
@@ -441,10 +461,10 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 				last;
 			}
 		}
-	print F "$description_current|";
+	print F ucfirst($description_current) . "|";
 	
 	# Astro Data
-	( $moonphase,
+	my ( $moonphase,
 	  $moonillum,
 	  $moonage,
 	  $moondist,
@@ -452,7 +472,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	  $sundist,
 	  $sunang ) = phase();
 	print F sprintf("%.2f",$moonillum*100), "|";
-	print F sprintf("%.2f",$moonage*100), "|";
+	print F sprintf("%.2f",$moonage), "|";
 	print F sprintf("%.2f",$moonphase*100), "|";
 	print F "-9999|";
 #	# cur_moon_p
@@ -485,15 +505,15 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 		($sunset_hour, $sunset_minute) = ($1, $2);
 	}
 	if (defined $sunrise_hour && defined $sunrise_minute && defined $sunset_hour && defined $sunset_minute) {
-		print sprintf("%02d", $sunrise_hour), "|";
-		print sprintf("%02d", $sunrise_minute), "|";
-		print sprintf("%02d", $sunset_hour), "|";
-		print sprintf("%02d", $sunset_minute), "|";
+		print F sprintf("%02d", $sunrise_hour), "|";
+		print F sprintf("%02d", $sunrise_minute), "|";
+		print F sprintf("%02d", $sunset_hour), "|";
+		print F sprintf("%02d", $sunset_minute), "|";
 	} else {
-		print "-9999|";
-		print "-9999|";
-		print "-9999|";
-		print "-9999|";
+		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
+		print F "-9999|";
 	}
 
 	# cur_ozone
@@ -548,33 +568,29 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		$i++;
 		
 		# dfc0_date
-		my $date_str = $results->{date}
-		my $dt = DateTime::Format::ISO8601->parse_datetime($date_str);
-		$dt->set_time_zone($timezone);
-		my $epoch_time = $dt->epoch;
+		my $date_str = qx( TZ='$timezone' date  -d "$results->{date}" +'%Y-%m-%d' );
+		chomp($date_str);
+		my $t = Time::Piece->strptime($date_str, "%Y-%m-%d");
+		my $epoch_time = $t->epoch;
 		print F $epoch_time, "|";
+		print F sprintf("%02d", $t->mday), "|";
+		print F sprintf("%02d", $t->mon), "|";
+		my @month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH'}) );
+		$t->mon_list(@month);
+		print F $t->monname . "|";
+		@month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH_SH'}) );
+		$t->mon_list(@month);
+		print F $t->monname . "|";
+		print F $t->year . "|";
+		print F sprintf("%02d", $t->hour), "|";
+		print F sprintf("%02d", $t->min), "|";
+		my @days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS'}) );
+		$t->day_list(@days);
+		print F $t->wdayname . "|";
+		@days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS_SH'}) );
+		$t->day_list(@days);
+		print F $t->wdayname . "|";
 
-		# dfc0_day && dfc0_month && dfc0_monthn && dfc0_monthn_sh && dfc0_year && dfc0_hour &&dfc0_min && dfc0_wday && dfc0_wday_sh
-		my $dt = DateTime->from_epoch(epoch => $epoch_time, time_zone => $timezone);
-		my $day = $dt->day;
-		my $month = $dt->month;
-		my $year = $dt->year;
-		my $hour = $dt->hour;
-		my $minute = $dt->minute;
-		my $monthname = $dt->month_name;
-		my $monthname_short = $dt->strftime('%b');
-		my $weekday = $dt->day_name;
-		my $weekday_short = $dt->strftime('%a');
-		print sprintf("%02d", $day), "|";     	# Tag
-		print sprintf("%02d", $month), "|";   	# Monat
-		print "$monthname|";          			# Monat als voller Name
-		print "$monthname_short|";    			# Monat als Kurzform
-		print sprintf("%04d", $year), "|";    	# Jahr
-		print sprintf("%02d", $hour), "|";    	# Stunde
-		print sprintf("%02d", $minute), "|";  	# Minute
-		print "$weekday|";            			# Wochentag als voller Name
-		print "$weekday_short|";      			# Wochentag als Kurzform
-		
 		# dfc0_tt_h
 		print F sprintf("%.1f",$results->{temperature}->{max}->{air}), "|";
 		
@@ -603,7 +619,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		}
 		
 		# dfc0_w_sp_h
-		print F sprintf("%.2f",$results->{wind}{speed}{kilometer_per_hour}{max_gust}), "|";
+		print F sprintf("%.2f",$results->{wind}{speed}{kilometer_per_hour}{value}), "|";
 
 		# dfc0_w_dirdes_h
 		$wdir = $results->{wind}{direction};
@@ -631,7 +647,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$results->{wind}{direction}|";
 		
 		# dfc0_hu_a
-		print F "$results->{humidity}|";
+		print F sprintf("%.0f",$results->{humidity} * 100), "|";
 		
 		# dfc0_hu_h && dfc0_hu_l
 		my $min_humidity = 1;
@@ -786,21 +802,29 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 			'bdgr2_'  => 'bedeckt und gefrierender Regen',
 		);
 		my $weather_text = $translation_table{$weather};
-		print F "$weather_text|";
+		print F ucfirst($weather_text) . "|";
 		
 		# dfc0_ozone
 		print F "-9999|";
 		
 		# dfc0_moon_p
-		my $moonage = $results->{moon}{age};
-		my $moonphase = $moonage / 30;
-		my $moonpercent = 0;
-		if ($moonphase le "0.5") {
-			$moonpercent = $moonphase * 2 * 100;
-		} else {
-			$moonpercent = (1 - $moonphase) * 2 * 100;
-		}
-		print F "$moonpercent|";
+		my ( $moonphase,
+		  $moonillum,
+		  $moonage,
+		  $moondist,
+		  $moonang,
+		  $sundist,
+		  $sunang ) = phase($epoch_time);
+		print F sprintf("%.2f",$moonillum*100), "|";
+#		my $moonage = $results->{moon}{age};
+#		my $moonphase = $moonage / 30;
+#		my $moonpercent = 0;
+#		if ($moonphase le "0.5") {
+#			$moonpercent = $moonphase * 2 * 100;
+#		} else {
+#			$moonpercent = (1 - $moonphase) * 2 * 100;
+#		}
+#		print F "$moonpercent|";
 
 		# dfc0_dp
 		my $sum_dew_point = 0;
@@ -811,7 +835,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 			$count++;
 		}
 		my $average_dew_point = $sum_dew_point / $count;
-		("%.1f",$average_dew_point), "|";
+		print F sprintf("%.1f",$average_dew_point), "|";
 		
 		# dfc0_pr
 		print F sprintf("%.0f",$results->{air_pressure}{hpa}), "|";
@@ -820,21 +844,28 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F sprintf("%.1f",$results->{uv_index}{value}),"|";
 		
 		# dfc0_sun_r
-		my $dt = DateTime::Format::ISO8601->parse_datetime($results->{sun}{rise});
-		$dt->set_time_zone($timezone);
-		print F sprintf("%02d", $dt->hour), "|";
-		print F sprintf("%02d", $dt->minute), "|";
+		my $sunrise_str = qx( TZ='$timezone' date  -d "$results->{sun}{rise}" +'%Y-%m-%d %H:%M' );
+		chomp($sunrise_str);
+		my $srt = Time::Piece->strptime($sunrise_str, "%Y-%m-%d %H:%M");
+		print F sprintf("%02d", $srt->hour), "|";
+		print F sprintf("%02d", $srt->minute), "|";
 		
 		# dfc0_sun_s
-		my $dt = DateTime::Format::ISO8601->parse_datetime($results->{sun}{set});
-		$dt->set_time_zone($timezone);
-		print F sprintf("%02d", $dt->hour), "|";
-		print F sprintf("%02d", $dt->minute), "|";
+		my $sunset_str = qx( TZ='$timezone' date  -d "$results->{sun}{set}" +'%Y-%m-%d %H:%M' );
+		chomp($sunset_str);
+		my $srt = Time::Piece->strptime($sunset_str, "%Y-%m-%d %H:%M");
+		print F sprintf("%02d", $srt->hour), "|";
+		print F sprintf("%02d", $srt->minute), "|";
 		
 		#dfc0_vis
 		print F "-9999";
+
+		# dfc0_moon_a
+		print F sprintf("%.2f",$moonage), "|";
 		
-		
+		# dfc0_moon_ph
+		print F sprintf("%.2f",$moonphase*100), "|";
+
 		print F "\n";
 	}
   flock(F,8);
@@ -862,6 +893,7 @@ if ( $hourly ) { # Start hourly
 # Saving new hourly forecast data...
 
 $error = 0;
+my $epoch_time = 0;
 open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
   flock(F,2);
 	if ($error) {
@@ -883,32 +915,30 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		$i++;
 		
 		# hfc1_date
-		my $date_str = $results->{date}
-		my $dt = DateTime::Format::ISO8601->parse_datetime($date_str);
-		$dt->set_time_zone($timezone);
-		my $epoch_time = $dt->epoch;
+		my $date_str = qx( TZ='$timezone' date  -d "$results->{date}" +'%Y-%m-%d %H:%M' );
+		chomp($date_str);
+		my $t = Time::Piece->strptime($date_str, "%Y-%m-%d %H:%M");
+		$epoch_time = $t->epoch;
 		print F $epoch_time, "|";
 
 		# hfc1_day && hfc1_month && hfc1_monthn && hfc1_monthn_sh && hfc1_year && hfc1_hour &&hfc1_min && hfc1_wday && hfc1_wday_sh
-		my $dt = DateTime->from_epoch(epoch => $epoch_time, time_zone => $timezone);
-		my $day = $dt->day;
-		my $month = $dt->month;
-		my $year = $dt->year;
-		my $hour = $dt->hour;
-		my $minute = $dt->minute;
-		my $monthname = $dt->month_name;
-		my $monthname_short = $dt->strftime('%b');
-		my $weekday = $dt->day_name;
-		my $weekday_short = $dt->strftime('%a');
-		print sprintf("%02d", $day), "|";     	# Tag
-		print sprintf("%02d", $month), "|";   	# Monat
-		print "$monthname|";          			# Monat als voller Name
-		print "$monthname_short|";    			# Monat als Kurzform
-		print sprintf("%04d", $year), "|";    	# Jahr
-		print sprintf("%02d", $hour), "|";    	# Stunde
-		print sprintf("%02d", $minute), "|";  	# Minute
-		print "$weekday|";            			# Wochentag als voller Name
-		print "$weekday_short|";      			# Wochentag als Kurzform
+		print F sprintf("%02d", $t->mday), "|";
+		print F sprintf("%02d", $t->mon), "|";
+		my @month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH'}) );
+		$t->mon_list(@month);
+		print F $t->monname . "|";
+		@month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH_SH'}) );
+		$t->mon_list(@month);
+		print F $t->monname . "|";
+		print F $t->year . "|";
+		print F sprintf("%02d", $t->hour), "|";
+		print F sprintf("%02d", $t->min), "|";
+		my @days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS'}) );
+		$t->day_list(@days);
+		print F $t->wdayname . "|";
+		@days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS_SH'}) );
+		$t->day_list(@days);
+		print F $t->wdayname . "|";
 
 		# hfc1_tt
 		print F sprintf("%.1f",$results->{temperature}{air}), "|";
@@ -920,7 +950,7 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "-9999|";
 		
 		# hfc1_hu
-		print F "$results->{humidity}|";
+		print F sprintf("%.0f",$results->{humidity} * 100), "|";
 		
 		# hfc1_w_dirdes
 		$wdir = $results->{wind}{direction};
@@ -961,7 +991,8 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		
 		# hfc1_prec
 		if ($results->{precipitation}{details}{rainfall_amount}{millimeter}) {
-			print F sprintf("%.2f",$results->{precipitation}{details}{rainfall_amount}{millimeter}), "|";
+			my $rfamount = ($results->{precipitation}{details}{rainfall_amount}{millimeter}{interval_begin} + $results->{precipitation}{details}{rainfall_amount}{millimeter}{interval_end}) / 2;
+			print F sprintf("%.2f",$rfamount), "|";
 		} else {
 			print F "0|";
 		}
@@ -1117,7 +1148,7 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 			'bdgr2_'  => 'bedeckt und gefrierender Regen',
 		);
 		my $weather_text = $translation_table{$weather};
-		print F "$weather_text|";
+		print F  ucfirst($weather_text) . "|";
 
 		# Ozone
 		print F "-9999|";
@@ -1128,6 +1159,21 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		# Visibility km
 		print F sprintf("%.2f",$results->{visibility} / 1000), "|";
 		
+		# hfc0_moon_p
+		my ( $moonphase,
+		  $moonillum,
+		  $moonage,
+		  $moondist,
+		  $moonang,
+		  $sundist,
+		  $sunang ) = phase($epoch_time);
+		print F sprintf("%.2f",$moonillum*100), "|";
+
+		# hfc0_moon_a
+		print F sprintf("%.2f",$moonage), "|";
+		
+		# hfc0_moon_ph
+		print F sprintf("%.2f",$moonphase*100), "|";
 		
 		print F "\n";
 		}
@@ -1138,35 +1184,34 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		# hfc1_per
 		print F "$i|";
 		$i++;
-		
+
 		# hfc1_date
-		my $epoch_time += 3600;
-		print F $epoch_time, "|";
+		$epoch_time += 3600;
+		print F "$epoch_time|";
+		$t = Time::Piece->new ($epoch_time);
 
 		# hfc1_day && hfc1_month && hfc1_monthn && hfc1_monthn_sh && hfc1_year && hfc1_hour &&hfc1_min && hfc1_wday && hfc1_wday_sh
-		my $dt = DateTime->from_epoch(epoch => $epoch_time, time_zone => $timezone);
-		my $day = $dt->day;
-		my $month = $dt->month;
-		my $year = $dt->year;
-		my $hour = $dt->hour;
-		my $minute = $dt->minute;
-		my $monthname = $dt->month_name;
-		my $monthname_short = $dt->strftime('%b');
-		my $weekday = $dt->day_name;
-		my $weekday_short = $dt->strftime('%a');
-		print sprintf("%02d", $day), "|";     	# Tag
-		print sprintf("%02d", $month), "|";   	# Monat
-		print "$monthname|";          			# Monat als voller Name
-		print "$monthname_short|";    			# Monat als Kurzform
-		print sprintf("%04d", $year), "|";    	# Jahr
-		print sprintf("%02d", $hour), "|";    	# Stunde
-		print sprintf("%02d", $minute), "|";  	# Minute
-		print "$weekday|";            			# Wochentag als voller Name
-		print "$weekday_short|";      			# Wochentag als Kurzform
+		print F sprintf("%02d", $t->mday), "|";
+		print F sprintf("%02d", $t->mon), "|";
+		my @month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH'}) );
+		$t->mon_list(@month);
+		print F $t->monname . "|";
+		@month = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_MONTH_SH'}) );
+		$t->mon_list(@month);
+		print F $t->monname . "|";
+		print F $t->year . "|";
+		print F sprintf("%02d", $t->hour), "|";
+		print F sprintf("%02d", $t->min), "|";
+		my @days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS'}) );
+		$t->day_list(@days);
+		print F $t->wdayname . "|";
+		@days = split(' ', Encode::decode("UTF-8", $L{'GRABBER.LABEL_DAYS_SH'}) );
+		$t->day_list(@days);
+		print F $t->wdayname . "|";
 
 		# writing rubish till dataset is full
 		my $x = 0;
-		while ($x < 22) {
+		while ($x < 25) {
 			$x++;
 			print F "-9999|";
 		}

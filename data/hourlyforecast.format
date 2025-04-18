@@ -34,4 +34,7 @@
 # 30: Ozone (DU)
 # 31: Solar Radiation (W/sqm)
 # 32: Visability (km)
+# 33: Moon: Percent Illuminated (%)
+# 34: Moon: Age of Moon (d)
+# 35: Moon: Phase of Moon (%)
 #

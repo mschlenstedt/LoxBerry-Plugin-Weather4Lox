@@ -578,6 +578,14 @@ foreach (@dfcdata){
   $udp = 1; # Really send now in one run
   &send;
 
+  $name = "dfc$per\_moon_a";
+  $value = @fields[38];
+  &send;
+
+  $name = "dfc$per\_moon_ph";
+  $value = @fields[39];
+  &send;
+
 }
 
 #
@@ -744,6 +752,19 @@ foreach (@hfcdata){
   $value = @fields[32];
   $udp = 1; # Really send now in one run
   &send;
+
+  $name = "hfc$per\_moon_p";
+  $value = @fields[33];
+  &send;
+
+  $name = "hfc$per\_moon_a";
+  $value = @fields[34];
+  &send;
+
+  $name = "hfc$per\_moon_ph";
+  $value = @fields[35];
+  &send;
+
 
 }
 
@@ -1261,6 +1282,8 @@ foreach (@dfcdata){
   ${dfc.$per._sun_s} = "@fields[36]:@fields[37]";
   ${dfc.$per._ozone} = @fields[28];
   ${dfc.$per._moon_p} = @fields[29];
+  ${dfc.$per._moon_ph} = @fields[39];
+  ${dfc.$per._moon_a} = @fields[38];
   ${dfc.$per._uvi} = @fields[32];
   # Use night icons between sunset and sunrise
   #if (${dfc.$per._hour} > $hour_sun_s || ${dfc.$per._hour} < $hour_sun_r) {
@@ -1326,6 +1349,9 @@ foreach (@hfcdata){
   ${hfc.$per._we_icon} = @fields[28];
   ${hfc.$per._we_des} = @fields[29];
   ${hfc.$per._ozone} = @fields[30];
+  ${hfc.$per._moon_p} = @fields[33];
+  ${hfc.$per._moon_ph} = @fields[35];
+  ${hfc.$per._moon_a} = @fields[34];
   if (!$metric) {
   ${hfc.$per._tt} = @fields[11]*1.8+32;
   ${hfc.$per._tt_fl} = @fields[12]*1.8+32;

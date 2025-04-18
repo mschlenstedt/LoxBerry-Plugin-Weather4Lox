@@ -30,7 +30,7 @@
 # 26: Weather Code
 # 27: Weather Description
 # 28: Ozone (DU)
-# 29: MoonPhase (%)
+# 29: Moon: Percent Illuminated (%)
 # 30: DewPoint (C)
 # 31: Pressure (mbar)
 # 32: UV Index
@@ -39,4 +39,6 @@
 # 35: Sunset Time HOUR
 # 36: Sunset Time MINUTES
 # 37: Visability (km)
+# 38: Moon: Age of Moon (d)
+# 39: Moon: Phase of Moon (%)
 #
