@@ -31,6 +31,7 @@ use JSON qw( decode_json );
 use File::Copy;
 use Getopt::Long;
 use Time::Piece;
+use Astro::MoonPhase;
 
 ##########################################################################
 # Read Settings
@@ -248,17 +249,27 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$icon|";
 	print F "$code|";
 	print F "$decoded_json->{current}->{weather}->[0]->{description}|";
-	my $moonphase = $decoded_json->{daily}[0]->{moon_phase};
-	my $moonpercent = 0;
-	if ($moonphase le "0.5") {
-		$moonpercent = $moonphase * 2 * 100;
-	} else {
-		$moonpercent = (1 - $moonphase) * 2 * 100;
-	}
-	print F "$moonpercent|";
+	( $moonphase,
+	  $moonillum,
+	  $moonage,
+	  $moondist,
+	  $moonang,
+	  $sundist,
+	  $sunang ) = phase();
+	print F sprintf("%.2f",$moonillum*100), "|";
+	print F sprintf("%.2f",$moonage*100), "|";
+	print F sprintf("%.2f",$moonphase*100), "|";
 	print F "-9999|";
-	print F sprintf("%.0f",$moonphase*100), "|";
-	print F "-9999|";
+#	my $moonphase = $decoded_json->{daily}[0]->{moon_phase};
+#	my $moonpercent = 0;
+#	if ($moonphase le "0.5") {
+#		$moonpercent = $moonphase * 2 * 100;
+#	} else {
+#		$moonpercent = (1 - $moonphase) * 2 * 100;
+#	}
+#	print F "$moonpercent|";
+#	print F "-9999|";
+#	print F sprintf("%.0f",$moonphase*100), "|";
 	$t = localtime($decoded_json->{current}->{sunrise});
 	print F sprintf("%02d", $t->hour), "|";
 	print F sprintf("%02d", $t->min), "|";

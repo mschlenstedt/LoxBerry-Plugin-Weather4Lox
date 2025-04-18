@@ -32,6 +32,7 @@ use File::Copy;
 use Getopt::Long;
 use Time::Piece;
 use Math::Function::Interpolator;
+use Astro::MoonPhase;
 #use Data::Dumper;
 
 ##########################################################################
@@ -236,31 +237,42 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	my $wdes = $decoded_json->{current_condition}[0]->{'lang_' . $lang}[0]{value};
 	$wdes = $decoded_json->{current_condition}[0]->{weatherDesc}[0]{value} if !$wdes;
 	print F "$wdes|";
-	print F "$decoded_json->{weather}[0]->{astronomy}[0]{moon_illumination}|";
+	( $moonphase,
+	  $moonillum,
+	  $moonage,
+	  $moondist,
+	  $moonang,
+	  $sundist,
+	  $sunang ) = phase();
+	print F sprintf("%.2f",$moonillum*100), "|";
+	print F sprintf("%.2f",$moonage*100), "|";
+	print F sprintf("%.2f",$moonphase*100), "|";
 	print F "-9999|";
-	my $moonphasen;
-	my $moonphase = lc( $decoded_json->{weather}[0]->{astronomy}[0]{moon_phase} );
-	if ( $moonphase eq "new moon" ) {
-		$moonphasen = 0;
-	} elsif ( $moonphase eq "waxing crescent" ) {
-		$moonphasen = 0.125;
-	} elsif ( $moonphase eq "first quarter" ) {
-		$moonphasen = 0.25;
-	} elsif ( $moonphase eq "waxing gibbous" ) {
-		$moonphasen = 0.375;
-	} elsif ( $moonphase eq "full moon" ) {
-		$moonphasen = 0.5;
-	} elsif ( $moonphase eq "waning gibbous" ) {
-		$moonphasen = 0.625;
-	} elsif ( $moonphase eq "last quarter" ) {
-		$moonphasen = 0.75;
-	} elsif ( $moonphase eq "waning crescent" ) {
-		$moonphasen = 0.875;
-	} else {
-		$moonphasen = 1;
-	}
-	print F sprintf("%.0f",$moonphasen*100), "|";
-	print F "-9999|";
+#	print F "$decoded_json->{weather}[0]->{astronomy}[0]{moon_illumination}|";
+#	print F "-9999|";
+#	my $moonphasen;
+#	my $moonphase = lc( $decoded_json->{weather}[0]->{astronomy}[0]{moon_phase} );
+#	if ( $moonphase eq "new moon" ) {
+#		$moonphasen = 0;
+#	} elsif ( $moonphase eq "waxing crescent" ) {
+#		$moonphasen = 0.125;
+#	} elsif ( $moonphase eq "first quarter" ) {
+#		$moonphasen = 0.25;
+#	} elsif ( $moonphase eq "waxing gibbous" ) {
+#		$moonphasen = 0.375;
+#	} elsif ( $moonphase eq "full moon" ) {
+#		$moonphasen = 0.5;
+#	} elsif ( $moonphase eq "waning gibbous" ) {
+#		$moonphasen = 0.625;
+#	} elsif ( $moonphase eq "last quarter" ) {
+#		$moonphasen = 0.75;
+#	} elsif ( $moonphase eq "waning crescent" ) {
+#		$moonphasen = 0.875;
+#	} else {
+#		$moonphasen = 1;
+#	}
+#	print F sprintf("%.0f",$moonphasen*100), "|";
+#	print F "-9999|";
 	$t = Time::Piece->strptime($decoded_json->{weather}[0]->{astronomy}[0]{sunrise}, "%R %p");
 	print F sprintf("%02d", $t->hour), "|";
 	print F sprintf("%02d", $t->min), "|";

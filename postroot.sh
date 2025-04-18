@@ -18,5 +18,8 @@ ARGV5=$5 # Fifth argument is Base folder of LoxBerry
 echo "<INFO> Installing Perl Module Math::Function::Interpolator"
 cpanm Math::Function::Interpolator
 
+echo "<INFO> Installing Perl Module Astro::MoonPhase"
+cpanm Astro::MoonPhase
+
 # Exit with Status 0
 exit 0

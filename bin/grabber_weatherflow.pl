@@ -32,6 +32,7 @@ use JSON qw( decode_json );
 use File::Copy;
 use Getopt::Long;
 use Time::Piece;
+use Astro::MoonPhase;
 
 ##########################################################################
 # Read Settings
@@ -257,10 +258,21 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$icon|"; # Weather4Lox Weather Icon name
 	print F "$weather|"; # Weather Code
 	print F "$forecast_json->{current_conditions}->{conditions}|"; # Weather Description (note: forecast, since current observation does not have this info)
-	print F "-9999|"; # Moon percent Illuminated (not available in Weatherflow API)
-	print F "-9999|"; # Moon: Age of Moon (not available in Weatherflow API)
-	print F "-9999|"; # Moon: Phase of Moon (not available in Weatherflow API)
-	print F "-9999|"; # Moon: Hemisphere (not available in Weatherflow API)
+	( $moonphase,
+	  $moonillum,
+	  $moonage,
+	  $moondist,
+	  $moonang,
+	  $sundist,
+	  $sunang ) = phase();
+	print F sprintf("%.2f",$moonillum*100), "|";
+	print F sprintf("%.2f",$moonage*100), "|";
+	print F sprintf("%.2f",$moonphase*100), "|";
+	print F "-9999|";
+#	print F "-9999|"; # Moon percent Illuminated (not available in Weatherflow API)
+#	print F "-9999|"; # Moon: Age of Moon (not available in Weatherflow API)
+#	print F "-9999|"; # Moon: Phase of Moon (not available in Weatherflow API)
+#	print F "-9999|"; # Moon: Hemisphere (not available in Weatherflow API)
 	$t = localtime($forecast_json->{forecast}->{daily}->[0]->{sunrise});
 	print F sprintf("%02d", $t->hour), "|"; # Sunrise
 	print F sprintf("%02d", $t->min), "|";

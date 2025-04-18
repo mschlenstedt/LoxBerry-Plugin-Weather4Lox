@@ -31,6 +31,7 @@ use JSON qw( decode_json );
 use File::Copy;
 use Getopt::Long;
 use Time::Piece;
+use Astro::MoonPhase;
 
 ##########################################################################
 # Read Settings
@@ -213,18 +214,29 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$icon|";
 	print F "$code|";
 	print F  $decoded_json->{currentConditions}->{conditions} . "|";
-	# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
-	my $moonphase = $decoded_json->{currentConditions}->{moonphase};
-	my $moonpercent = 0;
-	if ($moonphase le "0.5") {
-		$moonpercent = $moonphase * 2 * 100;
-	} else {
-		$moonpercent = (1 - $moonphase) * 2 * 100;
-	}
-	print F "$moonpercent|";
+	( $moonphase,
+	  $moonillum,
+	  $moonage,
+	  $moondist,
+	  $moonang,
+	  $sundist,
+	  $sunang ) = phase();
+	print F sprintf("%.2f",$moonillum*100), "|";
+	print F sprintf("%.2f",$moonage*100), "|";
+	print F sprintf("%.2f",$moonphase*100), "|";
 	print F "-9999|";
-	print F sprintf("%.0f",$moonphase*100), "|";
-	print F "-9999|";
+#	# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
+#	my $moonphase = $decoded_json->{currentConditions}->{moonphase};
+#	my $moonpercent = 0;
+#	if ($moonphase le "0.5") {
+#		$moonpercent = $moonphase * 2 * 100;
+#	} else {
+#		$moonpercent = (1 - $moonphase) * 2 * 100;
+#	}
+#	print F "$moonpercent|";
+#	print F "-9999|";
+#	print F sprintf("%.0f",$moonphase*100), "|";
+#	print F "-9999|";
 	$t = localtime($decoded_json->{currentConditions}->{sunriseEpoch});
 	print F sprintf("%02d", $t->hour), "|";
 	print F sprintf("%02d", $t->min), "|";
