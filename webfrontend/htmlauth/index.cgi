@@ -53,6 +53,9 @@ $cfg->param("FOSHK.URL", "observations/current/json/units=m");
 $cfg->param("WEATHERFLOW.URL", "https://swd.weatherflow.com/swd/rest");
 $cfg->param("VISUALCROSSING.URL", "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline");
 $cfg->param("WTTRIN.URL", "https://wttr.in");
+$cfg->param("WETTERONLINE.URL-HOURLY", "https://api-app.wetteronline.de/app/weather/hourcast?");
+$cfg->param("WETTERONLINE.URL-DAILY", "https://api-app.wetteronline.de/app/weather/forecast?");
+$cfg->param("WETTERONLINE.URL-CURRENT", "https://www.wetteronline.de/wetter/");
 
 $cfg->save();
 
@@ -149,6 +152,17 @@ if ($R::saveformdata1) {
 		}
 	}
 
+	# Check for Station : WETTERONLINE
+	if ($R::weatherservice eq "wetteronline") {
+		our $url = $cfg->param("WETTERONLINE.URL-CURRENT");
+		our $querystation = $R::wetteronlinestationid;
+		# 1. attempt to query WetterOnline
+		&wetteronlinequery;
+		if ( $error ) {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'};
+		}
+	}
+
 	# Check for Station : WUNDERGROUND
 	if ($R::wugrabber) {
 		our $url = $cfg->param("WUNDERGROUND.URL");
@@ -195,6 +209,10 @@ if ($R::saveformdata1) {
 
 	$cfg->param("WTTRIN.LANG", "$R::wttrinlang");
 	$cfg->param("WTTRIN.STATIONID", "$R::wttrinstationid");
+
+	$cfg->param("WETTERONLINE.STATIONID", "$R::wetteronlinestationid");
+	$cfg->param("WETTERONLINE.APIKEY", "av=2&mv=13&c=d2ViOmFxcnhwWDR3ZWJDSlRuWeb=");
+	$cfg->param("WETTERONLINE.USERAGENT", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
 
 	$cfg->param("FOSHK.SERVER", "$R::foshkserver");
 	$cfg->param("FOSHK.PORT", "$R::foshkport");
@@ -331,11 +349,12 @@ if ($R::form eq "1" || !$R::form) {
   my %labels;
 
   # Weather Service
-  @values = ( 'visualcrossing', 'openweather', 'wttrin', 'weatherflow', );
+  @values = ( 'visualcrossing', 'openweather', 'wttrin', 'wetteronline', 'weatherflow', );
   %labels = (
         'visualcrossing' => 'Visual Crossing',
         'openweather' => 'OpenWeatherMap',
         'wttrin' => 'wttr.in',
+        'wetteronline' => 'WetterOnline',
         'weatherflow' => 'Weatherflow',
     );
   my $wservice = $cgi->popup_menu(
@@ -348,11 +367,12 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( WEATHERSERVICE => $wservice );
 
   # DFC Weather Service
-  @values = ( 'visualcrossing', 'openweather', 'wttrin', 'weatherflow', );
+  @values = ( 'visualcrossing', 'openweather', 'wttrin', 'wetteronline', 'weatherflow', );
   %labels = (
         'visualcrossing' => 'Visual Crossing',
         'openweather' => 'OpenWeatherMap',
         'wttrin' => 'wttr.in',
+        'wetteronline' => 'WetterOnline',
         'weatherflow' => 'Weatherflow',
     );
   my $wservicedfc = $cgi->popup_menu(
@@ -380,11 +400,12 @@ if ($R::form eq "1" || !$R::form) {
   $template->param( USEALTERNATEDFC => $usealternatedfc );
 
   # HFC Weather Service
-  @values = ( 'visualcrossing', 'openweather', 'wttrin', 'weatherflow', );
+  @values = ( 'visualcrossing', 'openweather', 'wttrin', 'wetteronline', 'weatherflow', );
   %labels = (
         'visualcrossing' => 'Visual Crossing',
         'openweather' => 'OpenWeatherMap',
         'wttrin' => 'wttr.in',
+        'wetteronline' => 'WetterOnline',
         'weatherflow' => 'Weatherflow',
     );
   my $wservicehfc = $cgi->popup_menu(
@@ -857,7 +878,7 @@ if ($R::form eq "1" || !$R::form) {
 $template->param( "LBPPLUGINDIR", $lbpplugindir);
 
 # Template
-LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "http://www.loxwiki.eu/display/LOXBERRY/Weather4Loxone", "help.html");
+LoxBerry::Web::lbheader($L{'SETTINGS.LABEL_PLUGINTITLE'} . " V$version", "https://wiki.loxberry.de/plugins/Weather4Loxone/start", "help.html");
 print $template->output();
 LoxBerry::Web::lbfooter();
 
@@ -1049,6 +1070,37 @@ sub wttrinquery
 	if (!$error) {
         	our $decoded_json = decode_json( $json );
 	}
+	return();
+
+}
+
+#####################################################
+# Query WetterOnline
+#####################################################
+
+sub wetteronlinequery
+{
+
+	# Get data from WetterOnline to check StationID
+	my $query = "$url$querystation";
+	my $ua = LWP::UserAgent->new;
+	my $request = HTTP::Request->new(GET => $query);
+	$request->header('User-Agent' => $useragent);
+	my $response = $ua->request($request);
+
+	if ($response->is_success) {
+		$error = 0;
+		$body = $response->decoded_content;
+		if ($body =~ /WO\.metadata\.p_city_weather\.nowcastBarMetadata = (\{.+\})$/m) {
+			$error = 0;
+			return ();
+		} else {
+			$error = $L{'SETTINGS.ERR_NO_WEATHERSTATION'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+		}
+	} else {
+		$error = $L{'SETTINGS.ERR_NO_DATA'} . "<br><br><b>URL:</b> $query<br><b>STATUS CODE:</b> $urlstatuscode";
+	}
+
 	return();
 
 }

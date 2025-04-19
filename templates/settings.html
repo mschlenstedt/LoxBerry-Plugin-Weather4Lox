@@ -504,6 +504,38 @@
 													</tr>
 													<tr>
 														<td colspan=3 width="75%">
+															<h2><TMPL_VAR SETTINGS.LABEL_WETTERONLINE_SETTINGS></h2>
+														</td>
+														<td align="right">
+															<a href="https://www.wetteronline.de/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/wetteronline_logo.png"></a>
+														</td>
+													</tr>
+													<tr>
+														<td width="25%">
+															<label id="labelwetteronlinestationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+														</td>
+														<td width="50%">
+															<table border=0 width="100%">
+															<tr>
+															<td width="70%"><input id="wetteronlinestationid" name="wetteronlinestationid" type="text" class="textfield" value="<TMPL_VAR WETTERONLINE.STATIONID>"></td>
+															<td width="15%"><a id="testwetteronline" data-role="button" data-mini="true" href="javascript:testwetteronline()"><TMPL_VAR SETTINGS.BUTTON_TESTWETTERONLINE></a></td>
+															</tr>
+															</table>
+														</td>
+														<td width="5%">
+															&nbsp;
+														</td>
+														<td width="20%">
+															<font size="-1"><TMPL_VAR SETTINGS.HINT_WETTERONLINESTATIONID></font>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=4>
+														<hr>
+														</td>
+													</tr>
+													<tr>
+														<td colspan=3 width="75%">
 															<h2><TMPL_VAR SETTINGS.LABEL_WEATHERFLOW_SETTINGS></h2>
 														</td>
 														<td align="right">
@@ -785,6 +817,12 @@
 									// Test Link for wtt.in
 									function testwttrin() {
 										var url = 'https://wttr.in/' + $('#wttrinstationid').val();
+										window.open(url, 'NewWindow');
+									}
+
+									// Test Link for Wetteronline
+									function testwetteronline() {
+										var url = 'https://www.wetteronline.de/wetter/' + $('#wetteronlinestationid').val();
 										window.open(url, 'NewWindow');
 									}
 

@@ -249,7 +249,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$icon|";
 	print F "$code|";
 	print F "$decoded_json->{current}->{weather}->[0]->{description}|";
-	( $moonphase,
+	my ( $moonphase,
 	  $moonillum,
 	  $moonage,
 	  $moondist,
@@ -257,7 +257,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	  $sundist,
 	  $sunang ) = phase();
 	print F sprintf("%.2f",$moonillum*100), "|";
-	print F sprintf("%.2f",$moonage*100), "|";
+	print F sprintf("%.2f",$moonage), "|";
 	print F sprintf("%.2f",$moonphase*100), "|";
 	print F "-9999|";
 #	my $moonphase = $decoded_json->{daily}[0]->{moon_phase};
@@ -445,7 +445,14 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$code|";
 		print F "$results->{weather}->[0]->{description}|";
 		print F "-9999|";
-		print F "-9999|";
+		my ( $moonphase,
+		  $moonillum,
+		  $moonage,
+		  $moondist,
+		  $moonang,
+		  $sundist,
+		  $sunang ) = phase($results->{dt});
+		print F sprintf("%.2f",$moonillum*100), "|";
 		print F sprintf("%.1f",$results->{dew_point}), "|";
 		print F sprintf("%.0f",$results->{pressure}), "|";
 		print F sprintf("%.1f",$results->{uvi}),"|";
@@ -455,7 +462,9 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		$t = localtime($results->{sunset});
 		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
-		print F "-9999";
+		print F "-9999|";
+		print F sprintf("%.2f",$moonage), "|";
+		print F sprintf("%.2f",$moonphase*100), "|";
 		print F "\n";
 	}
   flock(F,8);
@@ -624,6 +633,16 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "-9999|";
 		print F "-9999|";
 		print F "-9999|";
+		my ( $moonphase,
+		  $moonillum,
+		  $moonage,
+		  $moondist,
+		  $moonang,
+		  $sundist,
+		  $sunang ) = phase($results->{dt});
+		print F sprintf("%.2f",$moonillum*100), "|";
+		print F sprintf("%.2f",$moonage), "|";
+		print F sprintf("%.2f",$moonphase*100), "|";
 		print F "\n";
 	}
   flock(F,8);
@@ -779,72 +798,75 @@ if ($i < 168) {
 				} else {
 					# Convert Weather string into Weather Code and convert icon name
 					$weather = $results->{weather}->[0]->{id};
-        	$code = "";
-        	$icon = "";
-        	if ($weather eq "200") { $code = "18"; $icon = "tstorms" };
-        	if ($weather eq "201") { $code = "18"; $icon = "tstorms" };
-        	if ($weather eq "202") { $code = "19"; $icon = "tstorms" };
-        	if ($weather eq "210") { $code = "18"; $icon = "tstorms" };
-        	if ($weather eq "211") { $code = "18"; $icon = "tstorms" };
-        	if ($weather eq "212") { $code = "19"; $icon = "tstorms" };
-        	if ($weather eq "221") { $code = "19"; $icon = "tstorms" };
-        	if ($weather eq "230") { $code = "18"; $icon = "tstorms" };
-        	if ($weather eq "231") { $code = "18"; $icon = "tstorms" };
-        	if ($weather eq "232") { $code = "19"; $icon = "tstorms" };
-        	if ($weather eq "300") { $code = "13"; $icon = "chancerain" };
-        	if ($weather eq "301") { $code = "13"; $icon = "chancerain" };
-        	if ($weather eq "302") { $code = "13"; $icon = "chancerain" };
-        	if ($weather eq "310") { $code = "10"; $icon = "chancerain" };
-        	if ($weather eq "311") { $code = "11"; $icon = "rain" };
-        	if ($weather eq "312") { $code = "12"; $icon = "rain" };
-        	if ($weather eq "313") { $code = "12"; $icon = "rain" };
-        	if ($weather eq "314") { $code = "12"; $icon = "rain" };
-        	if ($weather eq "321") { $code = "12"; $icon = "rain" };
-        	if ($weather eq "500") { $code = "10"; $icon = "chancerain" };
-        	if ($weather eq "501") { $code = "11"; $icon = "rain" };
-        	if ($weather eq "502") { $code = "12"; $icon = "rain" };
-        	if ($weather eq "503") { $code = "12"; $icon = "rain" };
-        	if ($weather eq "504") { $code = "12"; $icon = "rain" };
-        	if ($weather eq "511") { $code = "14"; $icon = "sleet" };
-        	if ($weather eq "520") { $code = "10"; $icon = "rain" };
-        	if ($weather eq "521") { $code = "11"; $icon = "rain" };
-        	if ($weather eq "522") { $code = "12"; $icon = "rain" };
-        	if ($weather eq "531") { $code = "12"; $icon = "rain" };
-        	if ($weather eq "600") { $code = "20"; $icon = "snow" };
-        	if ($weather eq "601") { $code = "21"; $icon = "snow" };
-        	if ($weather eq "602") { $code = "21"; $icon = "snow" };
-        	if ($weather eq "611") { $code = "26"; $icon = "sleet" };
-        	if ($weather eq "612") { $code = "28"; $icon = "sleet" };
-        	if ($weather eq "613") { $code = "29"; $icon = "sleet" };
-        	if ($weather eq "615") { $code = "23"; $icon = "sleet" };
-        	if ($weather eq "616") { $code = "23"; $icon = "snow" };
-        	if ($weather eq "620") { $code = "21"; $icon = "snow" };
-        	if ($weather eq "621") { $code = "21"; $icon = "snow" };
-        	if ($weather eq "622") { $code = "21"; $icon = "snow" };
-        	if ($weather eq "701") { $code = "6";  $icon = "fog" };
-        	if ($weather eq "711") { $code = "6";  $icon = "fog" };
-        	if ($weather eq "721") { $code = "5";  $icon = "hazy" };
-        	if ($weather eq "731") { $code = "6";  $icon = "fog" };
-        	if ($weather eq "741") { $code = "6";  $icon = "fog" };
-        	if ($weather eq "751") { $code = "6";  $icon = "fog" };
-        	if ($weather eq "761") { $code = "6";  $icon = "fog" };
-        	if ($weather eq "762") { $code = "6";  $icon = "fog" };
-        	if ($weather eq "771") { $code = "19";  $icon = "tstorms" };
-        	if ($weather eq "781") { $code = "19";  $icon = "tstorms" };
-        	if ($weather eq "800") { $code = "1";  $icon = "clear" };
-        	if ($weather eq "801") { $code = "2";  $icon = "mostlysunny" };
-        	if ($weather eq "802") { $code = "3";  $icon = "mostlycloudy" };
-        	if ($weather eq "803") { $code = "4";  $icon = "cloudy" };
-        	if ($weather eq "804") { $code = "5";  $icon = "overcast" };
-        	if (!$icon) { $icon = "clear" };
-          if (!$code) { $code = "1" };
-        	$newline .= $icon;
-          $newline .= "|";
-        	$newline .= $code;
-          $newline .= "|";
-					$newline .= $results->{weather}->[0]->{description};
-					$newline .= "|";
+					$code = "";
+					$icon = "";
+					if ($weather eq "200") { $code = "18"; $icon = "tstorms" };
+					if ($weather eq "201") { $code = "18"; $icon = "tstorms" };
+					if ($weather eq "202") { $code = "19"; $icon = "tstorms" };
+					if ($weather eq "210") { $code = "18"; $icon = "tstorms" };
+					if ($weather eq "211") { $code = "18"; $icon = "tstorms" };
+					if ($weather eq "212") { $code = "19"; $icon = "tstorms" };
+					if ($weather eq "221") { $code = "19"; $icon = "tstorms" };
+					if ($weather eq "230") { $code = "18"; $icon = "tstorms" };
+					if ($weather eq "231") { $code = "18"; $icon = "tstorms" };
+					if ($weather eq "232") { $code = "19"; $icon = "tstorms" };
+					if ($weather eq "300") { $code = "13"; $icon = "chancerain" };
+					if ($weather eq "301") { $code = "13"; $icon = "chancerain" };
+					if ($weather eq "302") { $code = "13"; $icon = "chancerain" };
+					if ($weather eq "310") { $code = "10"; $icon = "chancerain" };
+					if ($weather eq "311") { $code = "11"; $icon = "rain" };
+					if ($weather eq "312") { $code = "12"; $icon = "rain" };
+					if ($weather eq "313") { $code = "12"; $icon = "rain" };
+					if ($weather eq "314") { $code = "12"; $icon = "rain" };
+					if ($weather eq "321") { $code = "12"; $icon = "rain" };
+					if ($weather eq "500") { $code = "10"; $icon = "chancerain" };
+					if ($weather eq "501") { $code = "11"; $icon = "rain" };
+					if ($weather eq "502") { $code = "12"; $icon = "rain" };
+					if ($weather eq "503") { $code = "12"; $icon = "rain" };
+					if ($weather eq "504") { $code = "12"; $icon = "rain" };
+					if ($weather eq "511") { $code = "14"; $icon = "sleet" };
+					if ($weather eq "520") { $code = "10"; $icon = "rain" };
+					if ($weather eq "521") { $code = "11"; $icon = "rain" };
+					if ($weather eq "522") { $code = "12"; $icon = "rain" };
+					if ($weather eq "531") { $code = "12"; $icon = "rain" };
+					if ($weather eq "600") { $code = "20"; $icon = "snow" };
+					if ($weather eq "601") { $code = "21"; $icon = "snow" };
+					if ($weather eq "602") { $code = "21"; $icon = "snow" };
+					if ($weather eq "611") { $code = "26"; $icon = "sleet" };
+					if ($weather eq "612") { $code = "28"; $icon = "sleet" };
+					if ($weather eq "613") { $code = "29"; $icon = "sleet" };
+					if ($weather eq "615") { $code = "23"; $icon = "sleet" };
+					if ($weather eq "616") { $code = "23"; $icon = "snow" };
+					if ($weather eq "620") { $code = "21"; $icon = "snow" };
+					if ($weather eq "621") { $code = "21"; $icon = "snow" };
+					if ($weather eq "622") { $code = "21"; $icon = "snow" };
+					if ($weather eq "701") { $code = "6";  $icon = "fog" };
+					if ($weather eq "711") { $code = "6";  $icon = "fog" };
+					if ($weather eq "721") { $code = "5";  $icon = "hazy" };
+					if ($weather eq "731") { $code = "6";  $icon = "fog" };
+					if ($weather eq "741") { $code = "6";  $icon = "fog" };
+					if ($weather eq "751") { $code = "6";  $icon = "fog" };
+					if ($weather eq "761") { $code = "6";  $icon = "fog" };
+					if ($weather eq "762") { $code = "6";  $icon = "fog" };
+					if ($weather eq "771") { $code = "19";  $icon = "tstorms" };
+					if ($weather eq "781") { $code = "19";  $icon = "tstorms" };
+					if ($weather eq "800") { $code = "1";  $icon = "clear" };
+					if ($weather eq "801") { $code = "2";  $icon = "mostlysunny" };
+					if ($weather eq "802") { $code = "3";  $icon = "mostlycloudy" };
+					if ($weather eq "803") { $code = "4";  $icon = "cloudy" };
+					if ($weather eq "804") { $code = "5";  $icon = "overcast" };
+					if (!$icon) { $icon = "clear" };
+					if (!$code) { $code = "1" };
+						$newline .= $icon;
+						$newline .= "|";
+						$newline .= $code;
+						$newline .= "|";
+						$newline .= $results->{weather}->[0]->{description};
+						$newline .= "|";
 				}
+				$newline .= "-9999|";
+				$newline .= "-9999|";
+				$newline .= "-9999|";
 				$newline .= "-9999|";
 				$newline .= "-9999|";
 				$newline .= "-9999|";

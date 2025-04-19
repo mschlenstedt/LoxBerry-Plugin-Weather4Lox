@@ -214,7 +214,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$icon|";
 	print F "$code|";
 	print F  $decoded_json->{currentConditions}->{conditions} . "|";
-	( $moonphase,
+	my ( $moonphase,
 	  $moonillum,
 	  $moonage,
 	  $moondist,
@@ -222,7 +222,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	  $sundist,
 	  $sunang ) = phase();
 	print F sprintf("%.2f",$moonillum*100), "|";
-	print F sprintf("%.2f",$moonage*100), "|";
+	print F sprintf("%.2f",$moonage), "|";
 	print F sprintf("%.2f",$moonphase*100), "|";
 	print F "-9999|";
 #	# See https://github.com/mschlenstedt/LoxBerry-Plugin-Weather4Lox/issues/37
@@ -350,7 +350,15 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$code|";
 		print F "$results->{description}|";
 		print F "-9999|";
-		print F sprintf("%.0f",$results->{moonphase}*100),"|";
+		my ( $moonphase,
+		  $moonillum,
+		  $moonage,
+		  $moondist,
+		  $moonang,
+		  $sundist,
+		  $sunang ) = phase($results->{datetimeEpoch});
+		print F sprintf("%.2f",$moonillum*100), "|";
+		#print F sprintf("%.0f",$results->{moonphase}*100),"|";
 		print F sprintf("%.1f",$results->{dew}), "|";
 		print F sprintf("%.1f",$results->{pressure}), "|";
 		print F sprintf("%.1f",$results->{uvindex}),"|";
@@ -361,6 +369,8 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
 		print F sprintf("%.1f",$results->{visibility}),"|";
+		print F sprintf("%.2f",$moonage), "|";
+		print F sprintf("%.2f",$moonphase*100), "|";
 		print F "\n";
 	}
   flock(F,8);
@@ -475,6 +485,16 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 			print F "-9999|";
 			print F sprintf("%.1f",$results->{solarradiation}), "|";
 			print F sprintf("%.1f",$results->{visibility}),"|";
+			my ( $moonphase,
+			  $moonillum,
+			  $moonage,
+			  $moondist,
+			  $moonang,
+			  $sundist,
+			  $sunang ) = phase($results->{datetimeEpoch});
+			print F sprintf("%.2f",$moonillum*100), "|";
+			print F sprintf("%.2f",$moonage), "|";
+			print F sprintf("%.2f",$moonphase*100), "|";
 			print F "\n";
 		}
 	}

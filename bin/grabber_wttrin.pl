@@ -237,7 +237,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	my $wdes = $decoded_json->{current_condition}[0]->{'lang_' . $lang}[0]{value};
 	$wdes = $decoded_json->{current_condition}[0]->{weatherDesc}[0]{value} if !$wdes;
 	print F "$wdes|";
-	( $moonphase,
+	my ( $moonphase,
 	  $moonillum,
 	  $moonage,
 	  $moondist,
@@ -245,7 +245,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	  $sundist,
 	  $sunang ) = phase();
 	print F sprintf("%.2f",$moonillum*100), "|";
-	print F sprintf("%.2f",$moonage*100), "|";
+	print F sprintf("%.2f",$moonage), "|";
 	print F sprintf("%.2f",$moonphase*100), "|";
 	print F "-9999|";
 #	print F "$decoded_json->{weather}[0]->{astronomy}[0]{moon_illumination}|";
@@ -489,28 +489,15 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		$wdes = $results->{hourly}[4]->{'lang_' . $lang}[0]{value};
 		$wdes = $results->{hourly}[4]->{weatherDesc}[0]{value} if !$wdes;
 		print F "$wdes|";
-		my $moonphasen = "";
-		my $moonphase = lc( $results->{astronomy}[0]{moon_phase} );
-		if ( $moonphase eq "new moon" ) {
-			$moonphasen = 0;
-		} elsif ( $moonphase eq "waxing crescent" ) {
-			$moonphasen = 0.125;
-		} elsif ( $moonphase eq "first quarter" ) {
-			$moonphasen = 0.25;
-		} elsif ( $moonphase eq "waxing gibbous" ) {
-			$moonphasen = 0.375;
-		} elsif ( $moonphase eq "full moon" ) {
-			$moonphasen = 0.5;
-		} elsif ( $moonphase eq "waning gibbous" ) {
-			$moonphasen = 0.625;
-		} elsif ( $moonphase eq "last quarter" ) {
-			$moonphasen = 0.75;
-		} elsif ( $moonphase eq "waning crescent" ) {
-			$moonphasen = 0.875;
-		} else {
-			$moonphasen = 1;
-		}
-		print F sprintf("%.0f",$moonphasen*100), "|";
+		# dfc0_moon_p
+		my ( $moonphase,
+		  $moonillum,
+		  $moonage,
+		  $moondist,
+		  $moonang,
+		  $sundist,
+		  $sunang ) = phase($t->epoch);
+		print F sprintf("%.2f",$moonillum*100), "|";
 		my $dewp = eval(join("+", @dewps)) / @dewps; # Mean from array
 		print F sprintf("%.1f",$dewp), "|";
 		my $pressure = eval(join("+", @pressures)) / @pressures; # Mean from array
@@ -524,6 +511,8 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F sprintf("%02d", $t->min), "|";
 		my $vis = eval(join("+", @visibilitys)) / @visibilitys; # Mean from array
 		print F sprintf("%.1f",$vis), "|";
+		print F sprintf("%.2f",$moonage), "|";
+		print F sprintf("%.2f",$moonphase*100), "|";
 		print F "\n";
 	}
   flock(F,8);
@@ -742,6 +731,17 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		$newline = $newline . "-9999" . "|";
 		$newline = $newline . "-9999" . "|";
 		$newline = $newline . sprintf("%.1f", $viss->linear($ep)) . "|";
+		# dfc0_moon_p
+		my ( $moonphase,
+		  $moonillum,
+		  $moonage,
+		  $moondist,
+		  $moonang,
+		  $sundist,
+		  $sunang ) = phase($ep);
+		$newline = $newline . sprintf("%.2f",$moonillum*100) . "|";
+		$newline = $newline . sprintf("%.2f",$moonage) . "|";
+		$newline = $newline . sprintf("%.2f",$moonphase*100) . "|";
 		# Save new line / dataset
 		print F "$i|$ep|";
 		$t = Time::Piece->new ($ep);

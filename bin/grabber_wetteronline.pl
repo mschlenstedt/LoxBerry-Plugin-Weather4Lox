@@ -49,14 +49,14 @@ use HTML::Entities;
 my $version = LoxBerry::System::pluginversion();
 
 my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
-my $city             = $pcfg->param("WETTERONLINE.STATION");
+my $city             = $pcfg->param("WETTERONLINE.STATIONID");
 my $apikey           = $pcfg->param("WETTERONLINE.APIKEY");
 my $timezone         = qx(cat /etc/timezone);
+chomp ($timezone);
 my $useragent        = $pcfg->param("WETTERONLINE.USERAGENT");
 my $urlCurrent_raw   = $pcfg->param("WETTERONLINE.URL-CURRENT");
 my $urlDaily_raw     = $pcfg->param("WETTERONLINE.URL-DAILY");
 my $urlHourly_raw    = $pcfg->param("WETTERONLINE.URL-HOURLY");
-chomp ($timezone);
 
 my $error = 0;
 
@@ -137,6 +137,9 @@ my $body = getUrl($urlCurrent, $useragent);
 my $currentCondMatch;
 if ($body =~ /WO\.metadata\.p_city_weather\.nowcastBarMetadata = (\{.+\})$/m) {
 	$currentCondMatch = $1;
+} else {
+        LOGCRIT("Failed to fetch data for $city. No valid data found in the server response. Check Station name.");
+        die "Quit fetching data.";
 }
 my $firstHourlyMatch;
 if ($body =~ /hourlyForecastElements\.push\((\{[^}]+\})/ms) {

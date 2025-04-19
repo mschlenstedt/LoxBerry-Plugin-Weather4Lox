@@ -258,7 +258,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$icon|"; # Weather4Lox Weather Icon name
 	print F "$weather|"; # Weather Code
 	print F "$forecast_json->{current_conditions}->{conditions}|"; # Weather Description (note: forecast, since current observation does not have this info)
-	( $moonphase,
+	my ( $moonphase,
 	  $moonillum,
 	  $moonage,
 	  $moondist,
@@ -266,7 +266,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	  $sundist,
 	  $sunang ) = phase();
 	print F sprintf("%.2f",$moonillum*100), "|";
-	print F sprintf("%.2f",$moonage*100), "|";
+	print F sprintf("%.2f",$moonage), "|";
 	print F sprintf("%.2f",$moonphase*100), "|";
 	print F "-9999|";
 #	print F "-9999|"; # Moon percent Illuminated (not available in Weatherflow API)
@@ -375,7 +375,14 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$weather|"; # Weather4Lox Weather Code
 		print F "$results->{conditions}|"; # Weather Description
 		print F "-9999|"; # Density of atmospheric ozone (not available in Weatherflow API)
-		print F "-9999|"; # Moon: precent Illuminated (not available in Weatherflow API)
+		my ( $moonphase,
+		  $moonillum,
+		  $moonage,
+		  $moondist,
+		  $moonang,
+		  $sundist,
+		  $sunang ) = phase($results->{day_start_local});
+		print F sprintf("%.2f",$moonillum*100), "|";
 		print F "-9999|"; # Dew Point (not available in Weatherflow API)
 		print F "-9999|"; # Pressure (not available in Weatherflow API)
 		print F "-9999|"; #UV Index (not available in Weatherflow API)
@@ -386,7 +393,8 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F sprintf("%02d", $t->hour), "|";
 		print F sprintf("%02d", $t->min), "|";
 		print F "-9999|"; # Visibility  (not available in Weatherflow API)
-		print F "-9999|"; # ??
+		print F sprintf("%.2f",$moonage), "|";
+		print F sprintf("%.2f",$moonphase*100), "|";
 		print F "\n";
 	}
 close(F);
@@ -492,8 +500,19 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$icon|"; # Weather4Lox Weather Icon name
 		print F "$results->{conditions}|"; # Weather description
 		print F "-9999|"; # Ozone (not available in Weatherflow API)
-		print F "-9999|"; # ??
-		print F "-9999|"; # ??
+		print F "-9999|"; # Solar Radiation (not available in Weatherflow API)
+		print F "-9999|"; # Visability (not available in Weatherflow API)
+		# dfc0_moon_p
+		my ( $moonphase,
+		  $moonillum,
+		  $moonage,
+		  $moondist,
+		  $moonang,
+		  $sundist,
+		  $sunang ) = phase($results->{time});
+		print F sprintf("%.2f",$moonillum*100), "|";
+		print F sprintf("%.2f",$moonage), "|";
+		print F sprintf("%.2f",$moonphase*100), "|";
 		print F "\n";
 	}
 close(F);
