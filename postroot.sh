@@ -21,5 +21,8 @@ cpanm Math::Function::Interpolator
 echo "<INFO> Installing Perl Module Astro::MoonPhase"
 cpanm Astro::MoonPhase
 
+echo "<INFO> Reconfigure Timezone - just to make sure..."
+dpkg-reconfigure -f noninteractive tzdata
+
 # Exit with Status 0
 exit 0
