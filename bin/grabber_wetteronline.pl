@@ -352,6 +352,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	# cur_prec_1hr
 	my $hourlyPrecipitationAmount = $decodedBodyFirstHourly->{hourlyPrecipitationAmount};
 	my ($value_after_minus) = $hourlyPrecipitationAmount =~ /-(.+)/;
+	$value_after_minus =~ s/,/\./g;
 	if ( $value_after_minus ) {
 		print F sprintf("%.2f",$value_after_minus), "|";
 	}
@@ -363,7 +364,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	my %translation_table = (					# translating wetteronline weather-code to openweather weather-code
 		"200"  => ["wbg1__", "mbg1__", "bdg1__"],
 		"210"  => ["bwg1__"],
-		"211"  => ["wbg2__", "mbg2__", "bdg2__"], "bwg2__",
+		"211"  => ["wbg2__", "mbg2__", "bdg2__", "bwg2__"],
 		"212"  => ["bwg3__"],
 		"500"  => ["wbs1__", "mbs1__", "bwr1__"],
 		"501"  => ["wbs2__", "mbs2__", "bwr2__"],
@@ -678,7 +679,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		my %translation_table = (					# translating wetteronline weather-code to openweather weather-code
 		"200"  => ["wbg1__", "mbg1__", "bdg1__"],
 		"210"  => ["bwg1__"],
-		"211"  => ["wbg2__", "mbg2__", "bdg2__"], "bwg2__",
+		"211"  => ["wbg2__", "mbg2__", "bdg2__", "bwg2__"],
 		"212"  => ["bwg3__"],
 		"500"  => ["wbs1__", "mbs1__", "bwr1__"],
 		"501"  => ["wbs2__", "mbs2__", "bwr2__"],
@@ -1031,7 +1032,7 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		my %translation_table = (					# translating wetteronline weather-code to openweather weather-code
 		"200"  => ["wbg1__", "mbg1__", "bdg1__"],
 		"210"  => ["bwg1__"],
-		"211"  => ["wbg2__", "mbg2__", "bdg2__"], "bwg2__",
+		"211"  => ["wbg2__", "mbg2__", "bdg2__", "bwg2__"],
 		"212"  => ["bwg3__"],
 		"500"  => ["wbs1__", "mbs1__", "bwr1__"],
 		"501"  => ["wbs2__", "mbs2__", "bwr2__"],
