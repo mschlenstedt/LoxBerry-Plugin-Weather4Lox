@@ -380,6 +380,13 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 			}
 		}
 		@pops = sort { $a <=> $b } @pops;
+		@gusts = sort { $a <=> $b } @gusts;
+		@winds = sort { $a <=> $b } @winds;
+		@winddirs = sort { $a <=> $b } @winddirs;
+		@hums = sort { $a <=> $b } @hums;
+		@pressures = sort { $a <=> $b } @pressures;
+		@dewps = sort { $a <=> $b } @dewps;
+		@visibilitys = sort { $a <=> $b } @visibilitys;
 		if ($pops[-1]) { # Max from sorted array
 			print F sprintf("%.0f",$pops[-1]), "|";
 		} else {
@@ -489,6 +496,7 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		$wdes = $results->{hourly}[4]->{'lang_' . $lang}[0]{value};
 		$wdes = $results->{hourly}[4]->{weatherDesc}[0]{value} if !$wdes;
 		print F "$wdes|";
+		print F "-9999|";
 		# dfc0_moon_p
 		my ( $moonphase,
 		  $moonillum,
