@@ -29,6 +29,7 @@ use IO::Socket; # For sending UDP packages
 use DateTime;
 use Time::HiRes;
 use Net::MQTT::Simple;
+#use Data::Dumper;
 
 ##########################################################################
 # Read settings
@@ -775,6 +776,7 @@ foreach (@hfcdata){
 # Prec within the next hours
 my $tmpprec4 = 0;
 my $tmpprec8 = 0;
+my $tmpprec12 = 0;
 my $tmpprec16 = 0;
 my $tmpprec24 = 0;
 my $tmpprec32 = 0;
@@ -784,6 +786,7 @@ my $tmpprec48 = 0;
 # Snow within the next hours
 my $tmpsnow4 = 0;
 my $tmpsnow8 = 0;
+my $tmpsnow12 = 0;
 my $tmpsnow16 = 0;
 my $tmpsnow24 = 0;
 my $tmpsnow32 = 0;
@@ -793,6 +796,7 @@ my $tmpsnow48 = 0;
 # Min Temp within the next hours
 my $tmpttmin4 = 0;
 my $tmpttmin8 = 0;
+my $tmpttmin12 = 0;
 my $tmpttmin16 = 0;
 my $tmpttmin24 = 0;
 my $tmpttmin32 = 0;
@@ -802,15 +806,35 @@ my $tmpttmin48 = 0;
 # Max Temp within the next hours
 my $tmpttmax4 = 0;
 my $tmpttmax8 = 0;
+my $tmpttmax12 = 0;
 my $tmpttmax16 = 0;
 my $tmpttmax24 = 0;
 my $tmpttmax32 = 0;
 my $tmpttmax40 = 0;
 my $tmpttmax48 = 0;
 
+# Mean Temp within the next hours
+my $tmpttmean4 = 0;
+my $tmpttmean8 = 0;
+my $tmpttmean12 = 0;
+my $tmpttmean16 = 0;
+my $tmpttmean24 = 0;
+my $tmpttmean32 = 0;
+my $tmpttmean40 = 0;
+my $tmpttmean48 = 0;
+my @tmpttmean4;
+my @tmpttmean8;
+my @tmpttmean12;
+my @tmpttmean16;
+my @tmpttmean24;
+my @tmpttmean32;
+my @tmpttmean40;
+my @tmpttmean48;
+
 # Min Pop within the next hours
 my $tmppopmin4 = 0;
 my $tmppopmin8 = 0;
+my $tmppopmin12 = 0;
 my $tmppopmin16 = 0;
 my $tmppopmin24 = 0;
 my $tmppopmin32 = 0;
@@ -820,6 +844,7 @@ my $tmppopmin48 = 0;
 # Max Pop within the next hours
 my $tmppopmax4 = 0;
 my $tmppopmax8 = 0;
+my $tmppopmax12 = 0;
 my $tmppopmax16 = 0;
 my $tmppopmax24 = 0;
 my $tmppopmax32 = 0;
@@ -836,6 +861,8 @@ foreach (@hfcdata){
       $tmpttmin4 = @fields[11];
       $tmpttmax8 = @fields[11];
       $tmpttmin8 = @fields[11];
+      $tmpttmax12 = @fields[11];
+      $tmpttmin12 = @fields[11];
       $tmpttmax16 = @fields[11];
       $tmpttmin16 = @fields[11];
       $tmpttmax24 = @fields[11];
@@ -851,6 +878,8 @@ foreach (@hfcdata){
       $tmppopmin4 = @fields[26];
       $tmppopmax8 = @fields[26];
       $tmppopmin8 = @fields[26];
+      $tmppopmax12 = @fields[26];
+      $tmppopmin12 = @fields[26];
       $tmppopmax16 = @fields[26];
       $tmppopmin16 = @fields[26];
       $tmppopmax24 = @fields[26];
@@ -869,6 +898,7 @@ foreach (@hfcdata){
     if ( $tmpttmax4 < @fields[11] ) { $tmpttmax4 = @fields[11]; }
     if ( $tmppopmin4 > @fields[26] ) { $tmppopmin4 = @fields[26]; }
     if ( $tmppopmax4 < @fields[26] ) { $tmppopmax4 = @fields[26]; }
+    push(@tmpttmean4, @fields[11]) if @fields[11] ne "-9999";
   }
   if ( @fields[0] <= 8 ) {
     $tmpprec8 = $tmpprec8 + @fields[24] if @fields[24] > 0;
@@ -877,6 +907,16 @@ foreach (@hfcdata){
     if ( $tmpttmax8 < @fields[11] ) { $tmpttmax8 = @fields[11]; }
     if ( $tmppopmin8 > @fields[26] ) { $tmppopmin8 = @fields[26]; }
     if ( $tmppopmax8 < @fields[26] ) { $tmppopmax8 = @fields[26]; }
+    push(@tmpttmean8, @fields[11]) if @fields[11] ne "-9999";
+  }
+  if ( @fields[0] <= 12 ) {
+    $tmpprec12 = $tmpprec12 + @fields[24] if @fields[24] > 0;
+    $tmpsnow12 = $tmpsnow12 + @fields[25] if @fields[25] > 0;
+    if ( $tmpttmin12 > @fields[11] ) { $tmpttmin12 = @fields[11]; }
+    if ( $tmpttmax12 < @fields[11] ) { $tmpttmax12 = @fields[11]; }
+    if ( $tmppopmin12 > @fields[26] ) { $tmppopmin12 = @fields[26]; }
+    if ( $tmppopmax12 < @fields[26] ) { $tmppopmax12 = @fields[26]; }
+    push(@tmpttmean12, @fields[11]) if @fields[11] ne "-9999";
   }
   if ( @fields[0] <= 16 ) {
     $tmpprec16 = $tmpprec16 + @fields[24] if @fields[24] > 0;
@@ -885,6 +925,7 @@ foreach (@hfcdata){
     if ( $tmpttmax16 < @fields[11] ) { $tmpttmax16 = @fields[11]; }
     if ( $tmppopmin16 > @fields[26] ) { $tmppopmin16 = @fields[26]; }
     if ( $tmppopmax16 < @fields[26] ) { $tmppopmax16 = @fields[26]; }
+    push(@tmpttmean16, @fields[11]) if @fields[11] ne "-9999";
   }
   if ( @fields[0] <= 24 ) {
     $tmpprec24 = $tmpprec24 + @fields[24] if @fields[24] > 0;
@@ -893,6 +934,7 @@ foreach (@hfcdata){
     if ( $tmpttmax24 < @fields[11] ) { $tmpttmax24 = @fields[11]; }
     if ( $tmppopmin24 > @fields[26] ) { $tmppopmin24 = @fields[26]; }
     if ( $tmppopmax24 < @fields[26] ) { $tmppopmax24 = @fields[26]; }
+    push(@tmpttmean24, @fields[11]) if @fields[11] ne "-9999";
   }
   if ( @fields[0] <= 32 ) {
     $tmpprec32 = $tmpprec32 + @fields[24] if @fields[24] > 0;
@@ -901,6 +943,7 @@ foreach (@hfcdata){
     if ( $tmpttmax32 < @fields[11] ) { $tmpttmax32 = @fields[11]; }
     if ( $tmppopmin32 > @fields[26] ) { $tmppopmin32 = @fields[26]; }
     if ( $tmppopmax32 < @fields[26] ) { $tmppopmax32 = @fields[26]; }
+    push(@tmpttmean32, @fields[11]) if @fields[11] ne "-9999";
   }
   if ( @fields[0] <= 40 ) {
     $tmpprec40 = $tmpprec40 + @fields[24] if @fields[24] > 0;
@@ -909,6 +952,7 @@ foreach (@hfcdata){
     if ( $tmpttmax40 < @fields[11] ) { $tmpttmax40 = @fields[11]; }
     if ( $tmppopmin40 > @fields[26] ) { $tmppopmin40 = @fields[26]; }
     if ( $tmppopmax40 < @fields[26] ) { $tmppopmax40 = @fields[26]; }
+    push(@tmpttmean40, @fields[11]) if @fields[11] ne "-9999";
   }
   if ( @fields[0] <= 48 ) {
     $tmpprec48 = $tmpprec48 + @fields[24] if @fields[24] > 0;
@@ -917,9 +961,20 @@ foreach (@hfcdata){
     if ( $tmpttmax48 < @fields[11] ) { $tmpttmax48 = @fields[11]; }
     if ( $tmppopmin48 > @fields[26] ) { $tmppopmin48 = @fields[26]; }
     if ( $tmppopmax48 < @fields[26] ) { $tmppopmax48 = @fields[26]; }
+    push(@tmpttmean48, @fields[11]) if @fields[11] ne "-9999";
   }
 
 }
+
+# Calculate mean values from arrays
+$tmpttmean4 = sprintf("%.1f",mean(@tmpttmean4));
+$tmpttmean8 = sprintf("%.1f",mean(@tmpttmean8));
+$tmpttmean12 = sprintf("%.1f",mean(@tmpttmean12));
+$tmpttmean16 = sprintf("%.1f",mean(@tmpttmean16));
+$tmpttmean24 = sprintf("%.1f",mean(@tmpttmean24));
+$tmpttmean32 = sprintf("%.1f",mean(@tmpttmean32));
+$tmpttmean40 = sprintf("%.1f",mean(@tmpttmean40));
+$tmpttmean48 = sprintf("%.1f",mean(@tmpttmean48));
 
 # Add calculated to send queue
 
@@ -929,6 +984,9 @@ $value = $tmpttmax4;
 &send;
 $name = "calc+8\_ttmax";
 $value = $tmpttmax8;
+&send;
+$name = "calc+12\_ttmax";
+$value = $tmpttmax12;
 &send;
 $name = "calc+16\_ttmax";
 $value = $tmpttmax16;
@@ -953,6 +1011,9 @@ $value = $tmpttmin4;
 $name = "calc+8\_ttmin";
 $value = $tmpttmin8;
 &send;
+$name = "calc+12\_ttmin";
+$value = $tmpttmin12;
+&send;
 $name = "calc+16\_ttmin";
 $value = $tmpttmin16;
 &send;
@@ -969,12 +1030,41 @@ $name = "calc+48\_ttmin";
 $value = $tmpttmin48;
 &send;
 
+# ttmean
+$name = "calc+4\_ttmean";
+$value = $tmpttmean4;
+&send;
+$name = "calc+8\_ttmean";
+$value = $tmpttmean8;
+&send;
+$name = "calc+12\_ttmean";
+$value = $tmpttmean12;
+&send;
+$name = "calc+16\_ttmean";
+$value = $tmpttmean16;
+&send;
+$name = "calc+24\_ttmean";
+$value = $tmpttmean24;
+&send;
+$name = "calc+32\_ttmean";
+$value = $tmpttmean32;
+&send;
+$name = "calc+40\_ttmean";
+$value = $tmpttmean40;
+&send;
+$name = "calc+48\_ttmean";
+$value = $tmpttmean48;
+&send;
+
 # popmax
 $name = "calc+4\_popmax";
 $value = $tmppopmax4;
 &send;
 $name = "calc+8\_popmax";
 $value = $tmppopmax8;
+&send;
+$name = "calc+12\_popmax";
+$value = $tmppopmax12;
 &send;
 $name = "calc+16\_popmax";
 $value = $tmppopmax16;
@@ -999,6 +1089,9 @@ $value = $tmppopmin4;
 $name = "calc+8\_popmin";
 $value = $tmppopmin8;
 &send;
+$name = "calc+12\_popmin";
+$value = $tmppopmin12;
+&send;
 $name = "calc+16\_popmin";
 $value = $tmppopmin16;
 &send;
@@ -1022,6 +1115,9 @@ $value = $tmpprec4;
 $name = "calc+8\_prec";
 $value = $tmpprec8;
 &send;
+$name = "calc+12\_prec";
+$value = $tmpprec12;
+&send;
 $name = "calc+16\_prec";
 $value = $tmpprec16;
 &send;
@@ -1044,6 +1140,9 @@ $value = $tmpsnow4;
 &send;
 $name = "calc+8\_snow";
 $value = $tmpsnow8;
+&send;
+$name = "calc+12\_snow";
+$value = $tmpsnow12;
 &send;
 $name = "calc+16\_snow";
 $value = $tmpsnow16;
@@ -1839,6 +1938,16 @@ sub mqttconnect
 
 };
 
+sub mean
+{
+	#print Dumper @_;
+	my (@data) = @_;
+	my $sum;
+	foreach (@data) {
+		$sum += $_;
+	}
+	return ( $sum / @data );
+}
 
 END
 {
