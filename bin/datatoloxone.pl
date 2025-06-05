@@ -793,6 +793,16 @@ my $tmpsnow32 = 0;
 my $tmpsnow40 = 0;
 my $tmpsnow48 = 0;
 
+# Solar Rad within the next hours
+my $tmpsr4 = 0;
+my $tmpsr8 = 0;
+my $tmpsr12 = 0;
+my $tmpsr16 = 0;
+my $tmpsr24 = 0;
+my $tmpsr32 = 0;
+my $tmpsr40 = 0;
+my $tmpsr48 = 0;
+
 # Min Temp within the next hours
 my $tmpttmin4 = 0;
 my $tmpttmin8 = 0;
@@ -894,6 +904,7 @@ foreach (@hfcdata){
   if ( @fields[0] <= 4 ) {
     $tmpprec4 = $tmpprec4 + @fields[24] if @fields[24] > 0;
     $tmpsnow4 = $tmpsnow4 + @fields[25] if @fields[25] > 0;
+    $tmpsr4 = $tmpsr4 + @fields[31] if @fields[31] > 0;
     if ( $tmpttmin4 > @fields[11] ) { $tmpttmin4 = @fields[11]; }
     if ( $tmpttmax4 < @fields[11] ) { $tmpttmax4 = @fields[11]; }
     if ( $tmppopmin4 > @fields[26] ) { $tmppopmin4 = @fields[26]; }
@@ -903,6 +914,7 @@ foreach (@hfcdata){
   if ( @fields[0] <= 8 ) {
     $tmpprec8 = $tmpprec8 + @fields[24] if @fields[24] > 0;
     $tmpsnow8 = $tmpsnow8 + @fields[25] if @fields[25] > 0;
+    $tmpsr8 = $tmpsr8 + @fields[31] if @fields[31] > 0;
     if ( $tmpttmin8 > @fields[11] ) { $tmpttmin8 = @fields[11]; }
     if ( $tmpttmax8 < @fields[11] ) { $tmpttmax8 = @fields[11]; }
     if ( $tmppopmin8 > @fields[26] ) { $tmppopmin8 = @fields[26]; }
@@ -912,6 +924,7 @@ foreach (@hfcdata){
   if ( @fields[0] <= 12 ) {
     $tmpprec12 = $tmpprec12 + @fields[24] if @fields[24] > 0;
     $tmpsnow12 = $tmpsnow12 + @fields[25] if @fields[25] > 0;
+    $tmpsr12 = $tmpsr12 + @fields[31] if @fields[31] > 0;
     if ( $tmpttmin12 > @fields[11] ) { $tmpttmin12 = @fields[11]; }
     if ( $tmpttmax12 < @fields[11] ) { $tmpttmax12 = @fields[11]; }
     if ( $tmppopmin12 > @fields[26] ) { $tmppopmin12 = @fields[26]; }
@@ -921,6 +934,7 @@ foreach (@hfcdata){
   if ( @fields[0] <= 16 ) {
     $tmpprec16 = $tmpprec16 + @fields[24] if @fields[24] > 0;
     $tmpsnow16 = $tmpsnow16 + @fields[25] if @fields[25] > 0;
+    $tmpsr16 = $tmpsr16 + @fields[31] if @fields[31] > 0;
     if ( $tmpttmin16 > @fields[11] ) { $tmpttmin16 = @fields[11]; }
     if ( $tmpttmax16 < @fields[11] ) { $tmpttmax16 = @fields[11]; }
     if ( $tmppopmin16 > @fields[26] ) { $tmppopmin16 = @fields[26]; }
@@ -930,6 +944,7 @@ foreach (@hfcdata){
   if ( @fields[0] <= 24 ) {
     $tmpprec24 = $tmpprec24 + @fields[24] if @fields[24] > 0;
     $tmpsnow24 = $tmpsnow24 + @fields[25] if @fields[25] > 0;
+    $tmpsr24 = $tmpsr24 + @fields[31] if @fields[31] > 0;
     if ( $tmpttmin24 > @fields[11] ) { $tmpttmin24 = @fields[11]; }
     if ( $tmpttmax24 < @fields[11] ) { $tmpttmax24 = @fields[11]; }
     if ( $tmppopmin24 > @fields[26] ) { $tmppopmin24 = @fields[26]; }
@@ -939,6 +954,7 @@ foreach (@hfcdata){
   if ( @fields[0] <= 32 ) {
     $tmpprec32 = $tmpprec32 + @fields[24] if @fields[24] > 0;
     $tmpsnow32 = $tmpsnow32 + @fields[25] if @fields[25] > 0;
+    $tmpsr32 = $tmpsr32 + @fields[31] if @fields[31] > 0;
     if ( $tmpttmin32 > @fields[11] ) { $tmpttmin32 = @fields[11]; }
     if ( $tmpttmax32 < @fields[11] ) { $tmpttmax32 = @fields[11]; }
     if ( $tmppopmin32 > @fields[26] ) { $tmppopmin32 = @fields[26]; }
@@ -948,6 +964,7 @@ foreach (@hfcdata){
   if ( @fields[0] <= 40 ) {
     $tmpprec40 = $tmpprec40 + @fields[24] if @fields[24] > 0;
     $tmpsnow40 = $tmpsnow40 + @fields[25] if @fields[25] > 0;
+    $tmpsr40 = $tmpsr40 + @fields[31] if @fields[31] > 0;
     if ( $tmpttmin40 > @fields[11] ) { $tmpttmin40 = @fields[11]; }
     if ( $tmpttmax40 < @fields[11] ) { $tmpttmax40 = @fields[11]; }
     if ( $tmppopmin40 > @fields[26] ) { $tmppopmin40 = @fields[26]; }
@@ -957,6 +974,7 @@ foreach (@hfcdata){
   if ( @fields[0] <= 48 ) {
     $tmpprec48 = $tmpprec48 + @fields[24] if @fields[24] > 0;
     $tmpsnow48 = $tmpsnow48 + @fields[25] if @fields[25] > 0;
+    $tmpsr48 = $tmpsr48 + @fields[31] if @fields[31] > 0;
     if ( $tmpttmin48 > @fields[11] ) { $tmpttmin48 = @fields[11]; }
     if ( $tmpttmax48 < @fields[11] ) { $tmpttmax48 = @fields[11]; }
     if ( $tmppopmin48 > @fields[26] ) { $tmppopmin48 = @fields[26]; }
@@ -1108,30 +1126,30 @@ $name = "calc+48\_popmin";
 $value = $tmppopmin48;
 &send;
 
-# prec
-$name = "calc+4\_prec";
-$value = $tmpprec4;
+# sr
+$name = "calc+4\_sr";
+$value = $tmpsr4;
 &send;
-$name = "calc+8\_prec";
-$value = $tmpprec8;
+$name = "calc+8\_sr";
+$value = $tmpsr8;
 &send;
-$name = "calc+12\_prec";
-$value = $tmpprec12;
+$name = "calc+12\_sr";
+$value = $tmpsr12;
 &send;
-$name = "calc+16\_prec";
-$value = $tmpprec16;
+$name = "calc+16\_sr";
+$value = $tmpsr16;
 &send;
-$name = "calc+24\_prec";
-$value = $tmpprec24;
+$name = "calc+24\_sr";
+$value = $tmpsr24;
 &send;
-$name = "calc+32\_prec";
-$value = $tmpprec32;
+$name = "calc+32\_sr";
+$value = $tmpsr32;
 &send;
-$name = "calc+40\_prec";
-$value = $tmpprec40;
+$name = "calc+40\_sr";
+$value = $tmpsr40;
 &send;
-$name = "calc+48\_prec";
-$value = $tmpprec48;
+$name = "calc+48\_sr";
+$value = $tmpsr48;
 &send;
 
 # snow
