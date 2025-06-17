@@ -208,7 +208,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	if ($weather eq "fog") { $code = "6"; $icon = "fog" };
 	if ($weather eq "wind") { $code = "22"; $icon = "wind" };
 	if ($weather eq "cloudy") { $code = "4"; $icon = "cloudy" };
-	if ($weather eq "partlycloudy") { $code = "3"; $icon = "partlycloudy" };
+	if ($weather eq "partlycloudy") { $code = "2"; $icon = "partlycloudy" };
 	if (!$icon) { $icon = "clear" };
  	if (!$code) { $code = "1" };
 	print F "$icon|";
