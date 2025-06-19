@@ -116,6 +116,7 @@ my $wdirdes;
 my @filecontent;
 my $i;
 my $currentepoche = 0;
+$currentepoche = $decoded_json->{currentConditions}->{datetimeEpoch}; # Needed during hourly forecast
 
 #
 # Fetch current data
@@ -136,7 +137,6 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
-	$currentepoche = $decoded_json->{currentConditions}->{datetimeEpoch}; # Needed during hourly forecast
 	print F "$decoded_json->{currentConditions}->{datetimeEpoch}|";
 	my $date = qx(date -R -d "\@$decoded_json->{currentConditions}->{datetimeEpoch}");
 	chomp ($date);
@@ -208,7 +208,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	if ($weather eq "fog") { $code = "6"; $icon = "fog" };
 	if ($weather eq "wind") { $code = "22"; $icon = "wind" };
 	if ($weather eq "cloudy") { $code = "4"; $icon = "cloudy" };
-	if ($weather eq "partlycloudy") { $code = "2"; $icon = "partlycloudy" };
+	if ($weather eq "partlycloudy") { $code = "3"; $icon = "partlycloudy" };
 	if (!$icon) { $icon = "clear" };
  	if (!$code) { $code = "1" };
 	print F "$icon|";
