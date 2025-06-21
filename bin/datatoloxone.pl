@@ -50,6 +50,7 @@ our $stdiconset       = $pcfg->param("WEB.ICONSET");
 our $topic            = $pcfg->param("SERVER.TOPIC");
 our $sendmqtt         = 0;
 our $mqtt;
+our $data;
 
 # Language
 our $lang = lblanguage();
@@ -360,6 +361,12 @@ $value = @fields[41];
 $udp = 1; # Really send now in one run
 &send;
 
+# Send raw current observation data over MQTT
+$name = "current";
+$value = $curdata;
+$udp = 1;
+&sendmqtt;
+
 #
 # Print out Daily Forecast
 #
@@ -369,7 +376,10 @@ open(F,"<$lbplogdir/dailyforecast.dat");
   our @dfcdata = <F>;
 close(F);
 
+$data = "";
+
 foreach (@dfcdata){
+  $data .= $_;
   s/[\n\r]//g;
   @fields = split(/\|/);
 
@@ -586,8 +596,12 @@ foreach (@dfcdata){
   $name = "dfc$per\_moon_ph";
   $value = @fields[39];
   &send;
-
 }
+
+# Send raw daily forecast data over MQTT
+$name = "daily";
+$value = $data;
+&sendmqtt;
 
 #
 # Print out Hourly Forecast
@@ -598,7 +612,10 @@ open(F,"<$lbplogdir/hourlyforecast.dat");
   our @hfcdata = <F>;
 close(F);
 
+$data = "";
+
 foreach (@hfcdata){
+  $data .= $_;
   s/[\n\r]//g;
   @fields = split(/\|/);
 
@@ -765,9 +782,12 @@ foreach (@hfcdata){
   $name = "hfc$per\_moon_ph";
   $value = @fields[35];
   &send;
-
-
 }
+
+# Send raw hourly forecast data over MQTT
+$name = "hourly";
+$value = $data;
+&sendmqtt;
 
 #
 # Print out calculated Forecast values
@@ -1897,20 +1917,24 @@ sub send {
 		}
 	}
 
-	if ($sendmqtt) {
-		eval {
-			$name =~ s/\+/\_\_/g;
-			LOGINF "Publishing " . $topic . "/" . $name . " " . $value;
-			$mqtt->retain($topic . "/" . $name, $value);
-		};
-		if ($@) {
-			my $error = $@ || 'Unknown failure';
-			LOGERR "An error occurred - $error";
-		};
-	};
+  &sendmqtt();
 
 	return();
+}
 
+sub sendmqtt
+	if ($sendmqtt) {
+  {
+  	eval {
+	  	$name =~ s/\+/\_\_/g;
+	  	LOGINF "Publishing " . $topic . "/" . $name . " " . $value;
+	  	$mqtt->retain($topic . "/" . $name, $value);
+	  };
+	  if ($@) {
+	  	my $error = $@ || 'Unknown failure';
+	  	LOGERR "An error occurred - $error";
+	  };
+  };
 }
 
 sub mqttconnect
