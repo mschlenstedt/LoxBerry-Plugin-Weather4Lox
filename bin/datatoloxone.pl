@@ -364,7 +364,6 @@ $udp = 1; # Really send now in one run
 # Send raw current observation data over MQTT
 $name = "current";
 $value = $curdata;
-$udp = 1;
 &sendmqtt;
 
 #
