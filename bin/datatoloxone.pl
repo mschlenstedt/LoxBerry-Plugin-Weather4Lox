@@ -1923,17 +1923,17 @@ sub send {
 
 sub sendmqtt
 	if ($sendmqtt) {
-  {
-  	eval {
-	  	$name =~ s/\+/\_\_/g;
-	  	LOGINF "Publishing " . $topic . "/" . $name . " " . $value;
-	  	$mqtt->retain($topic . "/" . $name, $value);
-	  };
-	  if ($@) {
-	  	my $error = $@ || 'Unknown failure';
-	  	LOGERR "An error occurred - $error";
-	  };
-  };
+	{
+		eval {
+			$name =~ s/\+/\_\_/g;
+			LOGINF "Publishing " . $topic . "/" . $name . " " . $value;
+			$mqtt->retain($topic . "/" . $name, $value);
+		};
+		if ($@) {
+			my $error = $@ || 'Unknown failure';
+			LOGERR "An error occurred - $error";
+		};
+	};
 }
 
 sub mqttconnect
