@@ -105,10 +105,6 @@ my $dateref = DateTime->new(
       day       => 1,
 );
 
-# UDP Queue Limits
-our $sendqueue = 0;
-our $sendqueuelimit = 50;
-
 # MQTT
 &mqttconnect();
 
@@ -124,6 +120,7 @@ close(F);
 chomp $curdata;
 
 my @fields = split(/\|/,$curdata);
+our $sendqueue = 0;
 our $value;
 our $name;
 our $tmpudp;
@@ -585,7 +582,6 @@ foreach (@dfcdata){
 
   $name = "dfc$per\_vis";
   $value = @fields[37];
-  $udp = 1; # Really send now in one run
   &send;
 
   $name = "dfc$per\_moon_a";
@@ -594,6 +590,7 @@ foreach (@dfcdata){
 
   $name = "dfc$per\_moon_ph";
   $value = @fields[39];
+  $udp = 1; # Really send now in one run
   &send;
 }
 
@@ -767,7 +764,6 @@ foreach (@hfcdata){
 
   $name = "hfc$per\_vis";
   $value = @fields[32];
-  $udp = 1; # Really send now in one run
   &send;
 
   $name = "hfc$per\_moon_p";
@@ -780,6 +776,7 @@ foreach (@hfcdata){
 
   $name = "hfc$per\_moon_ph";
   $value = @fields[35];
+  $udp = 1; # Really send now in one run
   &send;
 }
 
@@ -1169,6 +1166,32 @@ $value = $tmpsr40;
 &send;
 $name = "calc+48\_sr";
 $value = $tmpsr48;
+&send;
+
+# prec
+$name = "calc+4\_prec";
+$value = $tmpprec4;
+&send;
+$name = "calc+8\_prec";
+$value = $tmpprec8;
+&send;
+$name = "calc+12\_prec";
+$value = $tmpprec12;
+&send;
+$name = "calc+16\_prec";
+$value = $tmpprec16;
+&send;
+$name = "calc+24\_prec";
+$value = $tmpprec24;
+&send;
+$name = "calc+32\_prec";
+$value = $tmpprec32;
+&send;
+$name = "calc+40\_prec";
+$value = $tmpprec40;
+&send;
+$name = "calc+48\_prec";
+$value = $tmpprec48;
 &send;
 
 # snow
@@ -1881,23 +1904,24 @@ exit;
 sub send {
 
 	# Create HTML webpage
-	LOGINF "Adding value to weatherdata.html. Value:$name\@$value";
+	LOGINF "Adding value to weatherdata.html. Value: $name\@$value";
 	open(F,">>$lbplogdir/weatherdata.html");
-  	flock(F,2);
+	flock(F,2);
 		binmode F, ':encoding(UTF-8)';
 		print F "$name\@" . Encode::decode("UTF-8", $value) . "<br>\n";
-  	flock(F,8);
+	flock(F,8);
 	close(F);
 
-	# Send by UDP
-	my $msno = defined $pcfg->param("SERVER.MSNO") ? $pcfg->param("SERVER.MSNO") : 1;
-	my %miniservers = LoxBerry::System::get_miniservers();
+	# Send MQTT data
+	&sendmqtt();
 
-	#if ($miniservers{1}{IPAddress} ne "" && $sendudp) {
+	# Send UDP data
 	if ($sendudp) {
 		$tmpudp .= "$name\@$value; ";
-		LOGINF "Adding value to UDP send queue. Value:$name\@$value";
+		LOGINF "Adding value to UDP send queue. Value: $name\@$value";
 		if ($udp == 1) {
+			my $msno = defined $pcfg->param("SERVER.MSNO") ? $pcfg->param("SERVER.MSNO") : 1;
+			my %miniservers = LoxBerry::System::get_miniservers();
 			if ($miniservers{$msno}{IPAddress} ne "" && $udpport ne "") {
 				LOGINF "$sendqueue: Send Data to " . $miniservers{$msno}{Name};
 				# Send value
@@ -1915,8 +1939,6 @@ sub send {
 			$tmpudp = "";
 		}
 	}
-
-  &sendmqtt();
 
 	return();
 }
