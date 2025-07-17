@@ -359,9 +359,9 @@ $udp = 1; # Really send now in one run
 &send;
 
 # Send raw current observation data over MQTT
-$name = "current";
-$value = $curdata;
-&sendmqtt;
+#$name = "current";
+#$value = $curdata;
+#&sendmqtt;
 
 #
 # Print out Daily Forecast
@@ -595,9 +595,9 @@ foreach (@dfcdata){
 }
 
 # Send raw daily forecast data over MQTT
-$name = "daily";
-$value = $data;
-&sendmqtt;
+#$name = "daily";
+#$value = $data;
+#&sendmqtt;
 
 #
 # Print out Hourly Forecast
@@ -781,9 +781,9 @@ foreach (@hfcdata){
 }
 
 # Send raw hourly forecast data over MQTT
-$name = "hourly";
-$value = $data;
-&sendmqtt;
+#$name = "hourly";
+#$value = $data;
+#&sendmqtt;
 
 #
 # Print out calculated Forecast values
@@ -1943,9 +1943,8 @@ sub send {
 	return();
 }
 
-sub sendmqtt
+sub sendmqtt {
 	if ($sendmqtt) {
-	{
 		eval {
 			$name =~ s/\+/\_\_/g;
 			LOGINF "Publishing " . $topic . "/" . $name . " " . $value;
