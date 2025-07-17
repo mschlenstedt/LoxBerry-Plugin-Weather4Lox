@@ -116,7 +116,6 @@ my $wdirdes;
 my @filecontent;
 my $i;
 my $currentepoche = 0;
-$currentepoche = $decoded_json->{currentConditions}->{datetimeEpoch}; # Needed during hourly forecast
 
 #
 # Fetch current data
@@ -125,6 +124,7 @@ $currentepoche = $decoded_json->{currentConditions}->{datetimeEpoch}; # Needed d
 if ( $current ) { # Start current
 
 # Write location data into database
+$currentepoche = $decoded_json->{currentConditions}->{datetimeEpoch}; # Needed during hourly forecast
 $t = localtime($decoded_json->{currentConditions}->{datetimeEpoch});
 LOGINF "Saving new Data for Timestamp $t to database.";
 
@@ -409,7 +409,9 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 	for my $resultsdays ( @{$decoded_json->{days}} ){
 		for my $results( @{$resultsdays->{hours}} ){
 			# Skip first datasets of current day
-			if ($currentepoche >= $results->{datetimeEpoch}) {
+			my $now = localtime;
+			my $hfctime = localtime($results->{datetimeEpoch});
+			if ($now->hour > $hfctime->hour) {
 				next;
 			}
 			print F "$i|";
