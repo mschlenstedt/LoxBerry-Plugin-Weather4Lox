@@ -1,832 +1,727 @@
-									<style>
-										td {
-											vertical-align: middle;
-										}
-										label {
-											margin: 0 10px 0 0 !important;
-										}
-										.ui-input-text {
-											margin: 0 !important;
-										}
-									</style>
+<style>
+	td {
+		vertical-align: middle;
+	}
+	label {
+		margin: 0 10px 0 0 !important;
+	}
+	.ui-input-text {
+		margin: 0 !important;
+	}
+</style>
 
 
 <!-- Form: Wetterserver -->
 
 
 <TMPL_IF FORM1>
-									<center>
-										<br>
-									</center>
-									<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=1">
-										<input type="hidden" name="saveformdata1" value="1">
-											<div class="form-group">
-												<table class="formtable" border="0" width="100%" cellpadding="10">
-													<tr>
-														<td colspan=3 width="75%">
-															<h2><TMPL_VAR SETTINGS.LABEL_SERVER_SETTINGS></h2>
-														</td>
-														<td align="right">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelfetch"><TMPL_VAR SETTINGS.LABEL_FETCH></label>
-														</td>
-														<td width="50%">
-															<a id="fetch" data-role="button" style="background-color: rgba(67, 236, 48, 0.4);" data-mini="true" href="javascript:fetchweather()"><TMPL_VAR SETTINGS.BUTTON_FETCH></a>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1">
-																<span id="fetchstate">&nbsp;</span>
-															</font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan="4">
-															<hr>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelweatherservice"><TMPL_VAR SETTINGS.LABEL_WEATHERSERVICE></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR WEATHERSERVICE>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_CONFIGUREWEATHERSERVICE></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA></label>
-														</td>
-														<td width="50%">
-															<table border="0" width="100%">
-																<tr>
-																	<td><fieldset><TMPL_VAR GETDATA></fieldset></td>
-																	<td width="100%"><TMPL_VAR CRON></td>
-																 </tr>
-															</table>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan="4">
-															<hr>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelusealternatedfc"><TMPL_VAR SETTINGS.LABEL_USEALTERNATEDFC></label>
-														</td>
-														<td width="50%">
-															<table border="0" width="100%">
-																<tr>
-																	<td><TMPL_VAR USEALTERNATEDFC></td>
-																	<td width="100%"><TMPL_VAR WEATHERSERVICEDFC></td>
-																</tr>
-															</table>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_USEALTERNATEDFC></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelusealternatehfc"><TMPL_VAR SETTINGS.LABEL_USEALTERNATEHFC></label>
-														</td>
-														<td width="50%">
-															<table border="0" width="100%">
-																<tr>
-																	<td><TMPL_VAR USEALTERNATEHFC></td>
-																	<td width="100%"><TMPL_VAR WEATHERSERVICEHFC></td>
-																</tr>
-															</table>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_USEALTERNATEHFC></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelauto"><TMPL_VAR SETTINGS.LABEL_FETCH_DATA_ALTERNATE></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR CRON_ALTERNATE>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_FREE_ACCOUNT></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan="4">
-															<hr>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelmetric"><TMPL_VAR SETTINGS.LABEL_UNITS></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR METRIC>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td colspan="4">
-															<hr>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelwugrabber"><TMPL_VAR SETTINGS.LABEL_WUGRABBER></label>
-														</td>
-														<td width="50%">
-															<table border="0" width="100%">
-																<tr>
-																	<td><TMPL_VAR WUGRABBER></td>
-																	<td width="20%" align="right"><label id="labelwustationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label></td>
-																	<td width="80%"><input id="wustationid" name="wustationid" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR WUNDERGROUND.STATIONID>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>">
-																	<font size="-1"><a id="linkwundermap" href="https://www.wunderground.com/wundermap/" target="_blank"><TMPL_VAR SETTINGS.LABEL_WUMAP></a></font></td>
-																</tr>
-															</table>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_WUGRABBER></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_FOSHKGRABBER></label>
-														</td>
-														<td width="50%">
-															<table border="0" width="100%">
-															<tr>
-																<td><TMPL_VAR FOSHKGRABBER></td>
-																<td width="10%" align="right"><label id="labelfoshkserver" style="margin-top:15px"><TMPL_VAR SETTINGS.LABEL_FOSHKSERVER></label></td>
-																<td width="40%"><input id="foshkserver" name="foshkserver" type="text" data-validation-rule="special:hostname_or_ipaddr" class="textfield" value="<TMPL_VAR FOSHK.SERVER>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKSERVER>"></td>
-																<td width="10%" align="right"><label id="labelfoshkport" style="margin-top:15px"><TMPL_VAR SETTINGS.LABEL_FOSHKPORT></label></td>
-																<td width="40%"><input id="foshkport" name="foshkport" type="text" data-validation-rule="special:port" class="textfield" value="<TMPL_VAR FOSHK.PORT>" data-validation-optional="true" data-validation-error-msg="<TMPL_VAR SETTINGS.ERR_FOSHKPORT>">
-																</td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_FOSHKGRABBER></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelpwscatchuploadgrabber"><TMPL_VAR SETTINGS.LABEL_PWSCATCHUPLOADGRABBER></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR PWSCATCHUPLOADGRABBER>
-														</td>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_PWSCATCHUPLOADGRABBER></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelloxgrabber"><TMPL_VAR SETTINGS.LABEL_LOXGRABBER></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR LOXGRABBER>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_LOXGRABBER></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan="4">
-															<hr>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=3 width="75%">
-															<h2><TMPL_VAR SETTINGS.LABEL_VISUALCROSSING_SETTINGS></h2>
-														</td>
-														<td align="right">
-															<a href="https://www.visualcrossing.com/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/visualcrossing.svg"></a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelvisualcrossingapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
-														</td>
-														<td width="50%">
-															<input id="visualcrossingapikey" name="visualcrossingapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR VISUALCROSSING.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelvisualcrossingcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
-														</td>
-														<td width="50%">
-															<table border="0" width="100%">
-															<tr>
-																<td align="right">
-																	<label id="labelvisualcrossingcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-																</td>
-																<td>
-																	<input id="visualcrossingcoordlat" name="visualcrossingcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLAT>"
-																		data-validation-optional="true"
-																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-																</td>
-																<td align="right">
-																	<label id="labelvisualcrossingcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-																</td>
-																<td>
-																	<input id="visualcrossingcoordlong" name="visualcrossingcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLONG>"
-																		data-validation-optional="true"
-																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-																</td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<a id="visualcrossingcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-																onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=visualcrossing',
-																'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-																<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
-															</a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelvisualcrossinglang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR VISUALCROSSINGLANG>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelvisualcrossingcity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
-														</td>
-														<td width="50%">
-															<input id="visualcrossingcity" name="visualcrossingcity" type="text" class="textfield" value="<TMPL_VAR VISUALCROSSING.STATION>">
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelvisualcrossingcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
-														</td>
-														<td width="50%">
-															<input id="visualcrossingcountry" name="visualcrossingcountry" type="text" class="textfield" value="<TMPL_VAR VISUALCROSSING.COUNTRY>">
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=4>
-														<hr>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=3 width="75%">
-															<h2><TMPL_VAR SETTINGS.LABEL_OPENWEATHER_SETTINGS></h2>
-														</td>
-														<td align="right">
-															<a href="https://openweathermap.org/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/openweather_200.png"></a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelopenweatherapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
-														</td>
-														<td width="50%">
-																<input id="openweatherapikey" name="openweatherapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR OPENWEATHER.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelopenweathercoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
-														</td>
-														<td width="50%">
-															<table border="0" width="100%">
-															<tr>
-																<td align="right">
-																	<label id="labelopenweathercoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
-																</td>
-																<td>
-																	<input id="openweathercoordlat" name="openweathercoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLAT>"
-																		data-validation-optional="true"
-																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
-																</td>
-																<td align="right">
-																	<label id="labelopenweathercoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
-																</td>
-																<td>
-																	<input id="openweathercoordlong" name="openweathercoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLONG>"
-																		data-validation-optional="true"
-																		data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
-																</td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<a id="openweathercoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
-																onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=openweather',
-																'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
-																<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
-															</a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelopenweatherlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR OPENWEATHERLANG>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelopenweathercity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
-														</td>
-														<td width="50%">
-															<input id="openweathercity" name="openweathercity" type="text" class="textfield" value="<TMPL_VAR OPENWEATHER.STATION>">
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelopenweathercountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
-														</td>
-														<td width="50%">
-															<input id="openweathercountry" name="openweathercountry" type="text" class="textfield" value="<TMPL_VAR OPENWEATHER.COUNTRY>">
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=4>
-														<hr>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=3 width="75%">
-															<h2><TMPL_VAR SETTINGS.LABEL_WTTRIN_SETTINGS></h2>
-														</td>
-														<td align="right">
-															<a href="https://wttr.in/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/wttrin.png"></a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelwttrinlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR WTTRINLANG>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelwttrinstationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
-														</td>
-														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td width="70%"><input id="wttrinstationid" name="wttrinstationid" type="text" class="textfield" value="<TMPL_VAR WTTRIN.STATIONID>"></td>
-															<td width="15%"><a id="testwttrin" data-role="button" data-mini="true" href="javascript:testwttrin()"><TMPL_VAR SETTINGS.BUTTON_TESTWTTRIN></a></td>
-															<td width="15%"><a id="helpwttrin" data-role="button" data-mini="true" href="https://wttr.in/:help" target="_blank"><TMPL_VAR SETTINGS.BUTTON_HELPWTTRIN></a></td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_WTTRINSTATIONID></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=4>
-														<hr>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=3 width="75%">
-															<h2><TMPL_VAR SETTINGS.LABEL_WETTERONLINE_SETTINGS></h2>
-														</td>
-														<td align="right">
-															<a href="https://www.wetteronline.de/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/wetteronline_logo.png"></a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelwetteronlinestationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
-														</td>
-														<td width="50%">
-															<table border=0 width="100%">
-															<tr>
-															<td width="70%"><input id="wetteronlinestationid" name="wetteronlinestationid" type="text" class="textfield" value="<TMPL_VAR WETTERONLINE.STATIONID>"></td>
-															<td width="15%"><a id="testwetteronline" data-role="button" data-mini="true" href="javascript:testwetteronline()"><TMPL_VAR SETTINGS.BUTTON_TESTWETTERONLINE></a></td>
-															</tr>
-															</table>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_WETTERONLINESTATIONID></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=4>
-														<hr>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=3 width="75%">
-															<h2><TMPL_VAR SETTINGS.LABEL_WEATHERFLOW_SETTINGS></h2>
-														</td>
-														<td align="right">
-															<a href="https://weatherflow.com/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/weatherflow.svg"></a>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelweatherflowapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
-														</td>
-														<td width="50%">
-															<input id="weatherflowapikey" name="weatherflowapikey" type="text" data-validation-rule="^([A-Za-z0-9\-]){36}$" class="textfield" value="<TMPL_VAR WEATHERFLOW.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelweatherflowlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
-														</td>
-														<td width="50%">
-															<TMPL_VAR WEATHERFLOWLANG>
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															&nbsp;
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelweatherflowcity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
-														</td>
-														<td width="50%">
-															<input id="weatherflowcity" name="weatherflowcity" type="text" class="textfield" value="<TMPL_VAR WEATHERFLOW.CITY>">
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelweatherflowcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
-														</td>
-														<td width="50%">
-															<input id="weatherflowcountry" name="weatherflowcountry" type="text" class="textfield" value="<TMPL_VAR WEATHERFLOW.COUNTRY>">
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
-														</td>
-													</tr>
-													<tr>
-														<td width="25%">
-															<label id="labelweatherflowstationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
-														</td>
-														<td width="50%">
-															<input id="weatherflowstationid" name="weatherflowstationid" type="text" data-validation-rule="special:number" class="textfield" value="<TMPL_VAR WEATHERFLOW.STATIONID>"  data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>" data-validation-optional="true" >
-														</td>
-														<td width="5%">
-															&nbsp;
-														</td>
-														<td width="20%">
-															<font size="-1"><TMPL_VAR SETTINGS.HINT_WEATHERFLOWSTATIONID></font>
-														</td>
-													</tr>
-													<tr>
-														<td colspan=4>
-														&nbsp;
-														</td>
-													</tr>
-												</table>
-											</div>
-									<p>
-										&nbsp;
-									</p>
-									<p>
-										<center>
-											<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=1"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
-												<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
-										</center>
-									</form>
-									</p>
+	<center>
+		<br>
+	</center>
+	<form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi?form=1">
+		<input type="hidden" name="saveformdata1" value="1">
+			<div class="form-group">
+				<table class="formtable" border="0" width="100%" cellpadding="10">
+					<tr>
+						<td colspan=3 width="75%">
+							<h2><TMPL_VAR SETTINGS.LABEL_SERVER_SETTINGS></h2>
+						</td>
+						<td align="right">
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelfetch"><TMPL_VAR SETTINGS.LABEL_FETCH></label>
+						</td>
+						<td width="50%">
+							<a id="fetch" data-role="button" style="background-color: rgba(67, 236, 48, 0.4);" data-mini="true" href="javascript:fetchweather()"><TMPL_VAR SETTINGS.BUTTON_FETCH></a>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1">
+								<span id="fetchstate">&nbsp;</span>
+							</font>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<hr>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelweatherservice"><TMPL_VAR SETTINGS.LABEL_WEATHERSERVICE></label>
+						</td>
+						<td width="50%">
+							<TMPL_VAR WEATHERSERVICE>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_CONFIGUREWEATHERSERVICE></font>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<hr>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelusealternatedfc"><TMPL_VAR SETTINGS.LABEL_USEALTERNATEDFC></label>
+						</td>
+						<td width="50%">
+							<table border="0" width="100%">
+								<tr>
+									<td><TMPL_VAR USEALTERNATEDFC></td>
+									<td width="100%"><TMPL_VAR WEATHERSERVICEDFC></td>
+								</tr>
+							</table>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_USEALTERNATEDFC></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelusealternatehfc"><TMPL_VAR SETTINGS.LABEL_USEALTERNATEHFC></label>
+						</td>
+						<td width="50%">
+							<table border="0" width="100%">
+								<tr>
+									<td><TMPL_VAR USEALTERNATEHFC></td>
+									<td width="100%"><TMPL_VAR WEATHERSERVICEHFC></td>
+								</tr>
+							</table>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_USEALTERNATEHFC></font>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							<hr>
+						</td>
+					</tr>
+				</table>
 
-									<script>
+				<div class="collapsible">
+					<a href="#" onclick="expandall(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-plus ui-corner-all"><TMPL_VAR "SETTINGS.BUTTON_EXPAND"></a>
+					<a href="#" onclick="collapseall(); return false;" class="ui-btn ui-btn-inline ui-mini ui-btn-icon-left ui-icon-minus ui-corner-all"><TMPL_VAR "SETTINGS.BUTTON_COLLAPSE"></a>
+				</div>
 
-									$( document ).ready(function() {
-										// Activate on Load
-										disable();
+				<div data-role="collapsible">
+				<h1><TMPL_VAR SETTINGS.LABEL_VISUALCROSSING_SETTINGS></h1>
+				<table class="formtable" border="0" width="100%" cellpadding="10">
+					<tr>
+						<td width="25%">
+							<a href="https://www.visualcrossing.com/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/visualcrossing.svg"></a>
+						</td>
+						<td colspan=3 width="75%">
+						&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelvisualcrossingapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+						</td>
+						<td width="50%">
+							<input id="visualcrossingapikey" name="visualcrossingapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR VISUALCROSSING.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelvisualcrossingcoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+						</td>
+						<td width="50%">
+							<table border="0" width="100%">
+							<tr>
+								<td align="right">
+									<label id="labelvisualcrossingcoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+								</td>
+								<td>
+									<input id="visualcrossingcoordlat" name="visualcrossingcoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLAT>"
+										data-validation-optional="true"
+										data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+								</td>
+								<td align="right">
+									<label id="labelvisualcrossingcoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+								</td>
+								<td>
+									<input id="visualcrossingcoordlong" name="visualcrossingcoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR VISUALCROSSING.COORDLONG>"
+										data-validation-optional="true"
+										data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+								</td>
+							</tr>
+							</table>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<a id="visualcrossingcoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+								onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=visualcrossing',
+								'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+								<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelvisualcrossinglang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+						</td>
+						<td width="50%">
+							<TMPL_VAR VISUALCROSSINGLANG>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelvisualcrossingcity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
+						</td>
+						<td width="50%">
+							<input id="visualcrossingcity" name="visualcrossingcity" type="text" class="textfield" value="<TMPL_VAR VISUALCROSSING.STATION>">
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelvisualcrossingcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
+						</td>
+						<td width="50%">
+							<input id="visualcrossingcountry" name="visualcrossingcountry" type="text" class="textfield" value="<TMPL_VAR VISUALCROSSING.COUNTRY>">
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+						</td>
+					</tr>
+				</table>
+				</div>
+				<div data-role="collapsible">
+				<h1><TMPL_VAR SETTINGS.LABEL_OPENWEATHER_SETTINGS></h1>
+				<table class="formtable" border="0" width="100%" cellpadding="10">
+					<tr>
+						<td width="25%">
+							<a href="https://openweathermap.org/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/openweather_200.png"></a>
+						</td>
+						<td colspan=3>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelopenweatherapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+						</td>
+						<td width="50%">
+								<input id="openweatherapikey" name="openweatherapikey" type="text" data-validation-rule="special:alphanumeric" class="textfield" value="<TMPL_VAR OPENWEATHER.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelopenweathercoord"><TMPL_VAR SETTINGS.LABEL_COORDINATES></label>
+						</td>
+						<td width="50%">
+							<table border="0" width="100%">
+							<tr>
+								<td align="right">
+									<label id="labelopenweathercoordlat"><TMPL_VAR SETTINGS.LABEL_LATITUDE></label>
+								</td>
+								<td>
+									<input id="openweathercoordlat" name="openweathercoordlat" type="text" data-validation-rule="special:number-min-max-value:-90:90" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLAT>"
+										data-validation-optional="true"
+										data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LATITUDE>">
+								</td>
+								<td align="right">
+									<label id="labelopenweathercoordlong"><TMPL_VAR SETTINGS.LABEL_LONGITUDE></label>
+								</td>
+								<td>
+									<input id="openweathercoordlong" name="openweathercoordlong" type="text" data-validation-rule="special:number-min-max-value:-180:180" class="textfield" value="<TMPL_VAR OPENWEATHER.COORDLONG>"
+										data-validation-optional="true"
+										data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_LONGITUDE>">
+								</td>
+							</tr>
+							</table>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<a id="openweathercoordaddresssearch" data-role="button" data-inline="true" data-mini="true" href="#"
+								onClick="window.open('/admin/plugins/<TMPL_VAR LBPPLUGINDIR>/geolocation.cgi?service=openweather',
+								'NewWindow2','scrollbars=true,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no,width=900,height=600')">
+								<font size="-1"><TMPL_VAR SETTINGS.LABEL_ADDRESSSEARCH></font>
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelopenweatherlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+						</td>
+						<td width="50%">
+							<TMPL_VAR OPENWEATHERLANG>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelopenweathercity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
+						</td>
+						<td width="50%">
+							<input id="openweathercity" name="openweathercity" type="text" class="textfield" value="<TMPL_VAR OPENWEATHER.STATION>">
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelopenweathercountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
+						</td>
+						<td width="50%">
+							<input id="openweathercountry" name="openweathercountry" type="text" class="textfield" value="<TMPL_VAR OPENWEATHER.COUNTRY>">
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+						</td>
+					</tr>
+				</table>
+				</div>
+				<div data-role="collapsible">
+				<h1><TMPL_VAR SETTINGS.LABEL_WTTRIN_SETTINGS></h1>
+				<table class="formtable" border="0" width="100%" cellpadding="10">
+					<tr>
+						<td width="25%">
+							<a href="https://wttr.in/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/wttrin.png"></a>
+						</td>
+						<td colspan=3>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelwttrinlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+						</td>
+						<td width="50%">
+							<TMPL_VAR WTTRINLANG>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelwttrinstationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+						</td>
+						<td width="50%">
+							<table border=0 width="100%">
+							<tr>
+							<td width="70%"><input id="wttrinstationid" name="wttrinstationid" type="text" class="textfield" value="<TMPL_VAR WTTRIN.STATIONID>"></td>
+							<td width="15%"><a id="testwttrin" data-role="button" data-mini="true" href="javascript:testwttrin()"><TMPL_VAR SETTINGS.BUTTON_TESTWTTRIN></a></td>
+							<td width="15%"><a id="helpwttrin" data-role="button" data-mini="true" href="https://wttr.in/:help" target="_blank"><TMPL_VAR SETTINGS.BUTTON_HELPWTTRIN></a></td>
+							</tr>
+							</table>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_WTTRINSTATIONID></font>
+						</td>
+					</tr>
+				</table>
+				</div>
+				<div data-role="collapsible">
+				<h1><TMPL_VAR SETTINGS.LABEL_WETTERONLINE_SETTINGS></h1>
+				<table class="formtable" border="0" width="100%" cellpadding="10">
+					<tr>
+						<td width="25%">
+							<a href="https://www.wetteronline.de/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/wetteronline_logo.png"></a>
+						</td>
+						<td colspan=3>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelwetteronlinestationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+						</td>
+						<td width="50%">
+							<table border=0 width="100%">
+							<tr>
+							<td width="70%"><input id="wetteronlinestationid" name="wetteronlinestationid" type="text" class="textfield" value="<TMPL_VAR WETTERONLINE.STATIONID>"></td>
+							<td width="15%"><a id="testwetteronline" data-role="button" data-mini="true" href="javascript:testwetteronline()"><TMPL_VAR SETTINGS.BUTTON_TESTWETTERONLINE></a></td>
+							</tr>
+							</table>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_WETTERONLINESTATIONID></font>
+						</td>
+					</tr>
+				</table>
+				</div>
+				<div data-role="collapsible">
+				<h1><TMPL_VAR SETTINGS.LABEL_WEATHERFLOW_SETTINGS></h1>
+				<table class="formtable" border="0" width="100%" cellpadding="10">
+					<tr>
+						<td width="25%">
+							<a href="https://weatherflow.com/" target="_blank"><img src="/plugins/<TMPL_VAR LBPPLUGINDIR>/images/weatherflow.svg"></a>
+						</td>
+						<td colspan=3>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelweatherflowapikey"><TMPL_VAR SETTINGS.LABEL_APIKEY></label>
+						</td>
+						<td width="50%">
+							<input id="weatherflowapikey" name="weatherflowapikey" type="text" data-validation-rule="^([A-Za-z0-9\-]){36}$" class="textfield" value="<TMPL_VAR WEATHERFLOW.APIKEY>" data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_APIKEY>" data-validation-optional="true">
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelweatherflowlang"><TMPL_VAR SETTINGS.LABEL_LANG></label>
+						</td>
+						<td width="50%">
+							<TMPL_VAR WEATHERFLOWLANG>
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							&nbsp;
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelweatherflowcity"><TMPL_VAR SETTINGS.LABEL_CITY></label>
+						</td>
+						<td width="50%">
+							<input id="weatherflowcity" name="weatherflowcity" type="text" class="textfield" value="<TMPL_VAR WEATHERFLOW.CITY>">
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelweatherflowcountry"><TMPL_VAR SETTINGS.LABEL_COUNTRY></label>
+						</td>
+						<td width="50%">
+							<input id="weatherflowcountry" name="weatherflowcountry" type="text" class="textfield" value="<TMPL_VAR WEATHERFLOW.COUNTRY>">
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_JUSTFORWEBPAGE></font>
+						</td>
+					</tr>
+					<tr>
+						<td width="25%">
+							<label id="labelweatherflowstationid"><TMPL_VAR SETTINGS.LABEL_STATIONID></label>
+						</td>
+						<td width="50%">
+							<input id="weatherflowstationid" name="weatherflowstationid" type="text" data-validation-rule="special:number" class="textfield" value="<TMPL_VAR WEATHERFLOW.STATIONID>"  data-validation-error-msg="<TMPL_VAR SETTINGS.HINT_STATIONID>" data-validation-optional="true" >
+						</td>
+						<td width="5%">
+							&nbsp;
+						</td>
+						<td width="20%">
+							<font size="-1"><TMPL_VAR SETTINGS.HINT_WEATHERFLOWSTATIONID></font>
+						</td>
+					</tr>
+				</table>
+				</div>
+				<table class="formtable" border="0" width="100%" cellpadding="10">
+					<tr>
+						<td colspan=4>
+						&nbsp;
+						</td>
+					</tr>
+				</table>
+			</div>
+	<p>
+		&nbsp;
+	</p>
+	<p>
+		<center>
+			<a id="btncancel" data-role="button" data-inline="true" data-mini="true" data-icon="delete" href="./index.cgi?form=1"><TMPL_VAR SETTINGS.BUTTON_CANCEL></a>
+				<button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SETTINGS.BUTTON_SAVE></button>
+		</center>
+	</form>
+	</p>
 
-										// Validates
-										validate_enable('#wustationid');
-										validate_enable('#foshkserver');
-										validate_enable('#foshkport');
-										validate_enable('#darkskyapikey');
-										validate_enable('#darkskycoordlat');
-										validate_enable('#darkskycoordlong');
-										validate_enable('#weatherbitapikey');
-										validate_enable('#weatherbitcoordlat');
-										validate_enable('#weatherbitcoordlong');
-										validate_enable('#openweatherapikey');
-										validate_enable('#openweathercoordlat');
-										validate_enable('#openweathercoordlong');
-										validate_enable('#weatherflowapikey');
-										validate_enable('#weatherflowcoordlat');
-										validate_enable('#weatherflowcoordlong');
-										validate_enable('#weatherflowapikey');
-										validate_enable('#weatherflowstationid');
-										validate_enable('#udpport');
-									});
+	<script>
 
-									// Add some attributes PERL::CGI doesn't provide
-									$('select[name=getdata]').attr('data-role','flipswitch');
-									$('select[name=getdata_forecast]').attr('data-role','flipswitch');
-									$('select[name=loxgrabber]').attr('data-role','flipswitch');
-									$('select[name=wugrabber]').attr('data-role','flipswitch');
-									$('select[name=foshkgrabber]').attr('data-role','flipswitch');
-									$('select[name=pwscatchuploadgrabber]').attr('data-role','flipswitch');
-									$('select[name=usealternatedfc]').attr('data-role','flipswitch');
-									$('select[name=usealternatehfc]').attr('data-role','flipswitch');
-									$('select[name=weatherservice]').attr('data-mini','true');
-									$('select[name=weatherservicedfc]').attr('data-mini','true');
-									$('select[name=weatherservicehfc]').attr('data-mini','true');
-									$('select[name=openweatherlang]').attr('data-mini','true');
-									$('select[name=weatherflowlang]').attr('data-mini','true');
-									$('select[name=visualcrossinglang]').attr('data-mini','true');
-									$('select[name=wttrinlang]').attr('data-mini','true');
-									$('select[name=metric]').attr('data-mini','true');
-									$('select[name=cron]').attr('data-mini','true');
-									$('select[name=cron_alternate]').attr('data-mini','true');
+	$( document ).ready(function() {
+		// Activate on Load
+		disable();
 
-									// Get Data
-									$( document ).on( 'change', '#getdata', function ( e ) {
-										if ( $( "select[name=getdata]" ).val()  === "1" ) {
-											//alert("An!");
-											$('#cron').removeClass('ui-disabled');
-											$('#cron').selectmenu('refresh');
-										} else {
-											//alert("Aus!");
-											$('#cron').addClass('ui-disabled');
-											$('#cron').selectmenu('refresh');
-										}
-									});
+		// Validates
+		validate_enable('#wustationid');
+		validate_enable('#foshkserver');
+		validate_enable('#foshkport');
+		validate_enable('#darkskyapikey');
+		validate_enable('#darkskycoordlat');
+		validate_enable('#darkskycoordlong');
+		validate_enable('#weatherbitapikey');
+		validate_enable('#weatherbitcoordlat');
+		validate_enable('#weatherbitcoordlong');
+		validate_enable('#openweatherapikey');
+		validate_enable('#openweathercoordlat');
+		validate_enable('#openweathercoordlong');
+		validate_enable('#weatherflowapikey');
+		validate_enable('#weatherflowcoordlat');
+		validate_enable('#weatherflowcoordlong');
+		validate_enable('#weatherflowapikey');
+		validate_enable('#weatherflowstationid');
+		validate_enable('#udpport');
+	});
 
-									// Get Data Forecast
-									$( document ).on( 'change', '#getdata_forecast', function ( e ) {
-										if ( $( "select[name=getdata_forecast]" ).val()  === "1" ) {
-											//alert("An!");
-											$('#cron_alternate').removeClass('ui-disabled');
-											$('#cron_alternate').selectmenu('refresh');
-										} else {
-											//alert("Aus!");
-											$('#cron_alternate').addClass('ui-disabled');
-											$('#cron_alternate').selectmenu('refresh');
-										}
-									});
+	// Add some attributes PERL::CGI doesn't provide
+	$('select[name=getdata]').attr('data-role','flipswitch');
+	$('select[name=getdata_forecast]').attr('data-role','flipswitch');
+	$('select[name=loxgrabber]').attr('data-role','flipswitch');
+	$('select[name=wugrabber]').attr('data-role','flipswitch');
+	$('select[name=foshkgrabber]').attr('data-role','flipswitch');
+	$('select[name=pwscatchuploadgrabber]').attr('data-role','flipswitch');
+	$('select[name=usealternatedfc]').attr('data-role','flipswitch');
+	$('select[name=usealternatehfc]').attr('data-role','flipswitch');
+	$('select[name=weatherservice]').attr('data-mini','true');
+	$('select[name=weatherservicedfc]').attr('data-mini','true');
+	$('select[name=weatherservicehfc]').attr('data-mini','true');
+	$('select[name=openweatherlang]').attr('data-mini','true');
+	$('select[name=weatherflowlang]').attr('data-mini','true');
+	$('select[name=visualcrossinglang]').attr('data-mini','true');
+	$('select[name=wttrinlang]').attr('data-mini','true');
+	$('select[name=metric]').attr('data-mini','true');
+	$('select[name=cron]').attr('data-mini','true');
+	$('select[name=cron_alternate]').attr('data-mini','true');
 
-									// WUGrabber
-									$( document ).on( 'change', '#wugrabber', function ( e ) {
-										if ( $( "select[name=wugrabber]" ).val()  === "1" ) {
-											//alert("An!");
-											$('#labelwustationid').removeClass('ui-disabled');
-											$('#wustationid').removeClass('ui-disabled');
-										} else {
-											//alert("Aus!");
-											$('#labelwustationid').addClass('ui-disabled');
-											$('#wustationid').addClass('ui-disabled');
-										}
-									});
+	// Get Data
+	$( document ).on( 'change', '#getdata', function ( e ) {
+		if ( $( "select[name=getdata]" ).val()  === "1" ) {
+			//alert("An!");
+			$('#cron').removeClass('ui-disabled');
+			$('#cron').selectmenu('refresh');
+		} else {
+			//alert("Aus!");
+			$('#cron').addClass('ui-disabled');
+			$('#cron').selectmenu('refresh');
+		}
+	});
 
-									// FOSHKGrabber
-									$( document ).on( 'change', '#foshkgrabber', function ( e ) {
-										if ( $( "select[name=foshkgrabber]" ).val()  === "1" ) {
-											//alert("An!");
-											$('#labelfoshkserver').removeClass('ui-disabled');
-											$('#foshkserver').removeClass('ui-disabled');
-											$('#labelfoshkport').removeClass('ui-disabled');
-											$('#foshkport').removeClass('ui-disabled');
-										} else {
-											//alert("Aus!");
-											$('#labelfoshkserver').addClass('ui-disabled');
-											$('#foshkserver').addClass('ui-disabled');
-											$('#labelfoshkport').addClass('ui-disabled');
-											$('#foshkport').addClass('ui-disabled');
-										}
-									});
+	// Get Data Forecast
+	$( document ).on( 'change', '#getdata_forecast', function ( e ) {
+		if ( $( "select[name=getdata_forecast]" ).val()  === "1" ) {
+			//alert("An!");
+			$('#cron_alternate').removeClass('ui-disabled');
+			$('#cron_alternate').selectmenu('refresh');
+		} else {
+			//alert("Aus!");
+			$('#cron_alternate').addClass('ui-disabled');
+			$('#cron_alternate').selectmenu('refresh');
+		}
+	});
 
-									// Alternate DFC
-									$( document ).on( 'change', '#usealternatedfc', function ( e ) {
-										if ( $( "select[name=usealternatedfc]" ).val()  === "1" ) {
-											//alert("An!");
-											$('#weatherservicedfc').removeClass('ui-disabled');
-											$('#weatherservicedfc').selectmenu('refresh');
-										} else {
-											//alert("Aus!");
-											$('#weatherservicedfc').addClass('ui-disabled');
-											$('#weatherservicedfc').selectmenu('refresh');
-										}
-									});
+	// WUGrabber
+	$( document ).on( 'change', '#wugrabber', function ( e ) {
+		if ( $( "select[name=wugrabber]" ).val()  === "1" ) {
+			//alert("An!");
+			$('#labelwustationid').removeClass('ui-disabled');
+			$('#wustationid').removeClass('ui-disabled');
+		} else {
+			//alert("Aus!");
+			$('#labelwustationid').addClass('ui-disabled');
+			$('#wustationid').addClass('ui-disabled');
+		}
+	});
 
-									// Alternate HFC
-									$( document ).on( 'change', '#usealternatehfc', function ( e ) {
-										if ( $( "select[name=usealternatehfc]" ).val()  === "1" ) {
-											//alert("An!");
-											$('#weatherservicehfc').removeClass('ui-disabled');
-											$('#weatherservicehfc').selectmenu('refresh');
-										} else {
-											//alert("Aus!");
-											$('#weatherservicehfc').addClass('ui-disabled');
-											$('#weatherservicehfc').selectmenu('refresh');
-										}
-									});
+	// FOSHKGrabber
+	$( document ).on( 'change', '#foshkgrabber', function ( e ) {
+		if ( $( "select[name=foshkgrabber]" ).val()  === "1" ) {
+			//alert("An!");
+			$('#labelfoshkserver').removeClass('ui-disabled');
+			$('#foshkserver').removeClass('ui-disabled');
+			$('#labelfoshkport').removeClass('ui-disabled');
+			$('#foshkport').removeClass('ui-disabled');
+		} else {
+			//alert("Aus!");
+			$('#labelfoshkserver').addClass('ui-disabled');
+			$('#foshkserver').addClass('ui-disabled');
+			$('#labelfoshkport').addClass('ui-disabled');
+			$('#foshkport').addClass('ui-disabled');
+		}
+	});
 
-									// Disable some form elements depending on selected options
-									function disable() {
-										if ( $( "select[name=usealternatedfc]" ).val()  === "0" ) {
-											$('#weatherservicedfc').addClass('ui-disabled');
-											$('#weatherservicedfc').selectmenu('refresh');
-										}
-										if ( $( "select[name=usealternatehfc]" ).val()  === "0" ) {
-											$('#weatherservicehfc').addClass('ui-disabled');
-											$('#weatherservicehfc').selectmenu('refresh');
-										}
-										if ( $( "select[name=getdata]" ).val()  === "0" ) {
-											$('#cron').addClass('ui-disabled');
-										}
-										if ( $( "select[name=getdata_forecast]" ).val()  === "0" ) {
-											$('#cron').addClass('ui-disabled');
-										}
-										if ( $( "select[name=wugrabber]" ).val()  === "0" ) {
-											$('#labelwustationid').addClass('ui-disabled');
-											$('#wustationid').addClass('ui-disabled');
-										}
-										if ( $( "select[name=foshkgrabber]" ).val()  === "0" ) {
-											$('#labelfoshkserver').addClass('ui-disabled');
-											$('#foshkserver').addClass('ui-disabled');
-											$('#labelfoshkport').addClass('ui-disabled');
-											$('#foshkport').addClass('ui-disabled');
-										}
-									}
+	// Alternate DFC
+	$( document ).on( 'change', '#usealternatedfc', function ( e ) {
+		if ( $( "select[name=usealternatedfc]" ).val()  === "1" ) {
+			//alert("An!");
+			$('#weatherservicedfc').removeClass('ui-disabled');
+			$('#weatherservicedfc').selectmenu('refresh');
+		} else {
+			//alert("Aus!");
+			$('#weatherservicedfc').addClass('ui-disabled');
+			$('#weatherservicedfc').selectmenu('refresh');
+		}
+	});
 
-									function fetchweather()
-									{
+	// Alternate HFC
+	$( document ).on( 'change', '#usealternatehfc', function ( e ) {
+		if ( $( "select[name=usealternatehfc]" ).val()  === "1" ) {
+			//alert("An!");
+			$('#weatherservicehfc').removeClass('ui-disabled');
+			$('#weatherservicehfc').selectmenu('refresh');
+		} else {
+			//alert("Aus!");
+			$('#weatherservicehfc').addClass('ui-disabled');
+			$('#weatherservicehfc').selectmenu('refresh');
+		}
+	});
 
-										$('#fetch').addClass('ui-disabled');
-										$("#fetchstate").attr("style", "color:blue").html("<TMPL_VAR SETTINGS.HINT_FETCHWAIT>");
-										$.ajax( {
-												type: 'POST',
-												url: "./ajax-handler.cgi",
-												data: {
-													ajax: 'fetch',
-												}
-											} )
-										.done(function(resp) {
-											console.log( "fetch", "success", resp );
-											$("#fetchstate").attr("style", "color:green").html("<TMPL_VAR SETTINGS.HINT_FETCHOK>");
-										})
-										.fail(function(resp) {
-											console.log( "fetch", "failed", resp );
-											$("#fetchstate").attr("style", "color:red").html("<TMPL_VAR SETTINGS.HINT_FETCHFAILED>");
-										})
-										.always(function(resp) {
-										$('#fetch').removeClass('ui-disabled');
-											console.log( "fetch", "finished", resp );
-										});
+	// Disable some form elements depending on selected options
+	function disable() {
+		if ( $( "select[name=usealternatedfc]" ).val()  === "0" ) {
+			$('#weatherservicedfc').addClass('ui-disabled');
+			$('#weatherservicedfc').selectmenu('refresh');
+		}
+		if ( $( "select[name=usealternatehfc]" ).val()  === "0" ) {
+			$('#weatherservicehfc').addClass('ui-disabled');
+			$('#weatherservicehfc').selectmenu('refresh');
+		}
+		if ( $( "select[name=getdata]" ).val()  === "0" ) {
+			$('#cron').addClass('ui-disabled');
+		}
+		if ( $( "select[name=getdata_forecast]" ).val()  === "0" ) {
+			$('#cron').addClass('ui-disabled');
+		}
+		if ( $( "select[name=wugrabber]" ).val()  === "0" ) {
+			$('#labelwustationid').addClass('ui-disabled');
+			$('#wustationid').addClass('ui-disabled');
+		}
+		if ( $( "select[name=foshkgrabber]" ).val()  === "0" ) {
+			$('#labelfoshkserver').addClass('ui-disabled');
+			$('#foshkserver').addClass('ui-disabled');
+			$('#labelfoshkport').addClass('ui-disabled');
+			$('#foshkport').addClass('ui-disabled');
+		}
+	}
 
-									}
+	function fetchweather()
+	{
 
-									// Test Link for wtt.in
-									function testwttrin() {
-										var url = 'https://wttr.in/' + $('#wttrinstationid').val();
-										window.open(url, 'NewWindow');
-									}
+		$('#fetch').addClass('ui-disabled');
+		$("#fetchstate").attr("style", "color:blue").html("<TMPL_VAR SETTINGS.HINT_FETCHWAIT>");
+		$.ajax( {
+				type: 'POST',
+				url: "./ajax-handler.cgi",
+				data: {
+					ajax: 'fetch',
+				}
+			} )
+		.done(function(resp) {
+			console.log( "fetch", "success", resp );
+			$("#fetchstate").attr("style", "color:green").html("<TMPL_VAR SETTINGS.HINT_FETCHOK>");
+		})
+		.fail(function(resp) {
+			console.log( "fetch", "failed", resp );
+			$("#fetchstate").attr("style", "color:red").html("<TMPL_VAR SETTINGS.HINT_FETCHFAILED>");
+		})
+		.always(function(resp) {
+		$('#fetch').removeClass('ui-disabled');
+			console.log( "fetch", "finished", resp );
+		});
 
-									// Test Link for Wetteronline
-									function testwetteronline() {
-										var url = 'https://www.wetteronline.de/wetter/' + $('#wetteronlinestationid').val();
-										window.open(url, 'NewWindow');
-									}
+	}
 
-									</script>
+	// Test Link for wtt.in
+	function testwttrin() {
+		var url = 'https://wttr.in/' + $('#wttrinstationid').val();
+		window.open(url, 'NewWindow');
+	}
+
+	// Test Link for Wetteronline
+	function testwetteronline() {
+		var url = 'https://www.wetteronline.de/wetter/' + $('#wetteronlinestationid').val();
+		window.open(url, 'NewWindow');
+	}
+
+	// EXPAND ALL
+
+	function expandall() {
+
+		$('[data-role="collapsible"]').collapsible( "expand" );
+
+	}
+
+	// COLLAPSE ALL
+
+	function collapseall() {
+
+		$('[data-role="collapsible"]').collapsible( "collapse" );
+
+	}
+
+	</script>
 </TMPL_IF>
 
 
