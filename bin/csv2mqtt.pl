@@ -44,7 +44,7 @@ my $dateref = DateTime->new(
 
 # Connect to broker
 my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
-our $topic            = $pcfg->param("SERVER.TOPIC");
+our $topic           = $pcfg->param("SERVER.TOPIC");
 &mqttconnect();
 
 # Commandline options
@@ -60,10 +60,10 @@ GetOptions ('current' => \$current,
 # Print out Current Data
 #
 
-if ( $current ) { # Start current
+if ( $current && -e "$lbplogdir/current.dat.tmp") { # Start current
 
 # Read data
-open(F,"<$lbplogdir/current.dat");
+open(F,"<$lbplogdir/current.dat.tmp");
   our $curdata = <F>;
 close(F);
 
@@ -291,10 +291,10 @@ $value = @fields[41];
 # Print out Daily Forecast
 #
 
-if ( $daily ) { # Start daily
+if ( $daily && -e "$lbplogdir/dailyforecast.dat.tmp" ) { # Start daily
 
 # Read data
-open(F,"<$lbplogdir/dailyforecast.dat");
+open(F,"<$lbplogdir/dailyforecast.dat.tmp");
   our @dfcdata = <F>;
 close(F);
 
@@ -493,10 +493,10 @@ foreach (@dfcdata){
 # Print out Hourly Forecast
 #
 
-if ( $hourly ) { # Start hourly
+if ( $hourly && -e "$lbplogdir/hourlyforecast.dat.tmp") { # Start hourly
 
 # Read data
-open(F,"<$lbplogdir/hourlyforecast.dat");
+open(F,"<$lbplogdir/hourlyforecast.dat.tmp");
   our @hfcdata = <F>;
 close(F);
 

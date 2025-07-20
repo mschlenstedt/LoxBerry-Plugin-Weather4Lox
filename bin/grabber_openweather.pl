@@ -1,5 +1,12 @@
 #!/usr/bin/perl
 
+##############################################################################
+# This Grabber uses the outdated database format of Weather4Lox prior to 
+# Version 5. It still works due to the helper script csv2mqtt.pl.
+#
+# BUT DON'T USE IT AS TEMPLATE FOR NEW GRABBERS!
+##############################################################################
+
 # grabber for fetching data from openweathermap.org
 # fetches weather data (current and forecast) from openweathermap.org
 
@@ -926,7 +933,9 @@ close(F);
 my $currentname = "$lbplogdir/current.dat.tmp";
 my $currentsize = -s ($currentname);
 if ($currentsize > 100) {
-        move($currentname, "$lbplogdir/current.dat");
+        system("$lbpbindir/csv2mqtt.pl --current");
+        unlink("$currentname");
+        #move($currentname, "$lbplogdir/current.dat");
 }
 
 }
@@ -960,7 +969,9 @@ close(F);
 my $dailyname = "$lbplogdir/dailyforecast.dat.tmp";
 my $dailysize = -s ($dailyname);
 if ($dailysize > 100) {
-        move($dailyname, "$lbplogdir/dailyforecast.dat");
+        system("$lbpbindir/csv2mqtt.pl --daily");
+        unlink("$dailyname");
+        #move($dailyname, "$lbplogdir/dailyforecast.dat");
 }
 
 }
@@ -994,7 +1005,9 @@ close(F);
 my $hourlyname = "$lbplogdir/hourlyforecast.dat.tmp";
 my $hourlysize = -s ($hourlyname);
 if ($hourlysize > 100) {
-        move($hourlyname, "$lbplogdir/hourlyforecast.dat");
+        system("$lbpbindir/csv2mqtt.pl --hourly");
+        unlink("$hourlyname");
+        #move($hourlyname, "$lbplogdir/hourlyforecast.dat");
 }
 
 }
