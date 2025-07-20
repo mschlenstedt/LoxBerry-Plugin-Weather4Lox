@@ -25,7 +25,8 @@ use LoxBerry::System;
 use LoxBerry::IO;
 use DateTime;
 use Net::MQTT::Simple;
-use Data::Dumper;
+use Getopt::Long;
+#use Data::Dumper;
 
 my $i;
 our $value;
@@ -46,9 +47,20 @@ my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 our $topic            = $pcfg->param("SERVER.TOPIC");
 &mqttconnect();
 
+# Commandline options
+my $current = '';
+my $daily = '';
+my $hourly = '';
+GetOptions ('current' => \$current,
+            'daily' => \$daily,
+            'hourly' => \$hourly);
+
+
 #
 # Print out Current Data
 #
+
+if ( $current ) { # Start current
 
 # Read data
 open(F,"<$lbplogdir/current.dat");
@@ -273,9 +285,13 @@ $name = "snow";
 $value = @fields[41];
 &add_cur;
 
+}
+
 #
 # Print out Daily Forecast
 #
+
+if ( $daily ) { # Start daily
 
 # Read data
 open(F,"<$lbplogdir/dailyforecast.dat");
@@ -471,9 +487,13 @@ foreach (@dfcdata){
   &add_dfc;
 }
 
+}
+
 #
 # Print out Hourly Forecast
 #
+
+if ( $hourly ) { # Start hourly
 
 # Read data
 open(F,"<$lbplogdir/hourlyforecast.dat");
@@ -635,7 +655,8 @@ foreach (@hfcdata){
   &add_hfc;
 }
 
-print "\nEnde\n";
+}
+
 exit (0);
 
 #
