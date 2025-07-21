@@ -23,8 +23,8 @@
 
 use LoxBerry::System;
 use LoxBerry::IO;
+use LoxBerry::JSON;
 use DateTime;
-use Net::MQTT::Simple;
 use Getopt::Long;
 #use Data::Dumper;
 
@@ -34,6 +34,8 @@ our $name;
 our $per;
 our $data;
 our $mqtt;
+our $injects;
+our $now = time();
 
 # Date Reference: Convert into Loxone Epoche (1.1.2009)
 my $dateref = DateTime->new(
@@ -46,6 +48,12 @@ my $dateref = DateTime->new(
 my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 our $topic           = $pcfg->param("SERVER.TOPIC");
 &mqttconnect();
+
+# Read injects - this data is skipped
+#if (-e $lbplogdir . "/injects.json") {
+	$jsonobj = LoxBerry::JSON->new();
+	$injects = $jsonobj->open(filename => $lbplogdir . "/injects.json");
+#}
 
 # Commandline options
 my $current = '';
@@ -665,55 +673,55 @@ exit (0);
 
 sub add_cur {
 
-	$mqtt->retain($topic . "/current/" . $name, $value);
+	if ($now > $injects->{current}->{$name}->{epoch} + 86400) {
+		print STDERR "Publishing to " . $topic . "/current/" . $name . ": " . $value . "\n";
+		$mqtt->retain($topic . "/current/" . $name, $value);
+	} else {
+		print STDERR "Skipping " . $topic . "/current/" . $name . "\n";
+	}
 	return;
 
 }
 
 sub add_dfc {
 
-	$mqtt->retain($topic . "/daily/" . $per . "/" . $name, $value);
+	if ($now > $injects->{daily}->{$per}->{$name}->{epoch} + 86400) {
+		print STDERR "Publishing to " . $topic . "/daily/" . $per . "/" . $name . ": " . $value . "\n";
+		$mqtt->retain($topic . "/daily/" . $per . "/" . $name, $value);
+	} else {
+		print STDERR "Skipping " . $topic . "/daily/" . $per . "/" . $name . "\n";
+	}
 	return;
 
 }
 
 sub add_hfc {
 
-	$mqtt->retain($topic . "/hourly/" . $per . "/" . $name, $value);
+	if ($now > $injects->{hourly}->{$per}->{$name}->{epoch} + 86400) {
+		print STDERR "Publishing to " . $topic . "/hourly/" . $per . "/" . $name . ": " . $value . "\n";
+		$mqtt->retain($topic . "/hourly/" . $per . "/" . $name, $value);
+	} else {
+		print STDERR "Skipping " . $topic . "/hourly/" . $per . "/" . $name . "\n";
+	}
 	return;
 
 }
 
 sub mqttconnect {
 
-	$ENV{MQTT_SIMPLE_ALLOW_INSECURE_LOGIN} = 1;
-	my $mqttcred = LoxBerry::IO::mqtt_connectiondetails();
-	my $mqtt_username = $mqttcred->{brokeruser};
-	my $mqtt_password = $mqttcred->{brokerpass};
-	my $mqttbroker = $mqttcred->{brokerhost};
-	my $mqttport = $mqttcred->{brokerport};
+	print STDERR "Connecting to MQTT Broker\n";
+	$mqtt = mqtt_connect();
 
-	if (!$mqttbroker || !$mqttport) {
-		print "No MQTT config found. Giving up.\n";
-		exit (2);
-	}
-	
-	# Connect
-	eval {
-		$mqtt = Net::MQTT::Simple->new($mqttbroker . ":" . $mqttport);
-		if ($mqtt_username and $mqtt_password) {
-			$mqtt->login($mqtt_username, $mqtt_password);
-		}
-	};
 	if ($@ || !$mqtt) {
 		my $error = $@ || 'Unknown failure';
-		print "Cannot connect to Broker. An error occurred - $error";
+		print "Cannot connect to Broker. An error occurred - $error\n";
 		exit (2);
 	};
 
 	# Update Plugin Status
 	$topic = "weather4lox" if !$topic;; # Use standard if not defined
-	$mqtt->retain($topic . "/plugin/lastupdate_epoche", time());
+	$mqtt->retain($topic . "/plugin/lastupdate_epoch", $now);
+	$mqtt->retain($topic . "/plugin/lastupdate_lox", $now - $dateref->epoch);
 
 	return();
 
