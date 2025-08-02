@@ -35,7 +35,7 @@ use Time::Piece;
 use HTTP::Request;
 use DateTime;
 #use DateTime::TimeZone;
-#use DateTime::Format::ISO8601;
+use DateTime::Format::ISO8601;
 use Astro::MoonPhase;
 use utf8;
 use Encode qw(encode_utf8);
@@ -50,13 +50,17 @@ my $version = LoxBerry::System::pluginversion();
 
 my $pcfg             = new Config::Simple("$lbpconfigdir/weather4lox.cfg");
 my $city             = $pcfg->param("WETTERONLINE.STATIONID");
-my $apikey           = $pcfg->param("WETTERONLINE.APIKEY");
+
+my $apikey           = "av=2&mv=13&c=d2ViOmFxcnhwWDR3ZWJDSlRuWeb=";
+my $apikey_current   = "c=d293ZWI6QzhMNFRINmVUbkRoVWFqYg==";
+my $useragent        = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36";
+my $urlGEO_raw       = "https://www.wetteronline.de/wetter/";
+my $urlCurrent_raw   = "https://api-web.wo-cloud.com/weather/nowcast/v10?";
+my $urlDaily_raw     = "https://api-app.wetteronline.de/app/weather/forecast?";
+my $urlHourly_raw    = "https://api-app.wetteronline.de/app/weather/hourcast?";
+
 my $timezone         = qx(cat /etc/timezone);
 chomp ($timezone);
-my $useragent        = $pcfg->param("WETTERONLINE.USERAGENT");
-my $urlCurrent_raw   = $pcfg->param("WETTERONLINE.URL-CURRENT");
-my $urlDaily_raw     = $pcfg->param("WETTERONLINE.URL-DAILY");
-my $urlHourly_raw    = $pcfg->param("WETTERONLINE.URL-HOURLY");
 
 my $error = 0;
 
@@ -96,7 +100,7 @@ if ($verbose) {
 LOGSTART "Weather4Lox GRABBER_WETTERONLINE process started";
 LOGDEB "This is $0 Version $version";
 
-# Get data from wetteronline.de (HTTP Body request) for current conditions
+# Get HTML data from wetteronline.de (HTTP Body request)
 sub getUrl {
     my ($myUrl, $useragent) = @_;
     LOGDEB("URL: " . $myUrl);
@@ -130,41 +134,36 @@ sub findGid {
     }
 }
 
-# Getting current data and decoding to perl format
-LOGINF "Fetching current data for location $city";
-my $urlCurrent  = "$urlCurrent_raw$city";
-my $body = getUrl($urlCurrent, $useragent);
-my $currentCondMatch;
-if ($body =~ /WO\.metadata\.p_city_weather\.nowcastBarMetadata = (\{.+\})$/m) {
-	$currentCondMatch = $1;
+# Getting GEO data and decoding to perl format
+LOGINF "Fetching GEO data for location $city";
+my $urlGEO  = "$urlGEO_raw$city";
+my $body = getUrl($urlGEO, $useragent);
+my $geodataMatch;
+if ($body =~ /WO\.geo = (\{(?:[^{}]*|(?1))*\});/s) {
+	$geodataMatch = $1;
 } else {
         LOGCRIT("Failed to fetch data for $city. No valid data found in the server response. Check Station name.");
         die "Quit fetching data.";
 }
-my $firstHourlyMatch;
-if ($body =~ /hourlyForecastElements\.push\((\{[^}]+\})/ms) {
-	$firstHourlyMatch = $1;
-}
-my $geodataMatch;
-if ($body =~ /WO\.geo = (\{(?:[^{}]*|(?1))*\});/s) {
-	$geodataMatch = $1;
-}
-my $decodedBodyCurrent;
-my $decodedBodyFirstHourly;
 my $decodedGeodata;
-$currentCondMatch = decode_entities($currentCondMatch);
-$firstHourlyMatch = decode_entities($firstHourlyMatch);
 $geodataMatch = decode_entities($geodataMatch);
-$currentCondMatch = encode_utf8($currentCondMatch);
-$firstHourlyMatch = encode_utf8($firstHourlyMatch);
 $geodataMatch = encode_utf8($geodataMatch);
-$decodedBodyCurrent = $json->decode($currentCondMatch);
-$decodedBodyFirstHourly = $json->decode($firstHourlyMatch);
 $decodedGeodata = $json->decode($geodataMatch);
+my $lat = $decodedGeodata->{lat};
+my $long = $decodedGeodata->{lon};
+my $altitude = $decodedGeodata->{alt};
+
+# Getting current data and decoding to perl format
+LOGINF "Fetching current data for location $city";
+my $gid = findGid($city, $body);
+my $urlCurrent = "$urlCurrent_raw$apikey_current&grid_longitude=$long&grid_latitude=$lat&location_id=$gid&astro_longitude=$long&astro_latitude=$lat&latitude=$lat&longitude=$long&timezone=$timezone&language=de-DE&timeformat=HH:mm&windunit=kmh&system_of_measurement=metric&altitude=$altitude";
+my $currentData = getUrl($urlCurrent, $useragent);
+my $decodedCurrent;
+$currentData = encode_utf8($currentData);
+$decodedCurrent = $json->decode($currentData);
 
 # Getting daily data and decoding to perl format
 LOGINF "Fetching daily data for location $city";
-my $gid = findGid($city, $body);
 my $urlDaily = "$urlDaily_raw$apikey&location_id=$gid&timezone=$timezone";
 my $dailyData = getUrl($urlDaily, $useragent);
 my $decodedDaily;
@@ -195,8 +194,11 @@ my $i;
 if ( $current ) { # Start current
 
 # Write location data into database
+my $dt = DateTime::Format::ISO8601->parse_datetime(
+    $decodedCurrent->{current}->{date}
+);
 $t = DateTime->from_epoch(
-	 epoch     => $decodedBodyCurrent->{hourly}->{currentTime},
+	 epoch     => $dt->epoch,
          time_zone => $timezone,
 );
 LOGINF "Saving new Data for Timestamp $t to database.";
@@ -211,7 +213,7 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	binmode F, ':encoding(UTF-8)';
 	
 	# cur_date
-	my $epoch_time = $decodedBodyCurrent->{hourly}->{currentTime};
+	my $epoch_time = $dt->epoch;
 	print F "$epoch_time|";
 	
 	# cur_date_des
@@ -260,75 +262,51 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$altitude|";
 	
 	# cur_tt
-	my $temp_aktuell;
-		foreach my $entry (@{$decodedBodyCurrent->{nowcastBar}}) {
-			if ($entry->{relTime} eq 'aktuell') {
-				$temp_aktuell = $entry->{temp};
-				last;
-			}
-		}
+	my $temp_aktuell = $decodedCurrent->{current}->{temperature}->{air};
 	print F sprintf("%.1f",$temp_aktuell), "|";
 	
 	# cur_tt_fl
-	print F sprintf("%.1f",$decodedBodyFirstHourly->{apparentTemperature}), "|";
+	my $temp_fl = $decodedCurrent->{current}->{temperature}->{apparent};
+	print F sprintf("%.1f",$temp_fl), "|";
 	
 	# cur_hu
-	my $humidity = $decodedBodyFirstHourly->{humidity};
+	my $humidity = $decodedCurrent->{current}->{humidity}*100;
 	print F "$humidity|";
 	
 	# cur_w_dirdes && cur_w_dir
-	my $wdir = $decodedBodyFirstHourly->{windDirectionShortSector};
-	my $wind_deg;
-
-	if ($wdir eq "N") {
-		$wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_N'});  # Norden
-		$wind_deg = 0;
-	} elsif ($wdir eq "NO") {
-		$wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NE'}); # Nordosten
-		$wind_deg = 45;
-	} elsif ($wdir eq "O") {
-		$wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_E'});  # Osten
-		$wind_deg = 90;
-	} elsif ($wdir eq "SO") {
-		$wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SE'}); # Südosten
-		$wind_deg = 135;
-	} elsif ($wdir eq "S") {
-		$wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_S'});  # Süden
-		$wind_deg = 180;
-	} elsif ($wdir eq "SW") {
-		$wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_SW'}); # Südwesten
-		$wind_deg = 225;
-	} elsif ($wdir eq "W") {
-		$wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_W'});  # Westen
-		$wind_deg = 270;
-	} elsif ($wdir eq "NW") {
-		$wdirdes = Encode::decode("UTF-8", $L{'GRABBER.LABEL_NW'}); # Nordwesten
-		$wind_deg = 315;
-	} else {
-		$wdirdes = "Unbekannte Richtung";
-		$wind_deg = -1; # -1 für unbekannte Richtung
-	}
+	my $wind_deg = $decodedCurrent->{current}->{wind}->{direction};
+	my @dirs = qw(N NO O SO S SW W NW);                        # Windrichtungen
+	my $idx = int((($wind_deg + 22.5) % 360) / 45);            # Sektor errechnen
+	my $wdir = $dirs[$idx];
+	my %dir_labels = (
+		N  => $L{'GRABBER.LABEL_N'},
+		NO => $L{'GRABBER.LABEL_NE'},
+		O  => $L{'GRABBER.LABEL_E'},
+		SO => $L{'GRABBER.LABEL_SE'},
+		S  => $L{'GRABBER.LABEL_S'},
+		SW => $L{'GRABBER.LABEL_SW'},
+		W  => $L{'GRABBER.LABEL_W'},
+		NW => $L{'GRABBER.LABEL_NW'},
+	);
+	my $wdirdes = Encode::decode("UTF-8", $dir_labels{$wdir});
 	print F "$wdirdes|";
 	print F "$wind_deg|";
 	
 	# cur_w_sp
-	print F sprintf("%.1f",$decodedBodyFirstHourly->{windSpeedKmh}), "|";
+	print F sprintf("%.1f",$decodedCurrent->{current}->{wind}->{speed}->{kilometer_per_hour}->{value}), "|";
 	
 	# cur_w_gu
-	print F sprintf("%.1f",$decodedBodyFirstHourly->{windGustsKmh}), "|";
+	print F sprintf("%.1f",$decodedCurrent->{current}->{wind}->{speed}->{kilometer_per_hour}->{value}), "|";
 	
 	# cur_w_ch
-	print F sprintf("%.1f",$decodedBodyFirstHourly->{apparentTemperature}), "|";
+	print F sprintf("%.1f",$temp_fl), "|";
 	
 	# cur_pr
-	print F sprintf("%.0f",$decodedBodyFirstHourly->{airPressure}), "|";
+	print F sprintf("%.0f",$decodedCurrent->{current}->{air_pressure}->{hpa}), "|";
 	
 	# cur_dp
-	my $dew_point = sprintf("%.1f", 
-		(243.04 * (log($humidity / 100) + 17.625 * $temp_aktuell / (243.04 + $temp_aktuell))) /
-		(17.625 - (log($humidity / 100) + 17.625 * $temp_aktuell / (243.04 + $temp_aktuell)))
-	);
-	print F "$dew_point|";
+	my $dew_point = $decodedCurrent->{current}->{dew_point}->{celsius};
+	print F sprintf("%.1f",$dew_point), "|";
 	
 	# cur_vis
 	print F "-9999|";
@@ -340,35 +318,49 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	
 	# cur_uvi
-	my $uvi;
-	if ($body =~ /<tr\s+id="uvi">.*?<p>(\d+)/s) {
+	my $uvi = -9999;
+	if ($body =~ m{<span[^>]+label[^>]*>UV-Index</span>.*?<div[^>]+class="text"[^>]*>\s*([\d]+)}si) {
 		$uvi = $1;
 	}
 	print F sprintf("%.0f",$uvi), "|";
 	
 	# cur_prec_today
-	print F "-9999|";
+	my $todayPrecipitationAmount = 0;
+	if (
+		exists $decodedCurrent->{trend}
+		&& exists $decodedCurrent->{trend}->{items}->[0]->{precipitation}
+		&& exists $decodedCurrent->{trend}->{items}->[0]->{precipitation}->{details}
+		&& exists $decodedCurrent->{trend}->{items}->[0]->{precipitation}->{details}->{rainfall_amount}
+		&& exists $decodedCurrent->{trend}->{items}->[0]->{precipitation}->{details}->{rainfall_amount}->{millimeter}
+		&& exists $decodedCurrent->{trend}->{items}->[0]->{precipitation}->{details}->{rainfall_amount}->{millimeter}->{interval_end}
+	) {
+		$todayPrecipitationAmount = $decodedCurrent->{trend}->{items}->[0]->{precipitation}->{details}->{rainfall_amount}->{millimeter}->{interval_end};
+	}
+	print F sprintf("%.2f", $todayPrecipitationAmount), "|";
 	
 	# cur_prec_1hr
-	my $hourlyPrecipitationAmount = $decodedBodyFirstHourly->{hourlyPrecipitationAmount};
-	my ($value_after_minus) = $hourlyPrecipitationAmount =~ /-(.+)/;
-	$value_after_minus =~ s/,/\./g;
-	if ( $value_after_minus ) {
-		print F sprintf("%.2f",$value_after_minus), "|";
+	my $hourlyPrecipitationAmount = 0;
+	if (
+		exists $decodedCurrent->{hours}
+		&& exists $decodedCurrent->{hours}->[0]->{precipitation}
+		&& exists $decodedCurrent->{hours}->[0]->{precipitation}->{details}
+		&& exists $decodedCurrent->{hours}->[0]->{precipitation}->{details}->{rainfall_amount}
+		&& exists $decodedCurrent->{hours}->[0]->{precipitation}->{details}->{rainfall_amount}->{millimeter}
+		&& exists $decodedCurrent->{hours}->[0]->{precipitation}->{details}->{rainfall_amount}->{millimeter}->{interval_end}
+	) {
+		$hourlyPrecipitationAmount = $decodedCurrent->{hours}->[0]->{precipitation}->{details}->{rainfall_amount}->{millimeter}->{interval_end};
 	}
-	else {
-		print F "0|";
-	}
-	
+	print F sprintf("%.2f", $hourlyPrecipitationAmount), "|";
+
 	# cur_we_icon && cur_we_code
 	my %translation_table = (					# translating wetteronline weather-code to openweather weather-code
 		"200"  => ["wbg1__", "mbg1__", "bdg1__"],
 		"210"  => ["bwg1__"],
 		"211"  => ["wbg2__", "mbg2__", "bdg2__", "bwg2__"],
 		"212"  => ["bwg3__"],
-		"500"  => ["wbs1__", "mbs1__", "bwr1__"],
-		"501"  => ["wbs2__", "mbs2__", "bwr2__"],
-		"502"  => ["wbs3__", "mbs3__", "bwr3__"],
+		"500"  => ["wbs1__", "mbs1__", "mws1__", "bwr1__"],
+		"501"  => ["wbs2__", "mbs2__", "mws2__", "bwr2__"],
+		"502"  => ["wbs3__", "mbs3__", "mws3__", "bwr3__"],
 		"511"  => ["bdgr1_", "bdgr2_", "bwgr1_", "bwgr2_"],
 		"520"  => ["bdr1__", "bws1__"],
 		"521"  => ["bdr2__", "bws2__"],
@@ -386,22 +378,16 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 		"721"  => ["ns____", "nm____"],
 		"741"  => ["nb____"],
 		"800"  => ["so____", "mo____"],
-		"801"  => ["wb____", "mb____"],
+		"801"  => ["wb____", "mb____", "mw____"],
 		"802"  => ["bd____"],
 	);
-  
-	foreach my $entry (@{$decodedBodyCurrent->{nowcastBar}}) {
-		if ($entry->{relTime} eq 'aktuell') {
-			$weather = $entry->{symbol};
-			last;
-		}
-	}
+  	my $weather = $decodedCurrent->{current}->{symbol};
+
 	$code = "";
 	$icon = "";
 	
 	for my $translated_weather (keys %translation_table) {
 		if (grep { $_ eq $weather } @{$translation_table{$translated_weather}}) {
-			if ($translated_weather == 200) { $code = "18"; $icon = "tstorms" };
 			if ($translated_weather == 201) { $code = "18"; $icon = "tstorms" };
 			if ($translated_weather == 202) { $code = "19"; $icon = "tstorms" };
 			if ($translated_weather == 210) { $code = "18"; $icon = "tstorms" };
@@ -464,16 +450,73 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "$code|";
 	
 	# cur_we_des
-	my $description_current;
-		foreach my $entry (@{$decodedBodyCurrent->{nowcastBar}}) {
-			if ($entry->{relTime} eq 'aktuell') {
-				$description_current = $entry->{text};
-				last;
-			}
-		}
-	print F ucfirst($description_current) . "|";
+	#my $description_current = $decodedCurrent->{current}->{weather_condition_image};
+	#print F "$description_current|";
+	my %translation_table = (
+		'1'   => 'Sonnig bzw. klar',
+		'2'   => 'Meist sonnig, vereinzelt bewölkt',
+		'3'   => 'Vereinzelt sonnig, überwiegend bewölkt',
+		'4'   => 'Bewölkt bzw. bedeckt',
+		'5'   => 'Dunstig',
+		'6'   => 'Neblig',
+		'7'   => 'Sehr heiss',
+		'8'   => 'Sehr kalt',
+		'9'   => 'Schneetreiben',
+		'10'  => 'Schauer sind möglich',
+		'11'  => 'Schauer',
+		'12'  => 'Regen ist möglich',
+		'13'  => 'Regen',
+		'14'  => 'Gewitter sind möglich',
+		'15'  => 'Gewitter',
+		'16'  => 'Schneegestöber',
+		'18'  => 'Schneegstöber möglich, Schneeregen möglich',
+		'19'  => 'Schneeregen',
+		'20'  => 'Schnee möglich',
+		'21'  => 'Schnee',
+		'22'  => 'Windig',
+		'23'  => 'Schneeregen',
+		'26'  => 'Schneeregen',
+		'28'  => 'Leichter Schneeregen',
+		'29'  => 'Schneeregen',
+	);
+	my $weather_text = $translation_table{$code};
+	print F ucfirst($weather_text) . "|";
 	
-	# Astro Data
+	# # Astro Data
+	# my $moonageWO = $decodedCurrent->{moon}->[0]->{age};
+	# my ( $moonphase,
+	#   $moonillum,
+	#   $moonage,
+	#   $moondist,
+	#   $moonang,
+	#   $sundist,
+	#   $sunang ) = phase();
+	# print F sprintf("%.2f",$moonillum*100), "|";
+	# print F sprintf("%.0f",$moonageWO), "|";
+	# print F sprintf("%.2f",$moonphase*100), "|";
+	# print F "-9999|";
+
+	# cur_moon_p
+	#my $moonage = $decodedCurrent->{moon}->[0]->{age};
+	#my $moonphase = $moonage / 30;
+	#my $moonpercent = 0;
+	#if ($moonphase le "0.5") {
+	#	$moonpercent = $moonphase * 2 * 100;
+	#} else {
+	#	$moonpercent = (1 - $moonphase) * 2 * 100;
+	#}
+	#print F sprintf("%.1f",$moonpercent), "|";
+	
+	## cur_moon_a
+	#print F "$moonage|";
+	
+	## cur_moon_ph
+
+	#print F sprintf("%.0f",$moonphase*100), "|";
+
+	# cur_moon_p
+	# cur_moon_a
+	# cur_moon_ph
 	my ( $moonphase,
 	  $moonillum,
 	  $moonage,
@@ -484,36 +527,21 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F sprintf("%.2f",$moonillum*100), "|";
 	print F sprintf("%.2f",$moonage), "|";
 	print F sprintf("%.2f",$moonphase*100), "|";
+	
+	# cur_moon_h
 	print F "-9999|";
-#	# cur_moon_p
-#	my $moonage_raw = $decodedBodyCurrent->{moonage};
-#	my ($moonage) = $moonage_raw =~ /-(.+)/;
-#	my $moonphase = $moonage / 30;
-#	my $moonpercent = 0;
-#	if ($moonphase le "0.5") {
-#		$moonpercent = $moonphase * 2 * 100;
-#	} else {
-#		$moonpercent = (1 - $moonphase) * 2 * 100;
-#	}
-#	print F "$moonpercent|";
-#	
-#	# cur_moon_a
-#	print F "$moonage|";
-#	
-#	# cur_moon_ph
-#	print F sprintf("%.0f",$moonphase*100), "|";
-#	
-#	# cur_moon_h
-#	print F "-9999|";
 	
 	# cur_sun_r && cur_sun_s
-	my ($sunrise_hour, $sunrise_minute, $sunset_hour, $sunset_minute);
-	if ($body =~ /<span id="sunrise" title="Sonnenaufgang">\s*(\d{2}):(\d{2})\s*<\/span>/) {
-		($sunrise_hour, $sunrise_minute) = ($1, $2);
-	}
-	if ($body =~ /<span id="sunset" title="Sonnenuntergang">\s*(\d{2}):(\d{2})\s*<\/span>/) {
-		($sunset_hour, $sunset_minute) = ($1, $2);
-	}
+	my $dt_rise = DateTime::Format::ISO8601->parse_datetime($decodedCurrent->{current}->{sun}->{rise});
+	$dt_rise->set_time_zone($tz_offset);
+	my $sunrise_hour   = $dt_rise->hour;
+	my $sunrise_minute = $dt_rise->minute;
+
+	my $dt_set = DateTime::Format::ISO8601->parse_datetime($decodedCurrent->{current}->{sun}->{set});
+	$dt_set->set_time_zone($tz_offset);
+	my $sunset_hour   = $dt_set->hour;
+	my $sunset_minute = $dt_set->minute;
+
 	if (defined $sunrise_hour && defined $sunrise_minute && defined $sunset_hour && defined $sunset_minute) {
 		print F sprintf("%02d", $sunrise_hour), "|";
 		print F sprintf("%02d", $sunrise_minute), "|";
@@ -533,10 +561,11 @@ open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
 	print F "-9999|";
 	
 	# cur_pop
-	print F "$decodedBodyFirstHourly->{precipitationProbability}|";
+	my $cur_pop = $decodedCurrent->{current}->{precipitation}->{probability}*100;
+	print F sprintf("%.0f",$cur_pop), "|";
 		
 	# cur_snow
-	print F "$decodedBodyFirstHourly->{snowProbability}|";
+	print F "-9999|";
 	
 	
 	print F "\n";
@@ -775,50 +804,80 @@ open(F,">$lbplogdir/dailyforecast.dat.tmp") or $error = 1;
 		print F "$code|";
 
 		# dfc0_we_des
+		#my %translation_table = (
+		#	'so____'   => 'sonnig bzw. klar',
+		#	'mo____'   => 'sonnig bzw. klar',
+		#	'ns____'   => 'teils neblig',
+		#	'nm____'   => 'teils neblig',
+		#	'nb____'   => 'neblig',
+		#	'wb____'   => 'unterschiedlich bewölkt',
+		#	'mb____'   => 'unterschiedlich bewölkt',
+		#	'bd____'   => 'bedeckt',
+		#	'wbs1__'  => 'unterschiedlich bewölkt und vereinzelt Schauer',
+		#	'mbs1__'  => 'unterschiedlich bewölkt und vereinzelt Schauer',
+		#	'wbs2__'  => 'unterschiedlich bewölkt und Schauer',
+		#	'mbs2__'  => 'unterschiedlich bewölkt und Schauer',
+		#	'bdr1__'  => 'bedeckt, etwas Regen oder vereinzelt Schauer',
+		#	'bdr2__'  => 'bedeckt, Regen oder Schauer',
+		#	'bdr3__'  => 'bedeckt und ergiebiger Regen',
+		#	'wbsrs1'  => 'unterschiedlich bewölkt und vereinzelt Schneeregenschauer',
+		#	'mbsrs1'  => 'unterschiedlich bewölkt und vereinzelt Schneeregenschauer',
+		#	'wbsrs2'  => 'unterschiedlich bewölkt und Schneeregenschauer',
+		#	'mbsrs2'  => 'unterschiedlich bewölkt und Schneeregenschauer',
+		#	'bdsr1_'  => 'bedeckt, leichter Schneeregen oder vereinzelt Schneeregenschauer',
+		#	'bdsr2_'  => 'bedeckt, Schneeregen oder Schneeregenschauer',
+		#	'bdsr3_'  => 'bedeckt und ergiebiger Schneeregen',
+		#	'wbsns1'  => 'unterschiedlich bewölkt und vereinzelt Schneeschauer',
+		#	'mbsns1'  => 'unterschiedlich bewölkt und vereinzelt Schneeschauer',
+		#	'bdsn1_'  => 'bedeckt, leichter Schneefall oder vereinzelt Schneeschauer',
+		#	'wbsns2'  => 'unterschiedlich bewölkt und Schneeschauer',
+		#	'mbsns2'  => 'unterschiedlich bewölkt und Schneeschauer',
+		#	'bdsn1_'  => 'bedeckt, leichter Schneefall oder Schneeschauer',
+		#	'bdsn2_'  => 'bedeckt, Schneefall oder Schneeschauer',
+		#	'bdsn3_'  => 'bedeckt und ergiebiger Schneefall',
+		#	'wbsg__'  => 'unterschiedlich bewölkt und Schneegewitter',
+		#	'mbsg__'  => 'unterschiedlich bewölkt und Schneegewitter',
+		#	'bdsg__'  => 'bedeckt und Schneegewitter',
+		#	'wbg1__'  => 'unterschiedlich bewölkt, vereinzelt Schauer und Gewitter',
+		#	'mbg1__'  => 'unterschiedlich bewölkt, vereinzelt Schauer und Gewitter',
+		#	'bdg1__'  => 'bedeckt, vereinzelt Schauer und Gewitter',
+		#	'wbg2__'  => 'unterschiedlich bewölkt, Schauer und Gewitter',
+		#	'mbg2__'  => 'unterschiedlich bewölkt, Schauer und Gewitter',
+		#	'bdg2__'  => 'bedeckt, Schauer und Gewitter',
+		#	'bdgr1_'  => 'bedeckt und gefrierender Sprühregen',
+		#	'bdgr2_'  => 'bedeckt und gefrierender Regen',
+		#);
+		#my $weather_text = $translation_table{$weather};
+		#print F ucfirst($weather_text) . "|";
+		# --> Using https://wiki.loxberry.de/plugins/weather4loxone/start#wetter-codes
 		my %translation_table = (
-			'so____'   => 'sonnig bzw. klar',
-			'mo____'   => 'sonnig bzw. klar',
-			'ns____'   => 'teils neblig',
-			'nm____'   => 'teils neblig',
-			'nb____'   => 'neblig',
-			'wb____'   => 'unterschiedlich bewölkt',
-			'mb____'   => 'unterschiedlich bewölkt',
-			'bd____'   => 'bedeckt',
-			'wbs1__'  => 'unterschiedlich bewölkt und vereinzelt Schauer',
-			'mbs1__'  => 'unterschiedlich bewölkt und vereinzelt Schauer',
-			'wbs2__'  => 'unterschiedlich bewölkt und Schauer',
-			'mbs2__'  => 'unterschiedlich bewölkt und Schauer',
-			'bdr1__'  => 'bedeckt, etwas Regen oder vereinzelt Schauer',
-			'bdr2__'  => 'bedeckt, Regen oder Schauer',
-			'bdr3__'  => 'bedeckt und ergiebiger Regen',
-			'wbsrs1'  => 'unterschiedlich bewölkt und vereinzelt Schneeregenschauer',
-			'mbsrs1'  => 'unterschiedlich bewölkt und vereinzelt Schneeregenschauer',
-			'wbsrs2'  => 'unterschiedlich bewölkt und Schneeregenschauer',
-			'mbsrs2'  => 'unterschiedlich bewölkt und Schneeregenschauer',
-			'bdsr1_'  => 'bedeckt, leichter Schneeregen oder vereinzelt Schneeregenschauer',
-			'bdsr2_'  => 'bedeckt, Schneeregen oder Schneeregenschauer',
-			'bdsr3_'  => 'bedeckt und ergiebiger Schneeregen',
-			'wbsns1'  => 'unterschiedlich bewölkt und vereinzelt Schneeschauer',
-			'mbsns1'  => 'unterschiedlich bewölkt und vereinzelt Schneeschauer',
-			'bdsn1_'  => 'bedeckt, leichter Schneefall oder vereinzelt Schneeschauer',
-			'wbsns2'  => 'unterschiedlich bewölkt und Schneeschauer',
-			'mbsns2'  => 'unterschiedlich bewölkt und Schneeschauer',
-			'bdsn1_'  => 'bedeckt, leichter Schneefall oder Schneeschauer',
-			'bdsn2_'  => 'bedeckt, Schneefall oder Schneeschauer',
-			'bdsn3_'  => 'bedeckt und ergiebiger Schneefall',
-			'wbsg__'  => 'unterschiedlich bewölkt und Schneegewitter',
-			'mbsg__'  => 'unterschiedlich bewölkt und Schneegewitter',
-			'bdsg__'  => 'bedeckt und Schneegewitter',
-			'wbg1__'  => 'unterschiedlich bewölkt, vereinzelt Schauer und Gewitter',
-			'mbg1__'  => 'unterschiedlich bewölkt, vereinzelt Schauer und Gewitter',
-			'bdg1__'  => 'bedeckt, vereinzelt Schauer und Gewitter',
-			'wbg2__'  => 'unterschiedlich bewölkt, Schauer und Gewitter',
-			'mbg2__'  => 'unterschiedlich bewölkt, Schauer und Gewitter',
-			'bdg2__'  => 'bedeckt, Schauer und Gewitter',
-			'bdgr1_'  => 'bedeckt und gefrierender Sprühregen',
-			'bdgr2_'  => 'bedeckt und gefrierender Regen',
+			'1'   => 'Sonnig bzw. klar',
+			'2'   => 'Meist sonnig, vereinzelt bewölkt',
+			'3'   => 'Vereinzelt sonnig, überwiegend bewölkt',
+			'4'   => 'Bewölkt bzw. bedeckt',
+			'5'   => 'Dunstig',
+			'6'   => 'Neblig',
+			'7'   => 'Sehr heiss',
+			'8'   => 'Sehr kalt',
+			'9'   => 'Schneetreiben',
+			'10'  => 'Schauer sind möglich',
+			'11'  => 'Schauer',
+			'12'  => 'Regen ist möglich',
+			'13'  => 'Regen',
+			'14'  => 'Gewitter sind möglich',
+			'15'  => 'Gewitter',
+			'16'  => 'Schneegestöber',
+			'18'  => 'Schneegstöber möglich, Schneeregen möglich',
+			'19'  => 'Schneeregen',
+			'20'  => 'Schnee möglich',
+			'21'  => 'Schnee',
+			'22'  => 'Windig',
+			'23'  => 'Schneeregen',
+			'26'  => 'Schneeregen',
+			'28'  => 'Leichter Schneeregen',
+			'29'  => 'Schneeregen',
 		);
-		my $weather_text = $translation_table{$weather};
+		my $weather_text = $translation_table{$code};
 		print F ucfirst($weather_text) . "|";
 		
 		# dfc0_ozone
@@ -1128,50 +1187,81 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 		print F "$icon|";
 
 		# hfc1_we_des
+		#my %translation_table = (
+		#	'so____'   => 'sonnig bzw. klar',
+		#	'mo____'   => 'sonnig bzw. klar',
+		#	'ns____'   => 'teils neblig',
+		#	'nm____'   => 'teils neblig',
+		#	'nb____'   => 'neblig',
+		#	'wb____'   => 'unterschiedlich bewölkt',
+		#	'mb____'   => 'unterschiedlich bewölkt',
+		#	'bd____'   => 'bedeckt',
+		#	'wbs1__'  => 'unterschiedlich bewölkt und vereinzelt Schauer',
+		#	'mbs1__'  => 'unterschiedlich bewölkt und vereinzelt Schauer',
+		#	'bdr1__'  => 'bedeckt, etwas Regen oder vereinzelt Schauer',
+		#	'wbs2__'  => 'unterschiedlich bewölkt und Schauer',
+		#	'mbs2__'  => 'unterschiedlich bewölkt und Schauer',
+		#	'bdr2__'  => 'bedeckt, Regen oder Schauer',
+		#	'bdr3__'  => 'bedeckt und ergiebiger Regen',
+		#	'wbsrs1'  => 'unterschiedlich bewölkt und vereinzelt Schneeregenschauer',
+		#	'mbsrs1'  => 'unterschiedlich bewölkt und vereinzelt Schneeregenschauer',
+		#	'bdsr1_'  => 'bedeckt, leichter Schneeregen oder vereinzelt Schneeregenschauer',
+		#	'wbsrs2'  => 'unterschiedlich bewölkt und Schneeregenschauer',
+		#	'mbsrs2'  => 'unterschiedlich bewölkt und Schneeregenschauer',
+		#	'bdsr2_'  => 'bedeckt, Schneeregen oder Schneeregenschauer',
+		#	'bdsr3_'  => 'bedeckt und ergiebiger Schneeregen',
+		#	'wbsns1'  => 'unterschiedlich bewölkt und vereinzelt Schneeschauer',
+		#	'mbsns1'  => 'unterschiedlich bewölkt und vereinzelt Schneeschauer',
+		#	'bdsn1_'  => 'bedeckt, leichter Schneefall oder vereinzelt Schneeschauer',
+		#	'wbsns2'  => 'unterschiedlich bewölkt und Schneeschauer',
+		#	'mbsns2'  => 'unterschiedlich bewölkt und Schneeschauer',
+		#	'bdsn2_'  => 'bedeckt, Schneefall oder Schneeschauer',
+		#	'bdsn3_'  => 'bedeckt und ergiebiger Schneefall',
+		#	'wbsg__'  => 'unterschiedlich bewölkt und Schneegewitter',
+		#	'mbsg__'  => 'unterschiedlich bewölkt und Schneegewitter',
+		#	'bdsg__'  => 'bedeckt und Schneegewitter',
+		#	'wbg1__'  => 'unterschiedlich bewölkt, vereinzelt Schauer und Gewitter',
+		#	'mbg1__'  => 'unterschiedlich bewölkt, vereinzelt Schauer und Gewitter',
+		#	'bdg1__'  => 'bedeckt, vereinzelt Schauer und Gewitter',
+		#	'wbg2__'  => 'unterschiedlich bewölkt, Schauer und Gewitter',
+		#	'mbg2__'  => 'unterschiedlich bewölkt, Schauer und Gewitter',
+		#	'bdg2__'  => 'bedeckt, Schauer und Gewitter',
+		#	'bdgr1_'  => 'bedeckt und gefrierender Sprühregen',
+		#	'bdgr2_'  => 'bedeckt und gefrierender Regen',
+		#);
+		#my $weather_text = $translation_table{$weather};
+		#print F  ucfirst($weather_text) . "|";
+
+		# --> Using https://wiki.loxberry.de/plugins/weather4loxone/start#wetter-codes
 		my %translation_table = (
-			'so____'   => 'sonnig bzw. klar',
-			'mo____'   => 'sonnig bzw. klar',
-			'ns____'   => 'teils neblig',
-			'nm____'   => 'teils neblig',
-			'nb____'   => 'neblig',
-			'wb____'   => 'unterschiedlich bewölkt',
-			'mb____'   => 'unterschiedlich bewölkt',
-			'bd____'   => 'bedeckt',
-			'wbs1__'  => 'unterschiedlich bewölkt und vereinzelt Schauer',
-			'mbs1__'  => 'unterschiedlich bewölkt und vereinzelt Schauer',
-			'bdr1__'  => 'bedeckt, etwas Regen oder vereinzelt Schauer',
-			'wbs2__'  => 'unterschiedlich bewölkt und Schauer',
-			'mbs2__'  => 'unterschiedlich bewölkt und Schauer',
-			'bdr2__'  => 'bedeckt, Regen oder Schauer',
-			'bdr3__'  => 'bedeckt und ergiebiger Regen',
-			'wbsrs1'  => 'unterschiedlich bewölkt und vereinzelt Schneeregenschauer',
-			'mbsrs1'  => 'unterschiedlich bewölkt und vereinzelt Schneeregenschauer',
-			'bdsr1_'  => 'bedeckt, leichter Schneeregen oder vereinzelt Schneeregenschauer',
-			'wbsrs2'  => 'unterschiedlich bewölkt und Schneeregenschauer',
-			'mbsrs2'  => 'unterschiedlich bewölkt und Schneeregenschauer',
-			'bdsr2_'  => 'bedeckt, Schneeregen oder Schneeregenschauer',
-			'bdsr3_'  => 'bedeckt und ergiebiger Schneeregen',
-			'wbsns1'  => 'unterschiedlich bewölkt und vereinzelt Schneeschauer',
-			'mbsns1'  => 'unterschiedlich bewölkt und vereinzelt Schneeschauer',
-			'bdsn1_'  => 'bedeckt, leichter Schneefall oder vereinzelt Schneeschauer',
-			'wbsns2'  => 'unterschiedlich bewölkt und Schneeschauer',
-			'mbsns2'  => 'unterschiedlich bewölkt und Schneeschauer',
-			'bdsn2_'  => 'bedeckt, Schneefall oder Schneeschauer',
-			'bdsn3_'  => 'bedeckt und ergiebiger Schneefall',
-			'wbsg__'  => 'unterschiedlich bewölkt und Schneegewitter',
-			'mbsg__'  => 'unterschiedlich bewölkt und Schneegewitter',
-			'bdsg__'  => 'bedeckt und Schneegewitter',
-			'wbg1__'  => 'unterschiedlich bewölkt, vereinzelt Schauer und Gewitter',
-			'mbg1__'  => 'unterschiedlich bewölkt, vereinzelt Schauer und Gewitter',
-			'bdg1__'  => 'bedeckt, vereinzelt Schauer und Gewitter',
-			'wbg2__'  => 'unterschiedlich bewölkt, Schauer und Gewitter',
-			'mbg2__'  => 'unterschiedlich bewölkt, Schauer und Gewitter',
-			'bdg2__'  => 'bedeckt, Schauer und Gewitter',
-			'bdgr1_'  => 'bedeckt und gefrierender Sprühregen',
-			'bdgr2_'  => 'bedeckt und gefrierender Regen',
+			'1'   => 'Sonnig bzw. klar',
+			'2'   => 'Meist sonnig, vereinzelt bewölkt',
+			'3'   => 'Vereinzelt sonnig, überwiegend bewölkt',
+			'4'   => 'Bewölkt bzw. bedeckt',
+			'5'   => 'Dunstig',
+			'6'   => 'Neblig',
+			'7'   => 'Sehr heiss',
+			'8'   => 'Sehr kalt',
+			'9'   => 'Schneetreiben',
+			'10'  => 'Schauer sind möglich',
+			'11'  => 'Schauer',
+			'12'  => 'Regen ist möglich',
+			'13'  => 'Regen',
+			'14'  => 'Gewitter sind möglich',
+			'15'  => 'Gewitter',
+			'16'  => 'Schneegestöber',
+			'18'  => 'Schneegstöber möglich, Schneeregen möglich',
+			'19'  => 'Schneeregen',
+			'20'  => 'Schnee möglich',
+			'21'  => 'Schnee',
+			'22'  => 'Windig',
+			'23'  => 'Schneeregen',
+			'26'  => 'Schneeregen',
+			'28'  => 'Leichter Schneeregen',
+			'29'  => 'Schneeregen',
 		);
-		my $weather_text = $translation_table{$weather};
-		print F  ucfirst($weather_text) . "|";
+		my $weather_text = $translation_table{$code};
+		print F ucfirst($weather_text) . "|";
 
 		# Ozone
 		print F "-9999|";
