@@ -411,7 +411,7 @@ open(F,">$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 			# Skip first datasets of current day
 			my $now = localtime;
 			my $hfctime = localtime($results->{datetimeEpoch});
-			if ($now->hour > $hfctime->hour && $i == 1) {
+			if ($now->epoch > $hfctime->epoch) {
 				next;
 			}
 			print F "$i|";
