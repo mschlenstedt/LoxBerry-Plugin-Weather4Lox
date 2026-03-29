@@ -58,9 +58,8 @@ my %L = LoxBerry::System::readlanguage("language.ini");
 my $log = LoxBerry::Log->new (
 	package => 'weather4lox',
 	name => 'grabber_weatherflow',
-	logdir => "$lbplogdir",
-	#filename => "$lbplogdir/weather4lox.log",
-	#append => 1,
+	filename => "$lbplogdir/weather4lox.log",
+	append => 1,
 );
 
 # Commandline options

@@ -59,9 +59,8 @@ our $lang = lblanguage();
 my $log = LoxBerry::Log->new (
 	package => 'weather4lox',
 	name => 'datatoloxone',
-	logdir => "$lbplogdir",
-	#filename => "$lbplogdir/weather4lox.log",
-	#append => 1,
+	filename => "$lbplogdir/weather4lox.log",
+	append => 1,
 );
 
 # Commandline options
@@ -1980,7 +1979,7 @@ sub mqttconnect
 		LOGINF "Connecting to MQTT Broker";
 		$mqtt = Net::MQTT::Simple->new($mqttbroker . ":" . $mqttport);
 		if( $mqtt_username and $mqtt_password ) {
-			LOGDEB "MQTT Login with Username and Password: Sending $mqtt_username $mqtt_password";
+			LOGDEB "MQTT Login with Username and Password: Sending $mqtt_username ********";
 			$mqtt->login($mqtt_username, $mqtt_password);
 		}
 	};
@@ -1992,7 +1991,7 @@ sub mqttconnect
 	};
 
 	# Update Plugin Status
-	$topic = "weather4lox" if !$topic;; # Use standard if not defined
+	$topic = "weather4lox" if !$topic; # Use standard if not defined
 	LOGINF "Publishing " . $topic . "/plugin/lastupdate_epoche" . " " . time();
 	$mqtt->retain($topic . "/plugin/lastupdate_epoche", time());
 

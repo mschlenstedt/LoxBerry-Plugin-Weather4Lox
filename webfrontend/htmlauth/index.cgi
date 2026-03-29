@@ -79,7 +79,7 @@ my $template = HTML::Template->new(
 );
 
 # Language
-my %L = LoxBerry::Web::readlanguage($template, "language.ini");
+my %L = LoxBerry::System::readlanguage($template, "language.ini");
 
 # Save Form 1 (Server Settings)
 if ($R::saveformdata1) {
@@ -218,7 +218,6 @@ if ($R::saveformdata1) {
 	$cfg->param("FOSHK.PORT", "$R::foshkport");
 
 	$cfg->param("SERVER.PWSCATCHUPLOADGRABBER", "$R::pwscatchuploadgrabber");
-	$cfg->param("SERVER.WUGRABBER", "$R::wugrabber");
 	$cfg->param("SERVER.WUGRABBER", "$R::wugrabber");
 	$cfg->param("SERVER.LOXGRABBER", "$R::loxgrabber");
 	$cfg->param("SERVER.FOSHKGRABBER", "$R::foshkgrabber");

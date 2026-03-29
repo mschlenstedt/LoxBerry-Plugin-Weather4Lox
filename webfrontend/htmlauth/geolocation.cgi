@@ -98,7 +98,7 @@ $template->param( "SERVICE", $service);
 ##########################################################################
 
 # Read translations
-my %L = LoxBerry::Web::readlanguage($template, "language.ini");
+my %L = LoxBerry::System::readlanguage($template, "language.ini");
 
 ##########################################################################
 # Main program

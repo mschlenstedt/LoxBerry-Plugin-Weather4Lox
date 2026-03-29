@@ -19,10 +19,11 @@ my $requestinfo = "$ENV{'REMOTE_ADDR'} $ENV{'REQUEST_METHOD'} $ENV{'REQUEST_URI'
 
 print "content-type: text/plain\r\n\r\n";
 
-if ( -e "index.txt" ) {
-	print LoxBerry::System::read_file("index.txt");
+my $indexfile = "REPLACELBPLOGDIR/index.txt";
+if ( -e $indexfile ) {
+	print LoxBerry::System::read_file($indexfile);
 	LOGOK ("$requestinfo: Response sent");
 } else {
-	LOGWARN ("$requestinfo: Data currently not available");
+	LOGWARN ("$requestinfo: Data currently not available (file $indexfile not found)");
 }
 LOGEND();

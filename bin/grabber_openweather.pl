@@ -55,9 +55,8 @@ my %L = LoxBerry::System::readlanguage("language.ini");
 my $log = LoxBerry::Log->new (
 	package => 'weather4lox',
 	name => 'grabber_openweather',
-	logdir => "$lbplogdir",
-	#filename => "$lbplogdir/weather4lox.log",
-	#append => 1,
+	filename => "$lbplogdir/weather4lox.log",
+	append => 1,
 );
 
 # Commandline options
@@ -131,7 +130,7 @@ $error = 0;
 open(F,">$lbplogdir/current.dat.tmp") or $error = 1;
   flock(F,2);
 	if ($error) {
-		LOGCRIT "Cannot open $lbpconfigdir/current.dat.tmp";
+		LOGCRIT "Cannot open $lbplogdir/current.dat.tmp";
 		exit 2;
 	}
 	binmode F, ':encoding(UTF-8)';
@@ -678,7 +677,7 @@ if ($i < 168) {
 	$decoded_json = decode_json( "$json" );
 
 	$error = 0;
-	open(F,"+<$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;;
+	open(F,"+<$lbplogdir/hourlyforecast.dat.tmp") or $error = 1;
 	  if ($error) {
 		LOGCRIT "Cannot open $lbplogdir/hourlyforecast.dat.tmp";
 		exit 2;
@@ -857,9 +856,9 @@ if ($i < 168) {
 					if ($weather eq "804") { $code = "5";  $icon = "overcast" };
 					if (!$icon) { $icon = "clear" };
 					if (!$code) { $code = "1" };
-						$newline .= $icon;
-						$newline .= "|";
 						$newline .= $code;
+						$newline .= "|";
+						$newline .= $icon;
 						$newline .= "|";
 						$newline .= $results->{weather}->[0]->{description};
 						$newline .= "|";

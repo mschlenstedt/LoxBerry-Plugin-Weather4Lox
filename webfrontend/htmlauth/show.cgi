@@ -126,7 +126,11 @@ if ($map) {
 if ($dfc) {
 
   # Read data
-  open(F,"<$home/log/plugins/$psubfolder/dailyforecast.dat") || die "Cannot open $home/log/plugins/$psubfolder/dailyforecast.dat";
+  if (!open(F,"<$home/log/plugins/$psubfolder/dailyforecast.dat")) {
+    print "Content-Type: text/html\n\n";
+    print "<p>No daily forecast data available yet. Please fetch weather data first.</p>";
+    exit;
+  }
     our @dfcdata = <F>;
   close(F);
 
@@ -201,16 +205,24 @@ if ($dfc) {
 if ($hfc) {
 
   # Get current weather data from database - Needed for Sunrise and Sunset
-  open(F,"<$home/log/plugins/$psubfolder/current.dat") || die "Cannot open $home/log/plugins/$psubfolder/current.dat";
+  if (!open(F,"<$home/log/plugins/$psubfolder/current.dat")) {
+    print "Content-Type: text/html\n\n";
+    print "<p>No current weather data available yet. Please fetch weather data first.</p>";
+    exit;
+  }
     our $curdata = <F>;
   close(F);
   chomp $curdata;
+
   my @fields = split(/\|/,$curdata);
-  $hour_sun_r = @fields[34];
   $hour_sun_s = @fields[36];
 
   # Read data for Hourly Forecast
-  open(F,"<$home/log/plugins/$psubfolder/hourlyforecast.dat") || die "Cannot open $home/log/plugins/$psubfolder/hourlyforecast.dat";
+  if (!open(F,"<$home/log/plugins/$psubfolder/hourlyforecast.dat")) {
+    print "Content-Type: text/html\n\n";
+    print "<p>No hourly forecast data available yet. Please fetch weather data first.</p>";
+    exit;
+  }
     our @hfcdata = <F>;
   close(F);
 
@@ -287,7 +299,11 @@ if ($hfc) {
 #############################################
 
 # Get current weather data from database
-open(F,"<$home/log/plugins/$psubfolder/current.dat") || die "Cannot open $home/log/plugins/$psubfolder/current.dat";
+if (!open(F,"<$home/log/plugins/$psubfolder/current.dat")) {
+  print "Content-Type: text/html\n\n";
+  print "<p>No current weather data available yet. Please fetch weather data first.</p>";
+  exit;
+}
   our $curdata = <F>;
 close(F);
 
